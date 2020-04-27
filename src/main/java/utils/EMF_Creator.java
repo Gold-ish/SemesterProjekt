@@ -116,9 +116,9 @@ public class EMF_Creator {
         //A deployment server MUST set the following values which will override the defaults
         boolean isDeployed = (System.getenv("DEPLOYED") != null);
         if (isDeployed) {
-            user = System.getenv("USER_CA3");
-            pw = System.getenv("PW_CA3");
-            connection_str = System.getenv("CONNECTION_STR_CA3");
+            user = System.getenv("USER_SEMESTERPROJEKT");
+            pw = System.getenv("PW_SEMESTERPROJEKT");
+            connection_str = System.getenv("CONNECTION_STR_SEMESTERPROJEKT");
         }
         /*
         On your server in /opt/tomcat/bin/setenv.sh   add the following WITH YOUR OWN VALUES
