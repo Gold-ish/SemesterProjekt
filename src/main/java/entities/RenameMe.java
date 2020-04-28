@@ -7,10 +7,12 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.NamedQuery;
+import javax.xml.bind.annotation.XmlRootElement;
 
 
 @Entity
 @NamedQuery(name = "RenameMe.deleteAllRows", query = "DELETE from RenameMe")
+@XmlRootElement
 public class RenameMe implements Serializable {
 
     private static final long serialVersionUID = 1L;

@@ -3,6 +3,7 @@ package facades;
 import com.google.gson.Gson;
 import dto.MovieDTO;
 import dto.MovieListDTO;
+import errorhandling.MovieNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -28,8 +29,11 @@ public class FetchFacade {
         return instance;
     }
     
-    public MovieDTO getMovieWithID(String id) throws IOException {
+    public MovieDTO getMovieById(String id) throws IOException, MovieNotFoundException {
         String movieAPI = HttpUtils.fetchData("http://www.omdbapi.com/?i=" + id + "&apikey=6b10a5de");
+        if(movieAPI.contains("Error")){
+            throw new MovieNotFoundException("No movie found with id: " + id);
+        }
         MovieDTO fetchedmovie = gson.fromJson(movieAPI, MovieDTO.class);
         return fetchedmovie;
     }
