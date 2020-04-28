@@ -25,7 +25,7 @@ public class FetchFacade {
         return instance;
     }
     
-    public MovieDTO getMovieWithID(String id) throws IOException {
+    public MovieDTO getMovieById(String id) throws IOException {
         String movieAPI = HttpUtils.fetchData("http://www.omdbapi.com/?i=" + id + "&apikey=6b10a5de");
         MovieDTO fetchedmovie = gson.fromJson(movieAPI, MovieDTO.class);
         return fetchedmovie;
