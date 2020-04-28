@@ -28,7 +28,7 @@ public class FetchFacade {
     
     public MovieDTO getMovieById(String id) throws IOException, MovieNotFoundException {
         String movieAPI = HttpUtils.fetchData("http://www.omdbapi.com/?i=" + id + "&apikey=6b10a5de");
-        if(!movieAPI.contains("Response")){
+        if(movieAPI.contains("Error")){
             throw new MovieNotFoundException("No movie found with id: " + id);
         }
         MovieDTO fetchedmovie = gson.fromJson(movieAPI, MovieDTO.class);
