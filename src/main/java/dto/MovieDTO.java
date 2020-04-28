@@ -20,6 +20,13 @@ public class MovieDTO {
         this.imdbId = imdbId;
     }
 
+    public MovieDTO(MovieDTO movieDTO) {
+        this.title = movieDTO.getTitle();
+        this.releaseYear = movieDTO.getReleaseYear();
+        this.poster = movieDTO.getPoster();
+        this.imdbId = movieDTO.getImdbId();
+    }
+
     public String getTitle() {
         return title;
     }
@@ -71,6 +78,11 @@ public class MovieDTO {
             return false;
         }
         return true;
+    }
+
+    @Override
+    public String toString() {
+        return "MovieDTO{" + "title=" + title + ", releaseYear=" + releaseYear + ", poster=" + poster + ", imdbId=" + imdbId + '}';
     }
     
     

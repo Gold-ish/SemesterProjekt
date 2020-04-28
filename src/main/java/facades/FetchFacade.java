@@ -2,6 +2,7 @@ package facades;
 
 import com.google.gson.Gson;
 import dto.CompleteDTO;
+import dto.MovieListDTO;
 import dto.RandomCatDTO;
 import dto.RandomDogDTO;
 import fetcher.ChuckFetcher;
@@ -14,6 +15,7 @@ import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
+import javax.persistence.EntityManagerFactory;
 import utils.HttpUtils;
 
 /**
@@ -29,7 +31,7 @@ public class FetchFacade {
     private FetchFacade() {
     }
 
-    public static FetchFacade getFetchFacade() {
+    public static FetchFacade getFetchFacade(EntityManagerFactory _emf) {
         if (instance == null) {
             instance = new FetchFacade();
         }
@@ -70,6 +72,11 @@ public class FetchFacade {
         String dogAPI = HttpUtils.fetchData("https://random.dog/woof.json");
         RandomDogDTO randomDogDTO = gson.fromJson(dogAPI, RandomDogDTO.class);
         return randomDogDTO;
+    }
+    
+    public MovieListDTO fetchSearch(String searchString, int page) throws IOException{
+        String searchAPIdata = HttpUtils.fetchData("omdbapi.com/?s="+searchString+"&page="+page+"&apikey=6b10a5de");
+        
     }
     
 }
