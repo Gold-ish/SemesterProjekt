@@ -58,6 +58,8 @@ public class MovieResource {
             return Response.ok(movie).build();
         } catch (IOException ex) {
              return GENERIC_EXCEPTION_MAPPER.toResponse(ex);
+        } catch (MovieNotFoundException ex) {
+            return MOVIE_EXCEPTION_MAPPER.toResponse(ex);
         }
     }
 }

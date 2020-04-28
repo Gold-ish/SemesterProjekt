@@ -1,12 +1,15 @@
 package facades;
 
 import dto.MovieListDTO;
+import errorhandling.MovieNotFoundException;
 import java.io.IOException;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -57,11 +60,41 @@ public class SearchTest {
     }
     
     @Test
-    public void testAddPerson() throws IOException {    
+    public void testSearch() throws IOException, MovieNotFoundException {    
+        System.out.println("Test Search");
         String searchString = "star";
         int pageNumber = 1;
         MovieListDTO actualDto = facade.getMoviesByTitle(searchString, pageNumber);
         assertEquals(actualDto.getMovieDTOs().size(), 10);
     }
+    
+    @Test
+    public void testSearchDoesNotExist() throws IOException, MovieNotFoundException{
+        System.out.println("Test Search Does Not Exist");
+        String searchString = "aejclkejelo";
+        int pageNumber = 1;
+        
+        Exception exception = assertThrows(MovieNotFoundException.class, () -> {
+            facade.getMoviesByTitle(searchString, pageNumber);
+        });
+        String expectedMessage = "No movie found with the search result: aejclkejelo";
+        String actualMessage = exception.getMessage();
 
+        assertTrue(actualMessage.contains(expectedMessage));
+    }
+    
+    @Test
+    public void testSearchTooUnspecific() {
+        System.out.println("Test Search Does Not Exist");
+        String searchString = "a";
+        int pageNumber = 1;
+        
+        Exception exception = assertThrows(IllegalArgumentException.class, () -> {
+            facade.getMoviesByTitle(searchString, pageNumber);
+        });
+        String expectedMessage = "Too many search results, not specific enough search: a";
+        String actualMessage = exception.getMessage();
+
+        assertTrue(actualMessage.contains(expectedMessage));
+    }
 }

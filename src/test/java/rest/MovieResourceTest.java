@@ -45,7 +45,7 @@ public class MovieResourceTest {
         RestAssured.port = SERVER_PORT;
         RestAssured.defaultParser = Parser.JSON;
     }
-    
+
     @AfterAll
     public static void closeTestServer() {
         httpServer.shutdownNow();
@@ -55,7 +55,6 @@ public class MovieResourceTest {
 //    public void testTest() {
 //        assertTrue(true);
 //    }
-
     /**
      * Test of demo method, of class MovieResource.
      */
@@ -68,13 +67,13 @@ public class MovieResourceTest {
                 .statusCode(HttpStatus.OK_200.getStatusCode())
                 .body("msg", is("Hello World"));
     }
-    
+
     /**
      * Test of getById method, of class MovieResource.
      */
     @Test
     public void testGetById() {
-        MovieDTO movie = new MovieDTO("Star Wars: Episode V - The Empire Strikes Back", "1980", 
+        MovieDTO movie = new MovieDTO("Star Wars: Episode V - The Empire Strikes Back", "1980",
                 "https://m.media-amazon.com/images/M/MV5BYmU1NDRjNDgtMzhiMi00NjZmLTg5NGItZDNiZjU5NTU4OTE0XkEyXkFqcGdeQXVyNzkwMjQ5NzM@._V1_SX300.jpg",
                 "tt0080684");
         given().when()
@@ -87,7 +86,7 @@ public class MovieResourceTest {
                 .body("Poster", is(movie.getPoster()))
                 .body("imdbID", is(movie.getImdbID()));
     }
-    
+
     /**
      * Negative test of getById method, of class MovieResource with wrong id
      */
@@ -103,7 +102,7 @@ public class MovieResourceTest {
                 .body("code", is(404))
                 .body("message", is("No movie found with id: " + movie.getImdbID()));
     }
-    
+
     /**
      * Test of getByTitle method, of class MovieResource.
      */
@@ -122,7 +121,7 @@ public class MovieResourceTest {
                         "Star Wars: Episode II - Attack of the Clones",
                         "Star Wars: Episode III - Revenge of the Sith",
                         "Star Wars: Episode IV - A New Hope",
-                        "Star Wars: Episode V - The Empire Strikes Back", 
+                        "Star Wars: Episode V - The Empire Strikes Back",
                         "Star Wars: Episode VI - Return of the Jedi",
                         "Star Wars: Episode VII - The Force Awakens",
                         "Star Wars: Episode VIII - The Last Jedi",
@@ -131,9 +130,10 @@ public class MovieResourceTest {
                         "tt0080684", "tt0086190", "tt2488496", "tt0120915",
                         "tt0121766", "tt0121765", "tt0796366", "tt2527336"));
     }
-    
+
     /**
-     * Negative test of getByTitle method, of class MovieResource with wrong title
+     * Negative test of getByTitle method, of class MovieResource with wrong
+     * title
      */
     @Test
     public void testGetByTitle_wrongTitle() {
@@ -147,9 +147,10 @@ public class MovieResourceTest {
                 .body("code", is(500))
                 .body("message", is("Internal Server Error"));
     }
-    
+
     /**
-     * Negative test of getByTitle method, of class MovieResource with wrong pageNumber
+     * Negative test of getByTitle method, of class MovieResource with wrong
+     * pageNumber
      */
     @Test
     public void testGetByTitle_wrongPageNumber() {
@@ -159,8 +160,8 @@ public class MovieResourceTest {
                 .get("/movies/search/{title}/{page}", title, page).
                 then()
                 .assertThat()
-                .statusCode(HttpStatus.INTERNAL_SERVER_ERROR_500.getStatusCode())
-                .body("code", is(500))
-                .body("message", is("Internal Server Error"));
+                .statusCode(HttpStatus.NOT_FOUND_404.getStatusCode())
+                .body("code", is(404))
+                .body("message", is("No movie found with the search result: " + title));
     }
 }
