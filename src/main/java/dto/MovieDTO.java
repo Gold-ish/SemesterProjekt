@@ -8,41 +8,41 @@ import java.util.Objects;
  */
 public class MovieDTO {
     
-    private final String title;
-    private final String releaseYear;
-    private final String poster;
-    private final String imdbId;
+    private final String Title;
+    private final String Year;
+    private final String Poster;
+    private final String imdbID;
 
-    public MovieDTO(String title, String releaseYear, String poster, String imdbId) {
-        this.title = title;
-        this.releaseYear = releaseYear;
-        this.poster = poster;
-        this.imdbId = imdbId;
+    public MovieDTO(String Title, String Year, String Poster, String imdbID) {
+        this.Title = Title;
+        this.Year = Year;
+        this.Poster = Poster;
+        this.imdbID = imdbID;
     }
 
     public String getTitle() {
-        return title;
+        return Title;
     }
 
-    public String getReleaseYear() {
-        return releaseYear;
+    public String getYear() {
+        return Year;
     }
 
     public String getPoster() {
-        return poster;
+        return Poster;
     }
 
-    public String getImdbId() {
-        return imdbId;
+    public String getImdbID() {
+        return imdbID;
     }
 
     @Override
     public int hashCode() {
-        int hash = 5;
-        hash = 23 * hash + Objects.hashCode(this.title);
-        hash = 23 * hash + Objects.hashCode(this.releaseYear);
-        hash = 23 * hash + Objects.hashCode(this.poster);
-        hash = 23 * hash + Objects.hashCode(this.imdbId);
+        int hash = 3;
+        hash = 89 * hash + Objects.hashCode(this.Title);
+        hash = 89 * hash + Objects.hashCode(this.Year);
+        hash = 89 * hash + Objects.hashCode(this.Poster);
+        hash = 89 * hash + Objects.hashCode(this.imdbID);
         return hash;
     }
 
@@ -58,20 +58,26 @@ public class MovieDTO {
             return false;
         }
         final MovieDTO other = (MovieDTO) obj;
-        if (!Objects.equals(this.title, other.title)) {
+        if (!Objects.equals(this.Title, other.Title)) {
             return false;
         }
-        if (!Objects.equals(this.releaseYear, other.releaseYear)) {
+        if (!Objects.equals(this.Year, other.Year)) {
             return false;
         }
-        if (!Objects.equals(this.poster, other.poster)) {
+        if (!Objects.equals(this.Poster, other.Poster)) {
             return false;
         }
-        if (!Objects.equals(this.imdbId, other.imdbId)) {
+        if (!Objects.equals(this.imdbID, other.imdbID)) {
             return false;
         }
         return true;
     }
+
+    @Override
+    public String toString() {
+        return "MovieDTO{" + "Title=" + Title + ", Year=" + Year + ", Poster=" + Poster + ", imdbID=" + imdbID + '}';
+    }
+
     
     
 }
