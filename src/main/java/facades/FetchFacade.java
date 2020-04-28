@@ -16,7 +16,7 @@ import utils.HttpUtils;
 public class FetchFacade {
 
     private static FetchFacade instance;
-    private static final Gson gson = new Gson();
+    private static final Gson GSON = new Gson();
 
     //Private Constructor to ensure Singleton
     private FetchFacade() {
@@ -28,19 +28,19 @@ public class FetchFacade {
         }
         return instance;
     }
-    
+
     public MovieDTO getMovieById(String id) throws IOException, MovieNotFoundException {
         String movieAPI = HttpUtils.fetchData("http://www.omdbapi.com/?i=" + id + "&apikey=6b10a5de");
-        if(movieAPI.contains("Error")){
+        if (movieAPI.contains("Error")) {
             throw new MovieNotFoundException("No movie found with id: " + id);
         }
-        MovieDTO fetchedmovie = gson.fromJson(movieAPI, MovieDTO.class);
+        MovieDTO fetchedmovie = GSON.fromJson(movieAPI, MovieDTO.class);
         return fetchedmovie;
     }
-    
-    public MovieListDTO fetchSearch(String searchString, int page) throws IOException{
-        String searchAPIdata = HttpUtils.fetchData("http://www.omdbapi.com/?s="+searchString+"&page="+page+"&apikey=6b10a5de");
-        
+
+    public MovieListDTO getMoviesByTitle(String searchString, int page) throws IOException {
+        String searchAPIdata = HttpUtils.fetchData("http://www.omdbapi.com/?s=" 
+                + searchString + "&page=" + page + "&apikey=6b10a5de");
         //We remove all the formalities from the Json by substringing it into a format that we can use.
         String movies = searchAPIdata.substring(11);
         String[] moviesExtra = movies.split("\\]");
@@ -56,16 +56,15 @@ public class FetchFacade {
                 if (lastMovieIndexInString != 0) {
                     lastMovieIndexInString += 1;
                 }
-            }else {
+            } else {
                 movieStrings.add(moviesExtra[0].substring(lastMovieIndexInString, moviesExtra[0].length()));
             }
         }
         List<MovieDTO> movieDtos = new ArrayList();
         for (String movie : movieStrings) {
-            movieDtos.add(gson.fromJson(movie, MovieDTO.class));
+            movieDtos.add(GSON.fromJson(movie, MovieDTO.class));
         }
-        
         return new MovieListDTO(movieDtos);
     }
-    
+
 }

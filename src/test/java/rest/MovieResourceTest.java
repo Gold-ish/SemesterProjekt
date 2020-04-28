@@ -10,6 +10,8 @@ import org.glassfish.grizzly.http.server.HttpServer;
 import org.glassfish.grizzly.http.util.HttpStatus;
 import org.glassfish.jersey.grizzly2.httpserver.GrizzlyHttpServerFactory;
 import org.glassfish.jersey.server.ResourceConfig;
+import static org.hamcrest.Matchers.containsInAnyOrder;
+import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
@@ -102,11 +104,63 @@ public class MovieResourceTest {
                 .body("message", is("No movie found with id: " + movie.getImdbID()));
     }
     
-//
-//    /**
-//     * Test of getByTitle method, of class MovieResource.
-//     */
-//    @Test
-//    public void testGetByTitle() {
-//    }
+    /**
+     * Test of getByTitle method, of class MovieResource.
+     */
+    @Test
+    public void testGetByTitle() {
+        String title = "star";
+        int page = 1;
+        given().when()
+                .get("/movies/search/{title}/{page}", title, page).
+                then()
+                .assertThat()
+                .statusCode(HttpStatus.OK_200.getStatusCode())
+                .body("movieDTOs", hasSize(10))
+                .body("movieDTOs.Title", containsInAnyOrder("Star Trek",
+                        "Star Wars: Episode I - The Phantom Menace",
+                        "Star Wars: Episode II - Attack of the Clones",
+                        "Star Wars: Episode III - Revenge of the Sith",
+                        "Star Wars: Episode IV - A New Hope",
+                        "Star Wars: Episode V - The Empire Strikes Back", 
+                        "Star Wars: Episode VI - Return of the Jedi",
+                        "Star Wars: Episode VII - The Force Awakens",
+                        "Star Wars: Episode VIII - The Last Jedi",
+                        "Rogue One: A Star Wars Story"))
+                .body("movieDTOs.imdbID", containsInAnyOrder("tt0076759", "tt3748528",
+                        "tt0080684", "tt0086190", "tt2488496", "tt0120915",
+                        "tt0121766", "tt0121765", "tt0796366", "tt2527336"));
+    }
+    
+    /**
+     * Negative test of getByTitle method, of class MovieResource with wrong title
+     */
+    @Test
+    public void testGetByTitle_wrongTitle() {
+        String title = "x";
+        int page = 1;
+        given().when()
+                .get("/movies/search/{title}/{page}", title, page).
+                then()
+                .assertThat()
+                .statusCode(HttpStatus.INTERNAL_SERVER_ERROR_500.getStatusCode())
+                .body("code", is(500))
+                .body("message", is("Internal Server Error"));
+    }
+    
+    /**
+     * Negative test of getByTitle method, of class MovieResource with wrong pageNumber
+     */
+    @Test
+    public void testGetByTitle_wrongPageNumber() {
+        String title = "star";
+        int page = 1000;
+        given().when()
+                .get("/movies/search/{title}/{page}", title, page).
+                then()
+                .assertThat()
+                .statusCode(HttpStatus.INTERNAL_SERVER_ERROR_500.getStatusCode())
+                .body("code", is(500))
+                .body("message", is("Internal Server Error"));
+    }
 }

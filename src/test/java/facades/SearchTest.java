@@ -60,7 +60,7 @@ public class SearchTest {
     public void testAddPerson() throws IOException {    
         String searchString = "star";
         int pageNumber = 1;
-        MovieListDTO actualDto = facade.fetchSearch(searchString, pageNumber);
+        MovieListDTO actualDto = facade.getMoviesByTitle(searchString, pageNumber);
         assertEquals(actualDto.getMovieDTOs().size(), 10);
     }
 
