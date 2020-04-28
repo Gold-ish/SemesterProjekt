@@ -1,6 +1,7 @@
 package facades;
 
 import dto.MovieListDTO;
+import java.io.IOException;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import org.junit.jupiter.api.AfterAll;
@@ -25,7 +26,7 @@ public class SearchTest {
     @BeforeAll
     public static void setUpClass() {
        emf = EMF_Creator.createEntityManagerFactory(EMF_Creator.DbSelector.TEST,EMF_Creator.Strategy.DROP_AND_CREATE);
-       facade = FetchFacade.getFetchFacade(emf);
+       facade = FetchFacade.getFetchFacade();
     }
 
     @AfterAll
@@ -56,7 +57,7 @@ public class SearchTest {
     }
     
     @Test
-    public void testAddPerson() {    
+    public void testAddPerson() throws IOException {    
         String searchString = "star";
         int pageNumber = 1;
         MovieListDTO actualDto = facade.fetchSearch(searchString, pageNumber);

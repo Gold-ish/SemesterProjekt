@@ -9,12 +9,11 @@ import java.util.List;
  */
 public class MovieListDTO {
 
-    private List<MovieDTO> movieDTOs;
+    private List<MovieDTO> movieDTOs = new ArrayList();
 
     public MovieListDTO(List<MovieDTO> m) {
-        List<MovieDTO> movieList = new ArrayList();
         m.forEach((movieDTO) -> {
-            movieList.add(new MovieDTO(movieDTO));
+            movieDTOs.add(new MovieDTO(movieDTO));
         });
     }
 
