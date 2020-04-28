@@ -97,7 +97,9 @@ public class MovieResourceTest {
                 .get("/movies/{id}", movie.getImdbID()).
                 then()
                 .assertThat()
-                .statusCode(HttpStatus.OK_200.getStatusCode());
+                .statusCode(HttpStatus.NOT_FOUND_404.getStatusCode())
+                .body("code", is(404))
+                .body("message", is("No movie found with id: " + movie.getImdbID()));
     }
     
 //

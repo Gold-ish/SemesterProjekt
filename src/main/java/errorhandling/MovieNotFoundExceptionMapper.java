@@ -32,7 +32,7 @@ public class MovieNotFoundExceptionMapper implements ExceptionMapper<MovieNotFou
     public Response toResponse(MovieNotFoundException ex) {
         Logger.getLogger(GenericExceptionMapper.class.getName()).log(Level.SEVERE, null, ex);
         ExceptionDTO err = new ExceptionDTO(404, ex.getMessage());
-        return Response.status(403).entity(gson.toJson(err)).type(MediaType.APPLICATION_JSON).build();
+        return Response.status(404).entity(gson.toJson(err)).type(MediaType.APPLICATION_JSON).build();
               
     }
 }
