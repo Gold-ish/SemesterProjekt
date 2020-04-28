@@ -1,10 +1,6 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package rest;
 
+import dto.MovieDTO;
 import io.restassured.RestAssured;
 import static io.restassured.RestAssured.given;
 import io.restassured.parsing.Parser;
@@ -16,7 +12,6 @@ import org.glassfish.jersey.grizzly2.httpserver.GrizzlyHttpServerFactory;
 import org.glassfish.jersey.server.ResourceConfig;
 import static org.hamcrest.Matchers.is;
 import org.junit.jupiter.api.AfterAll;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
@@ -77,12 +72,39 @@ public class MovieResourceTest {
      */
     @Test
     public void testGetById() {
+        MovieDTO movie = new MovieDTO("Star Wars: Episode V - The Empire Strikes Back", "1980", 
+                "https://m.media-amazon.com/images/M/MV5BYmU1NDRjNDgtMzhiMi00NjZmLTg5NGItZDNiZjU5NTU4OTE0XkEyXkFqcGdeQXVyNzkwMjQ5NzM@._V1_SX300.jpg",
+                "tt0080684");
+        given().when()
+                .get("/movies/{id}", movie.getImdbID()).
+                then()
+                .assertThat()
+                .statusCode(HttpStatus.OK_200.getStatusCode())
+                .body("Title", is(movie.getTitle()))
+                .body("Year", is(movie.getYear()))
+                .body("Poster", is(movie.getPoster()))
+                .body("imdbID", is(movie.getImdbID()));
     }
-
+    
     /**
-     * Test of getByTitle method, of class MovieResource.
+     * Negative test of getById method, of class MovieResource with wrong id
      */
     @Test
-    public void testGetByTitle() {
+    public void testGetById_wrongId() {
+        MovieDTO movie = new MovieDTO("", "", "",
+                "tt1");
+        given().when()
+                .get("/movies/{id}", movie.getImdbID()).
+                then()
+                .assertThat()
+                .statusCode(HttpStatus.OK_200.getStatusCode());
     }
+    
+//
+//    /**
+//     * Test of getByTitle method, of class MovieResource.
+//     */
+//    @Test
+//    public void testGetByTitle() {
+//    }
 }
