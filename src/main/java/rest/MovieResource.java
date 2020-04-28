@@ -3,6 +3,7 @@ package rest;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import errorhandling.GenericExceptionMapper;
+import errorhandling.MovieNotFoundException;
 import facades.FetchFacade;
 import java.io.IOException;
 import javax.ws.rs.GET;
@@ -33,7 +34,7 @@ public class MovieResource {
     @GET
     @Path("{id}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getById(@PathParam("id") String id) {
+    public Response getById(@PathParam("id") String id) throws MovieNotFoundException {
         try {
             String movie = GSON.toJson(FACADE.getMovieById(id));
             return Response.ok(movie).build();

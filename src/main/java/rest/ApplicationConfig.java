@@ -24,6 +24,7 @@ public class ApplicationConfig extends Application {
         resources.add(cors.CorsResponseFilter.class);
         resources.add(errorhandling.AuthenticationExceptionMapper.class);
         resources.add(errorhandling.GenericExceptionMapper.class);
+        resources.add(errorhandling.MovieNotFoundExceptionMapper.class);
         resources.add(org.glassfish.jersey.server.wadl.internal.WadlResource.class);
         resources.add(rest.FetchDemoResource.class);
         resources.add(rest.MovieResource.class);
