@@ -68,7 +68,8 @@ public class MovieResourceTest {
      * Test of demo method, of class MovieResource.
      */
     @Test
-    public void testServerConnection() {
+    public void testServerConnection_EnsuresThatTheServerIsUp_200() {
+        System.out.println("testServerConnection_EnsuresThatTheServerIsUp_200");
         given().when()
                 .get("/movies").
                 then()
@@ -81,7 +82,8 @@ public class MovieResourceTest {
      * Test of getById method, of class MovieResource.
      */
     @Test
-    public void testGetById() {
+    public void testGetMovieById_ReturnsMovie_EqualResults() {
+        System.out.println("testGetMovieById_ReturnsMovie_EqualResults");
         MovieDTO movie = new MovieDTO("Star Wars: Episode V - The Empire Strikes Back", "1980",
                 "https://m.media-amazon.com/images/M/MV5BYmU1NDRjNDgtMzhiMi00NjZmLTg5NGItZDNiZjU5NTU4OTE0XkEyXkFqcGdeQXVyNzkwMjQ5NzM@._V1_SX300.jpg",
                 "tt0080684");
@@ -100,7 +102,8 @@ public class MovieResourceTest {
      * Negative test of getById method, of class MovieResource with wrong id
      */
     @Test
-    public void testGetById_wrongId() {
+    public void testGetMovieByID_NonExistentMovieID_404MovieNotFoundException() {
+        System.out.println("testGetMovieByID_NonExistentMovieID_404MovieNotFoundException");
         MovieDTO movie = new MovieDTO("", "", "",
                 "tt1");
         given().when()
@@ -116,7 +119,8 @@ public class MovieResourceTest {
      * Test of getByTitle method, of class MovieResource.
      */
     @Test
-    public void testGetByTitle() {
+    public void testGetMoviesByTitle_ReturnsListOf10Movies_EqualResults() {
+        System.out.println("testGetMoviesByTitle_ReturnsListOf10Movies_EqualResults");
         String title = "star";
         int page = 1;
         given().when()
@@ -145,7 +149,8 @@ public class MovieResourceTest {
      * title
      */
     @Test
-    public void testGetByTitle_wrongTitle() {
+    public void testGetMoviesByTitle_SearchTooUnspecific_500IllegalArgumentException() {
+        System.out.println("testGetMoviesByTitle_SearchTooUnspecific_500IllegalArgumentException");
         String title = "x";
         int page = 1;
         given().when()
@@ -162,9 +167,24 @@ public class MovieResourceTest {
      * pageNumber
      */
     @Test
-    public void testGetByTitle_wrongPageNumber() {
+    public void testGetMoviesByTitle_PageNumberDoesNotExist_404MovieNotFoundException() {
+        System.out.println("testGetMoviesByTitle_PageNumberDoesNotExist_404MovieNotFoundException");
         String title = "star";
         int page = 1000;
+        given().when()
+                .get("/movies/search/{title}/{page}", title, page).
+                then()
+                .assertThat()
+                .statusCode(HttpStatus.NOT_FOUND_404.getStatusCode())
+                .body("code", is(404))
+                .body("message", is("No movie found with the search result: " + title));
+    }
+    
+    @Test
+    public void testGetMoviesByTitle_SearchDoesNotExist_404MovieNotFoundException() {
+        System.out.println("testGetMoviesByTitle_SearchDoesNotExist_404MovieNotFoundException");
+        String title = "qwertyuiop";
+        int page = 1;
         given().when()
                 .get("/movies/search/{title}/{page}", title, page).
                 then()
