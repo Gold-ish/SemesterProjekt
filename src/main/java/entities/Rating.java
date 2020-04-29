@@ -21,6 +21,14 @@ public class Rating implements Serializable {
     private String movieID;
     private int rating;
 
+    public Rating(String movieID, int rating) {
+        this.movieID = movieID;
+        this.rating = rating;
+    }
+
+    public Rating() {
+    }
+
     public String getMovieID() {
         return movieID;
     }

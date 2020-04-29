@@ -7,17 +7,19 @@ import java.util.Objects;
  * @author carol
  */
 public class MovieDTO {
-    
+
     private final String Title;
     private final String Year;
     private final String Poster;
-    private final String imdbID;
+    private final String imdbID;//Rating dto - movie dto - rating double(fetcher fra vores db. for movieID - gennemsnit af ratings)
+    private double avgRating;
 
     public MovieDTO(String Title, String Year, String Poster, String imdbID) {
         this.Title = Title;
         this.Year = Year;
         this.Poster = Poster;
         this.imdbID = imdbID;
+        this.avgRating = 0.0;
     }
 
     public MovieDTO(MovieDTO movieDTO) {
@@ -25,6 +27,7 @@ public class MovieDTO {
         this.Year = movieDTO.getYear();
         this.Poster = movieDTO.getPoster();
         this.imdbID = movieDTO.getImdbID();
+        this.avgRating = 0.0;
     }
 
     public String getTitle() {
@@ -43,13 +46,22 @@ public class MovieDTO {
         return imdbID;
     }
 
+    public double getAvgRating() {
+        return avgRating;
+    }
+
+    public void setAvgRating(double avgRating) {
+        this.avgRating = avgRating;
+    }
+
     @Override
     public int hashCode() {
-        int hash = 3;
-        hash = 89 * hash + Objects.hashCode(this.Title);
-        hash = 89 * hash + Objects.hashCode(this.Year);
-        hash = 89 * hash + Objects.hashCode(this.Poster);
-        hash = 89 * hash + Objects.hashCode(this.imdbID);
+        int hash = 5;
+        hash = 43 * hash + Objects.hashCode(this.Title);
+        hash = 43 * hash + Objects.hashCode(this.Year);
+        hash = 43 * hash + Objects.hashCode(this.Poster);
+        hash = 43 * hash + Objects.hashCode(this.imdbID);
+        hash = 43 * hash + (int) (Double.doubleToLongBits(this.avgRating) ^ (Double.doubleToLongBits(this.avgRating) >>> 32));
         return hash;
     }
 
@@ -65,6 +77,9 @@ public class MovieDTO {
             return false;
         }
         final MovieDTO other = (MovieDTO) obj;
+        if (Double.doubleToLongBits(this.avgRating) != Double.doubleToLongBits(other.avgRating)) {
+            return false;
+        }
         if (!Objects.equals(this.Title, other.Title)) {
             return false;
         }
@@ -82,7 +97,7 @@ public class MovieDTO {
 
     @Override
     public String toString() {
-        return "MovieDTO{" + "Title=" + Title + ", Year=" + Year + ", Poster=" + Poster + ", imdbID=" + imdbID + '}';
+        return "MovieDTO{" + "Title=" + Title + ", Year=" + Year + ", Poster=" + Poster + ", imdbID=" + imdbID + ", avgRating=" + avgRating + '}';
     }
-    
+
 }

@@ -5,14 +5,16 @@ import com.google.gson.GsonBuilder;
 import errorhandling.GenericExceptionMapper;
 import errorhandling.MovieNotFoundException;
 import errorhandling.MovieNotFoundExceptionMapper;
-import facades.FetchFacade;
+import facades.MovieFacade;
 import java.io.IOException;
+import javax.persistence.EntityManagerFactory;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import utils.EMF_Creator;
 
 /**
  *
@@ -21,7 +23,9 @@ import javax.ws.rs.core.Response;
 @Path("movies")
 public class MovieResource {
 
-    private static final FetchFacade FACADE = FetchFacade.getFetchFacade();
+    private static EntityManagerFactory EMF = 
+            EMF_Creator.createEntityManagerFactory(EMF_Creator.DbSelector.DEV, EMF_Creator.Strategy.CREATE);
+    private static final MovieFacade FACADE = MovieFacade.getMovieFacade(EMF);
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
     private static final GenericExceptionMapper GENERIC_EXCEPTION_MAPPER
             = new GenericExceptionMapper();
