@@ -29,12 +29,7 @@ public class FacadeExampleTest {
 
     //@BeforeAll
     public static void setUpClass() {
-        emf = EMF_Creator.createEntityManagerFactory(
-                "pu",
-                "jdbc:mysql://localhost:3307/startcode_test",
-                "dev",
-                "ax2",
-                EMF_Creator.Strategy.CREATE);
+        emf = EMF_Creator.createEntityManagerFactory(EMF_Creator.DbSelector.TEST,EMF_Creator.Strategy.DROP_AND_CREATE);
         facade = FacadeExample.getFacadeExample(emf);
     }
 
