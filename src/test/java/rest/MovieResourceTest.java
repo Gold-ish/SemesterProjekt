@@ -19,6 +19,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import utils.EMF_Creator;
 
+
 /**
  *
  * @author carol
@@ -55,7 +56,7 @@ public class MovieResourceTest {
 
     @AfterAll
     public static void closeTestServer() {
-                EMF_Creator.endREST_TestWithDB();
+        EMF_Creator.endREST_TestWithDB();
         httpServer.shutdownNow();
     }
 
