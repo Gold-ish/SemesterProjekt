@@ -7,8 +7,6 @@ import errorhandling.MovieNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import javax.persistence.EntityManagerFactory;
-import utils.EMF_Creator;
 import utils.HttpUtils;
 
 /**
@@ -18,8 +16,6 @@ import utils.HttpUtils;
 public class FetchFacade {
 
     private static FetchFacade instance;
-    //private static EntityManagerFactory emf;
-    EntityManagerFactory emf = EMF_Creator.createEntityManagerFactory(EMF_Creator.DbSelector.DEV, EMF_Creator.Strategy.CREATE);
     private static final Gson GSON = new Gson();
 
     //Private Constructor to ensure Singleton

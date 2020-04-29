@@ -18,13 +18,14 @@ import org.junit.jupiter.api.Test;
  */
 public class fetchFacadeTest {
 
-    private static FetchFacade FACADE = FetchFacade.getFetchFacade();
+    private static final FetchFacade FACADE = FetchFacade.getFetchFacade();
 
     public fetchFacadeTest() {
     }
 
     /**
      * Test of getMovieById method, of class FetchFacade.
+     * @throws java.lang.Exception
      */
     @Test
     public void testGetMovieByID() throws Exception {
