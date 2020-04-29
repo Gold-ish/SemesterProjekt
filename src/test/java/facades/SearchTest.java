@@ -44,7 +44,7 @@ public class SearchTest {
         //r2 = new RenameMe("aaa", "bbb");
         try {
             em.getTransaction().begin();
-            em.createNamedQuery("RenameMe.deleteAllRows").executeUpdate();
+            //em.createNamedQuery("RenameMe.deleteAllRows").executeUpdate();
             //em.persist(r1);
             //em.persist(r2);
 

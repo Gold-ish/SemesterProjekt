@@ -34,17 +34,7 @@ public class RatingFacade {
     private EntityManager getEntityManager() {
         return emf.createEntityManager();
     }
-
-    //PSVM
-    public static void main(String[] args) {
-        /*EntityManagerFactory emf = EMF_Creator.createEntityManagerFactory(EMF_Creator.DbSelector.DEV, EMF_Creator.Strategy.CREATE);
-        RatingFacade rf = getRatingFacade(emf);
-        //Add rating
-        rf.addRating("tt0076759", 10);
-        rf.addRating("tt0076759", 8);
-        System.out.println(rf.getRatingAvg(""));*/
-    }
-
+    
     //No unit-test yet. - Manual tested Works
     public double addRating(String movieID, int rating) {
         EntityManager em = getEntityManager();
