@@ -7,7 +7,7 @@ import java.util.Objects;
  * @author carol
  */
 public class MovieDTO {
-
+    
     private final String Title;
     private final int Year;
     private final String Poster;

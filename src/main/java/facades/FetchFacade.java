@@ -1,6 +1,7 @@
 package facades;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 import dto.MovieDTO;
 import dto.MovieListDTO;
 import errorhandling.MovieNotFoundException;
@@ -69,7 +70,11 @@ public class FetchFacade {
             for (String movie : movieStrings) {
                 movieDtos.add(GSON.fromJson(movie, MovieDTO.class));
             }
-            return new MovieListDTO(movieDtos);
+            
+            String searchResultsJSONString = "{" + moviesExtra[1].substring(1);
+            JsonObject jobj = new Gson().fromJson(searchResultsJSONString, JsonObject.class);
+            int searchResults = jobj.get("totalResults").getAsInt();
+            return new MovieListDTO(movieDtos , searchResults);
         }
     }
 }
