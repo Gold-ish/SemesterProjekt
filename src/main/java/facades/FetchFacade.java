@@ -40,8 +40,8 @@ public class FetchFacade {
     }
 
     public MovieListDTO getMoviesByTitle(String searchString, int page) throws IOException, MovieNotFoundException {
-        String searchAPIdata = HttpUtils.fetchData("http://www.omdbapi.com/?s="
-                + searchString + "&page=" + page + "&apikey=6b10a5de");
+        String searchAPIdata = HttpUtils.fetchData("http://www.omdbapi.com/?s='"
+                + searchString + "'&page=" + page + "&apikey=6b10a5de");
         if (searchAPIdata.contains("Movie not found!")) {
             throw new MovieNotFoundException("No movie found with the search result: " + searchString);
         } else if (searchAPIdata.contains("Too many results.")) {
