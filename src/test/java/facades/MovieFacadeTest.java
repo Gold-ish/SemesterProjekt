@@ -1,7 +1,7 @@
 package facades;
 
-import dto.MovieDTO;
 import dto.MovieListDTO;
+import dto.SpecificMovieDTO;
 import entities.Rating;
 import errorhandling.MovieNotFoundException;
 import java.io.IOException;
@@ -52,7 +52,7 @@ public class MovieFacadeTest {
     public void testGetMovieById_ReturnsMovie_EqualResults() throws IOException, MovieNotFoundException {
         System.out.println("testGetMovieById_ReturnsMovie_EqualResults");
         String movieID = r1.getMovieID();
-        MovieDTO mdto = FACADE.getMovieById(movieID);
+        SpecificMovieDTO mdto = FACADE.getMovieById(movieID);
         double expectedRatingOnMovieDTO = ((double) r1.getRating() + (double) r2.getRating()) / 2;
         assertEquals(expectedRatingOnMovieDTO, mdto.getAvgRating());
     }

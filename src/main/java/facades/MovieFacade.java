@@ -1,7 +1,7 @@
 package facades;
 
-import dto.MovieDTO;
 import dto.MovieListDTO;
+import dto.SpecificMovieDTO;
 import errorhandling.MovieNotFoundException;
 import java.io.IOException;
 import javax.persistence.EntityManager;
@@ -34,8 +34,8 @@ public class MovieFacade {
         return emf.createEntityManager();
     }
 
-    public MovieDTO getMovieById(String id) throws IOException, MovieNotFoundException {
-        MovieDTO mdto = fetchFacade.getMovieById(id);
+    public SpecificMovieDTO getMovieById(String id) throws IOException, MovieNotFoundException {
+        SpecificMovieDTO mdto = fetchFacade.getMovieById(id);
         mdto.setAvgRating(ratingFacade.getRatingAvg(mdto.getImdbID()));
         return mdto;
     }

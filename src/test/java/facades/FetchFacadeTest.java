@@ -1,7 +1,7 @@
 package facades;
 
-import dto.MovieDTO;
 import dto.MovieListDTO;
+import dto.SpecificMovieDTO;
 import errorhandling.MovieNotFoundException;
 import java.io.IOException;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -28,11 +28,27 @@ public class FetchFacadeTest {
     @Test
     public void testGetMovieById_ReturnsMovie_EqualResults() throws Exception {
         System.out.println("testGetMovieById_ReturnsMovie_EqualResults");
-        MovieDTO expResult = new MovieDTO("Star Wars: Episode IV - A New Hope",
+        SpecificMovieDTO expResult = new SpecificMovieDTO(
+                "Star Wars: Episode IV - A New Hope",
                 1977,
+                "PG",
+                "25 May 1977",
+                "121 min",
+                "Action, Adventure, Fantasy, Sci-Fi",
+                "George Lucas",
+                "Mark Hamill, Harrison Ford, Carrie Fisher, Peter Cushing",
+                "Luke Skywalker joins forces with a Jedi Knight, a cocky pilot, "
+                        + "a Wookiee and two droids to save the galaxy from the "
+                        + "Empire's world-destroying battle station, while also "
+                        + "attempting to rescue Princess Leia from the mysterious Darth Vader.",
+                "English",
+                "Won 6 Oscars. Another 52 wins & 28 nominations.",
                 "https://m.media-amazon.com/images/M/MV5BNzVlY2MwMjktM2E4OS00Y2Y3LWE3ZjctYzhkZGM3YzA1ZWM2XkEyXkFqcGdeQXVyNzkwMjQ5NzM@._V1_SX300.jpg",
-                "tt0076759");
-        MovieDTO result = FACADE.getMovieById("tt0076759");
+                "tt0076759",
+                "movie",
+                "21 Sep 2004",
+                "20th Century Fox");
+        SpecificMovieDTO result = FACADE.getMovieById("tt0076759");
         assertEquals(expResult, result);
     }
 
