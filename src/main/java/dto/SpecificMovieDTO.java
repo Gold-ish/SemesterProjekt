@@ -1,5 +1,7 @@
 package dto;
 
+import entities.Review;
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -25,6 +27,7 @@ public class SpecificMovieDTO {
     private final String DVD;
     private final String Production;
     private double avgRating;
+    private List<Review> review;
 
     public SpecificMovieDTO(String Title, String Year, String Rated, String Released, String Runtime, String Genre, String Director, String Actors, String Plot, String Language, String Awards, String Poster, String imdbID, String Type, String DVD, String Production) {
         this.Title = Title;
@@ -118,26 +121,35 @@ public class SpecificMovieDTO {
         this.avgRating = avgRating;
     }
 
+    public List<Review> getReview() {
+        return review;
+    }
+
+    public void setReviews(List<Review> review) {
+        this.review = review;
+    }
+
     @Override
     public int hashCode() {
         int hash = 7;
-        hash = 79 * hash + Objects.hashCode(this.Title);
-        hash = 79 * hash + Objects.hashCode(this.Year);
-        hash = 79 * hash + Objects.hashCode(this.Rated);
-        hash = 79 * hash + Objects.hashCode(this.Released);
-        hash = 79 * hash + Objects.hashCode(this.Runtime);
-        hash = 79 * hash + Objects.hashCode(this.Genre);
-        hash = 79 * hash + Objects.hashCode(this.Director);
-        hash = 79 * hash + Objects.hashCode(this.Actors);
-        hash = 79 * hash + Objects.hashCode(this.Plot);
-        hash = 79 * hash + Objects.hashCode(this.Language);
-        hash = 79 * hash + Objects.hashCode(this.Awards);
-        hash = 79 * hash + Objects.hashCode(this.Poster);
-        hash = 79 * hash + Objects.hashCode(this.imdbID);
-        hash = 79 * hash + Objects.hashCode(this.Type);
-        hash = 79 * hash + Objects.hashCode(this.DVD);
-        hash = 79 * hash + Objects.hashCode(this.Production);
-        hash = 79 * hash + (int) (Double.doubleToLongBits(this.avgRating) ^ (Double.doubleToLongBits(this.avgRating) >>> 32));
+        hash = 29 * hash + Objects.hashCode(this.Title);
+        hash = 29 * hash + Objects.hashCode(this.Year);
+        hash = 29 * hash + Objects.hashCode(this.Rated);
+        hash = 29 * hash + Objects.hashCode(this.Released);
+        hash = 29 * hash + Objects.hashCode(this.Runtime);
+        hash = 29 * hash + Objects.hashCode(this.Genre);
+        hash = 29 * hash + Objects.hashCode(this.Director);
+        hash = 29 * hash + Objects.hashCode(this.Actors);
+        hash = 29 * hash + Objects.hashCode(this.Plot);
+        hash = 29 * hash + Objects.hashCode(this.Language);
+        hash = 29 * hash + Objects.hashCode(this.Awards);
+        hash = 29 * hash + Objects.hashCode(this.Poster);
+        hash = 29 * hash + Objects.hashCode(this.imdbID);
+        hash = 29 * hash + Objects.hashCode(this.Type);
+        hash = 29 * hash + Objects.hashCode(this.DVD);
+        hash = 29 * hash + Objects.hashCode(this.Production);
+        hash = 29 * hash + (int) (Double.doubleToLongBits(this.avgRating) ^ (Double.doubleToLongBits(this.avgRating) >>> 32));
+        hash = 29 * hash + Objects.hashCode(this.review);
         return hash;
     }
 
@@ -204,14 +216,14 @@ public class SpecificMovieDTO {
         if (!Objects.equals(this.Production, other.Production)) {
             return false;
         }
+        if (!Objects.equals(this.review, other.review)) {
+            return false;
+        }
         return true;
     }
-    
-    
-    
+
     @Override
     public String toString() {
-        return "SpecificMovieDTO{" + "Title=" + Title + ", Year=" + Year + ", Rated=" + Rated + ", Released=" + Released + ", Runtime=" + Runtime + ", Genre=" + Genre + ", Director=" + Director + ", Actors=" + Actors + ", Plot=" + Plot + ", Language=" + Language + ", Awards=" + Awards + ", Poster=" + Poster + ", imdbID=" + imdbID + ", Type=" + Type + ", DVD=" + DVD + ", Production=" + Production + ", avgRating=" + avgRating + '}';
+        return "SpecificMovieDTO{" + "Title=" + Title + ", Year=" + Year + ", Rated=" + Rated + ", Released=" + Released + ", Runtime=" + Runtime + ", Genre=" + Genre + ", Director=" + Director + ", Actors=" + Actors + ", Plot=" + Plot + ", Language=" + Language + ", Awards=" + Awards + ", Poster=" + Poster + ", imdbID=" + imdbID + ", Type=" + Type + ", DVD=" + DVD + ", Production=" + Production + ", avgRating=" + avgRating + ", review=" + review + '}';
     }
-
 }

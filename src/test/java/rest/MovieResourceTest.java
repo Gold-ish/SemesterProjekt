@@ -194,6 +194,7 @@ public class MovieResourceTest {
                 .body("message", is("No movie found with the search result: " + title));
     }
     
+    
     @Test
     public void testAddRating_ReturnsRating_EqualResults() {
         System.out.println("testAddRating_ReturnsRating_EqualResults");
@@ -205,4 +206,17 @@ public class MovieResourceTest {
                 .assertThat()
                 .statusCode(HttpStatus.OK_200.getStatusCode());
     }
+
+    @Test
+    public void testAddReview_ReturnsReview_EqualResults() {
+        System.out.println("testAddReview_ReturnsReview_EqualResults");
+        String movieid = "tt0080684";
+        String review = "Very good movie";
+        given().when()         
+                .post("/movies/add/review/{movieid}/{review}", movieid, review).
+                then()
+                .assertThat()
+                .statusCode(HttpStatus.OK_200.getStatusCode());
+    }
+    
 }

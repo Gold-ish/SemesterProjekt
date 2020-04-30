@@ -17,6 +17,7 @@ public class MovieFacade {
     private static EntityManagerFactory emf;
     private final FetchFacade fetchFacade = FetchFacade.getFetchFacade();
     private final RatingFacade ratingFacade = RatingFacade.getRatingFacade(emf);
+    private final ReviewFacade reviewFacade = ReviewFacade.getReviewFacade(emf);
 
     //Private Constructor to ensure Singleton
     private MovieFacade() {
@@ -37,6 +38,7 @@ public class MovieFacade {
     public SpecificMovieDTO getMovieById(String id) throws IOException, MovieNotFoundException {
         SpecificMovieDTO mdto = fetchFacade.getMovieById(id);
         mdto.setAvgRating(ratingFacade.getRatingAvg(mdto.getImdbID()));
+        mdto.setReviews(reviewFacade.getReviews(mdto.getImdbID()));
         return mdto;
     }
 
@@ -50,5 +52,9 @@ public class MovieFacade {
     
     public double addRating(String movieID, int rating){
         return ratingFacade.addRating(movieID, rating);
+    }
+    
+    public String addReview(String movieID, String review) {
+        return reviewFacade.addReview(movieID, review);
     }
 }

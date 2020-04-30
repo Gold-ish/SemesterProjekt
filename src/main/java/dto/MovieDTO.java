@@ -1,5 +1,7 @@
 package dto;
 
+import entities.Review;
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -13,6 +15,7 @@ public class MovieDTO {
     private final String Poster;
     private final String imdbID;
     private double avgRating;
+    private List<Review> review;
 
     public MovieDTO(String Title, String Year, String Poster, String imdbID) {
         this.Title = Title;
@@ -54,14 +57,23 @@ public class MovieDTO {
         this.avgRating = avgRating;
     }
 
+    public List<Review> getReview() {
+        return review;
+    }
+    
+    public void setReviews(List<Review> review) {
+        this.review = review;
+    }
+
     @Override
     public int hashCode() {
-        int hash = 5;
-        hash = 23 * hash + Objects.hashCode(this.Title);
+        int hash = 3;
+        hash = 53 * hash + Objects.hashCode(this.Title);
         hash = 23 * hash + Objects.hashCode(this.Year);
-        hash = 23 * hash + Objects.hashCode(this.Poster);
-        hash = 23 * hash + Objects.hashCode(this.imdbID);
-        hash = 23 * hash + (int) (Double.doubleToLongBits(this.avgRating) ^ (Double.doubleToLongBits(this.avgRating) >>> 32));
+        hash = 53 * hash + Objects.hashCode(this.Poster);
+        hash = 53 * hash + Objects.hashCode(this.imdbID);
+        hash = 53 * hash + (int) (Double.doubleToLongBits(this.avgRating) ^ (Double.doubleToLongBits(this.avgRating) >>> 32));
+        hash = 53 * hash + Objects.hashCode(this.review);
         return hash;
     }
 
@@ -92,15 +104,14 @@ public class MovieDTO {
         if (!Objects.equals(this.imdbID, other.imdbID)) {
             return false;
         }
+        if (!Objects.equals(this.review, other.review)) {
+            return false;
+        }
         return true;
     }
 
     @Override
     public String toString() {
-        return "MovieDTO{" + "Title=" + Title + ", Year=" + Year + ", Poster=" + Poster + ", imdbID=" + imdbID + ", avgRating=" + avgRating + '}';
+        return "MovieDTO{" + "Title=" + Title + ", Year=" + Year + ", Poster=" + Poster + ", imdbID=" + imdbID + ", avgRating=" + avgRating + ", review=" + review + '}';
     }
-
-    
-    
-
 }
