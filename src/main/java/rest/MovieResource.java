@@ -76,4 +76,13 @@ public class MovieResource {
         double addedRating = FACADE.addRating(movieID, rating);
         return Response.ok(addedRating).build();
     }
+    
+    @POST
+    @Path("add/review/{movieid}/{review}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response addReview(@PathParam("movieid") String movieID,
+            @PathParam("review") String review) {
+        String addedReview = FACADE.addReview(movieID, review);
+        return Response.ok(addedReview).build();
+    }
 }
