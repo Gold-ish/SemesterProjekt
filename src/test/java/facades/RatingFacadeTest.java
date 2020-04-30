@@ -1,6 +1,12 @@
 package facades;
 
+import entities.Rating;
+import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import utils.EMF_Creator;
 
 /**
@@ -9,31 +15,70 @@ import utils.EMF_Creator;
  */
 public class RatingFacadeTest {
 
-    private static EntityManagerFactory EMF
-            = EMF_Creator.createEntityManagerFactory(EMF_Creator.DbSelector.DEV, EMF_Creator.Strategy.CREATE);
-    private static final RatingFacade FACADE = RatingFacade.getRatingFacade(EMF);
+    private static EntityManagerFactory EMF;
+    private static RatingFacade FACADE;
+    private static Rating r1, r2, r3, r4, r5, r6;
 
-    //@Disabled("Not implemented yet")
-    //@Test
-    public void testAddRating_ReturnsTheRating_EqualResults() throws Exception {
-        System.out.println("testAddRating_ReturnsTheRating_EqualResults");
+    @BeforeAll
+    public static void setUpClass() {
+        EMF = EMF_Creator.createEntityManagerFactory(EMF_Creator.DbSelector.TEST,
+                EMF_Creator.Strategy.DROP_AND_CREATE);
+        FACADE = RatingFacade.getRatingFacade(EMF);
     }
 
-    //@Disabled("Not implemented yet")
-    //@Test
+    @BeforeEach
+    public void setUp() {
+        EntityManager em = EMF.createEntityManager();
+        r1 = new Rating("MovieID1", 8);
+        r2 = new Rating("MovieID2", 8);
+        r3 = new Rating("MovieID3", 8);
+        r4 = new Rating("MovieID1", 3);
+        r5 = new Rating("MovieID2", 7);
+        r6 = new Rating("MovieID3", 5);
+        try {
+            em.getTransaction().begin();
+            em.createNamedQuery("Rating.deleteAllRows").executeUpdate();
+            em.persist(r1);
+            em.persist(r2);
+            em.persist(r3);
+            em.persist(r4);
+            em.persist(r5);
+            em.persist(r6);
+            em.getTransaction().commit();
+        } finally {
+            em.close();
+        }
+    }
+
+    @Test
+    public void testAddRating_ReturnsTheRating_EqualResults() {
+        System.out.println("testAddRating_ReturnsTheRating_EqualResults");
+        Rating dummyRating = new Rating("DummyRating", 5);
+        double addRatingReturn = FACADE.addRating(dummyRating.getMovieID(), dummyRating.getRating());
+        double expectedRatingReturned = dummyRating.getRating();
+        assertEquals(expectedRatingReturned, addRatingReturn);
+    }
+
+    //@Test (Nothing we can test yet. After user implementation then mby)
     public void testAddRating_CantThinkOfNegativeTest_ThrowSomeException() throws Exception {
         System.out.println("test-negative");
     }
 
-    //@Disabled("Not implemented yet")
-    //@Test
-    public void testGetRatingAvg_ReturnsTheAvgRating_EqualResults() throws Exception {
+    @Test
+    public void testGetRatingAvg_ReturnsTheAvgRating_EqualResults() {
         System.out.println("testGetRatingAvg_ReturnsTheAvgRating_EqualResults");
+        String movieID = "MovieID1";
+        double avgRating = FACADE.getRatingAvg(movieID);
+        double expectedRating = ((double) r1.getRating() + (double) r4.getRating())/2;
+        assertEquals(expectedRating, avgRating);
     }
 
-    //@Disabled("Not implemented yet")
-    //@Test
+    @Test
     public void testGetRatingAvg_ReturnsTheAvgRatingOfNonExistingRating_EqualResults() throws Exception {
         System.out.println("testGetRatingAvg_ReturnsTheAvgRatingOfNonExistingRating_EqualResults");
+        String movieID = "NonExistingID";
+        double avgRating = FACADE.getRatingAvg(movieID);
+        double expectedRating = -1.0;
+        assertEquals(expectedRating, avgRating);
     }
 }

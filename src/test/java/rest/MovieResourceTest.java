@@ -193,4 +193,16 @@ public class MovieResourceTest {
                 .body("code", is(404))
                 .body("message", is("No movie found with the search result: " + title));
     }
+    
+    @Test
+    public void testAddRating_ReturnsRating_EqualResults() {
+        System.out.println("testAddRating_ReturnsRating_EqualResults");
+        String movieid = "tt0080684";
+        int rating = 8;
+        given().when()
+                .post("/movies/add/rating/{movieid}/{rating}", movieid, rating).
+                then()
+                .assertThat()
+                .statusCode(HttpStatus.OK_200.getStatusCode());
+    }
 }

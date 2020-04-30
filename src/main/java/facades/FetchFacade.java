@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import dto.MovieDTO;
 import dto.MovieListDTO;
+import dto.SpecificMovieDTO;
 import errorhandling.MovieNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -30,12 +31,12 @@ public class FetchFacade {
         return instance;
     }
 
-    public MovieDTO getMovieById(String id) throws IOException, MovieNotFoundException {
+    public SpecificMovieDTO getMovieById(String id) throws IOException, MovieNotFoundException {
         String movieAPI = HttpUtils.fetchData("http://www.omdbapi.com/?i=" + id + "&apikey=6b10a5de");
         if (movieAPI.contains("Error")) {
             throw new MovieNotFoundException("No movie found with id: " + id);
         }
-        MovieDTO fetchedmovie = GSON.fromJson(movieAPI, MovieDTO.class);
+        SpecificMovieDTO fetchedmovie = GSON.fromJson(movieAPI, SpecificMovieDTO.class);
         return fetchedmovie;
     }
 
