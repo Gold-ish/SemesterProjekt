@@ -34,8 +34,7 @@ public class RatingFacade {
     private EntityManager getEntityManager() {
         return emf.createEntityManager();
     }
-    
-    //No unit-test yet. - Manual tested Works
+
     public double addRating(String movieID, int rating) {
         EntityManager em = getEntityManager();
         Rating r = new Rating(movieID, rating);
@@ -49,7 +48,6 @@ public class RatingFacade {
         }
     }
 
-    //No unit-test yet. - Manual tested Works
     public double getRatingAvg(String movieID) {
         EntityManager em = getEntityManager();
         try {
