@@ -1,6 +1,7 @@
 package facades;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 import dto.MovieDTO;
 import dto.MovieListDTO;
 import errorhandling.MovieNotFoundException;
@@ -39,8 +40,8 @@ public class FetchFacade {
     }
 
     public MovieListDTO getMoviesByTitle(String searchString, int page) throws IOException, MovieNotFoundException {
-        String searchAPIdata = HttpUtils.fetchData("http://www.omdbapi.com/?s="
-                + searchString + "&page=" + page + "&apikey=6b10a5de");
+        String searchAPIdata = HttpUtils.fetchData("http://www.omdbapi.com/?s='"
+                + searchString + "'&page=" + page + "&apikey=6b10a5de");
         if (searchAPIdata.contains("Movie not found!")) {
             throw new MovieNotFoundException("No movie found with the search result: " + searchString);
         } else if (searchAPIdata.contains("Too many results.")) {
@@ -69,7 +70,11 @@ public class FetchFacade {
             for (String movie : movieStrings) {
                 movieDtos.add(GSON.fromJson(movie, MovieDTO.class));
             }
-            return new MovieListDTO(movieDtos);
+            
+            String searchResultsJSONString = "{" + moviesExtra[1].substring(1);
+            JsonObject jobj = new Gson().fromJson(searchResultsJSONString, JsonObject.class);
+            int searchResults = jobj.get("totalResults").getAsInt();
+            return new MovieListDTO(movieDtos , searchResults);
         }
     }
 }
