@@ -9,6 +9,7 @@ import facades.MovieFacade;
 import java.io.IOException;
 import javax.persistence.EntityManagerFactory;
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -65,5 +66,14 @@ public class MovieResource {
         } catch (MovieNotFoundException ex) {
             return MOVIE_EXCEPTION_MAPPER.toResponse(ex);
         }
+    }
+    
+    @POST
+    @Path("add/rating/{movieid}/{rating}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response addRating(@PathParam("movieid") String movieID,
+            @PathParam("rating") int rating) {
+        double addedRating = FACADE.addRating(movieID, rating);
+        return Response.ok(addedRating).build();
     }
 }

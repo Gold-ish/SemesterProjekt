@@ -1,6 +1,5 @@
 package facades;
 
-import com.google.gson.Gson;
 import dto.MovieDTO;
 import dto.MovieListDTO;
 import errorhandling.MovieNotFoundException;
@@ -16,11 +15,8 @@ public class MovieFacade {
 
     private static MovieFacade instance;
     private static EntityManagerFactory emf;
-    private final Gson GSON = new Gson();
     private final FetchFacade fetchFacade = FetchFacade.getFetchFacade();
     private final RatingFacade ratingFacade = RatingFacade.getRatingFacade(emf);
-    //Which url?????
-    private final String URL = "";
 
     //Private Constructor to ensure Singleton
     private MovieFacade() {
@@ -46,9 +42,13 @@ public class MovieFacade {
 
     public MovieListDTO getMoviesByTitle(String searchString, int page) throws IOException, MovieNotFoundException {
         MovieListDTO mdtoList = fetchFacade.getMoviesByTitle(searchString, page);
-        for (MovieDTO movie : mdtoList.getMovieDTOs()) {
+        mdtoList.getMovieDTOs().forEach((movie) -> {
             movie.setAvgRating(ratingFacade.getRatingAvg(movie.getImdbID()));
-        }
+        });
         return mdtoList;
+    }
+    
+    public double addRating(String movieID, int rating){
+        return ratingFacade.addRating(movieID, rating);
     }
 }

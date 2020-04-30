@@ -9,12 +9,12 @@ import java.util.Objects;
 public class MovieDTO {
 
     private final String Title;
-    private final String Year;
+    private final int Year;
     private final String Poster;
-    private final String imdbID;//Rating dto - movie dto - rating double(fetcher fra vores db. for movieID - gennemsnit af ratings)
+    private final String imdbID;
     private double avgRating;
 
-    public MovieDTO(String Title, String Year, String Poster, String imdbID) {
+    public MovieDTO(String Title, int Year, String Poster, String imdbID) {
         this.Title = Title;
         this.Year = Year;
         this.Poster = Poster;
@@ -34,7 +34,7 @@ public class MovieDTO {
         return Title;
     }
 
-    public String getYear() {
+    public int getYear() {
         return Year;
     }
 
@@ -56,12 +56,12 @@ public class MovieDTO {
 
     @Override
     public int hashCode() {
-        int hash = 5;
-        hash = 43 * hash + Objects.hashCode(this.Title);
-        hash = 43 * hash + Objects.hashCode(this.Year);
-        hash = 43 * hash + Objects.hashCode(this.Poster);
-        hash = 43 * hash + Objects.hashCode(this.imdbID);
-        hash = 43 * hash + (int) (Double.doubleToLongBits(this.avgRating) ^ (Double.doubleToLongBits(this.avgRating) >>> 32));
+        int hash = 7;
+        hash = 79 * hash + Objects.hashCode(this.Title);
+        hash = 79 * hash + this.Year;
+        hash = 79 * hash + Objects.hashCode(this.Poster);
+        hash = 79 * hash + Objects.hashCode(this.imdbID);
+        hash = 79 * hash + (int) (Double.doubleToLongBits(this.avgRating) ^ (Double.doubleToLongBits(this.avgRating) >>> 32));
         return hash;
     }
 
@@ -77,13 +77,13 @@ public class MovieDTO {
             return false;
         }
         final MovieDTO other = (MovieDTO) obj;
+        if (this.Year != other.Year) {
+            return false;
+        }
         if (Double.doubleToLongBits(this.avgRating) != Double.doubleToLongBits(other.avgRating)) {
             return false;
         }
         if (!Objects.equals(this.Title, other.Title)) {
-            return false;
-        }
-        if (!Objects.equals(this.Year, other.Year)) {
             return false;
         }
         if (!Objects.equals(this.Poster, other.Poster)) {

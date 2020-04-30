@@ -84,7 +84,7 @@ public class MovieResourceTest {
     @Test
     public void testGetMovieById_ReturnsMovie_EqualResults() {
         System.out.println("testGetMovieById_ReturnsMovie_EqualResults");
-        MovieDTO movie = new MovieDTO("Star Wars: Episode V - The Empire Strikes Back", "1980",
+        MovieDTO movie = new MovieDTO("Star Wars: Episode V - The Empire Strikes Back", 1980,
                 "https://m.media-amazon.com/images/M/MV5BYmU1NDRjNDgtMzhiMi00NjZmLTg5NGItZDNiZjU5NTU4OTE0XkEyXkFqcGdeQXVyNzkwMjQ5NzM@._V1_SX300.jpg",
                 "tt0080684");
         given().when()
@@ -104,7 +104,7 @@ public class MovieResourceTest {
     @Test
     public void testGetMovieByID_NonExistentMovieID_404MovieNotFoundException() {
         System.out.println("testGetMovieByID_NonExistentMovieID_404MovieNotFoundException");
-        MovieDTO movie = new MovieDTO("", "", "",
+        MovieDTO movie = new MovieDTO("", 0, "",
                 "tt1");
         given().when()
                 .get("/movies/{id}", movie.getImdbID()).
