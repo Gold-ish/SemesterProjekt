@@ -2,12 +2,11 @@ package facades;
 
 import dto.ReviewDTO;
 import entities.Review;
+import errorhandling.NotFoundException;
 import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
-import javax.persistence.NoResultException;
-import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 
 /*
@@ -39,35 +38,14 @@ public class ReviewFacade {
         return emf.createEntityManager();
     }
 
-    public String addReview(String movieID, String review) {
+    public ReviewDTO addReview(ReviewDTO rdto) {
         EntityManager em = getEntityManager();
-        Review r = new Review(movieID, review);
+        Review r = new Review(rdto.getMovieID(), rdto.getReview());
         try {
             em.getTransaction().begin();
             em.persist(r);
             em.getTransaction().commit();
-            return r.getReview();
-        } finally {
-            em.close();
-        }
-    }
-
-    public String getReview(String movieID) throws NoResultException {
-        EntityManager em = getEntityManager();
-        try {
-            Query q = em.createQuery("SELECT r FROM Review r WHERE r.movieID = :id");
-            q.setParameter("id", movieID);
-            String review = null;
-            try {
-                if (q.getSingleResult() != null) {
-                    review = (String) q.getSingleResult();
-                    return review;
-                } else {
-                    return null;
-                }
-            } catch (NoResultException nre) {
-                return null;
-            }
+            return new ReviewDTO(r);
         } finally {
             em.close();
         }
@@ -87,6 +65,38 @@ public class ReviewFacade {
             em.close();
         }
 
+    }
+    
+    public ReviewDTO editReview(ReviewDTO rdto) throws NotFoundException {
+        EntityManager em = getEntityManager();
+        try {
+            em.getTransaction().begin();
+            Review r = em.find(Review.class, rdto.getId());
+            if(r == null || !r.getMovieID().equals(rdto.getMovieID())){
+                throw new NotFoundException();
+            }
+            r.setReview(rdto.getReview());
+            em.getTransaction().commit();
+            return new ReviewDTO(r);
+        } finally {
+            em.close();
+        }
+    }
+    
+    public String deleteReview(int id) throws NotFoundException{
+        EntityManager em = getEntityManager();
+        try {
+            em.getTransaction().begin();
+            Review r = em.find(Review.class, id);
+            if(r == null){
+                throw new NotFoundException();
+            }
+            em.remove(r);
+            em.getTransaction().commit();
+            return "review " + id + " deleted";
+        } finally {
+            em.close();
+        }
     }
 
 }

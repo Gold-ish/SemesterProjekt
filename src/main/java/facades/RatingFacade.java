@@ -1,6 +1,8 @@
 package facades;
 
+import dto.RatingDTO;
 import entities.Rating;
+import errorhandling.NotFoundException;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Query;
@@ -35,14 +37,14 @@ public class RatingFacade {
         return emf.createEntityManager();
     }
 
-    public double addRating(String movieID, int rating) {
+    public RatingDTO addRating(RatingDTO rdto) {
         EntityManager em = getEntityManager();
-        Rating r = new Rating(movieID, rating);
+        Rating r = new Rating(rdto.getMovieID(), rdto.getRating());
         try {
             em.getTransaction().begin();
             em.persist(r);
             em.getTransaction().commit();
-            return r.getRating();
+            return new RatingDTO(r);
         } finally {
             em.close();
         }
@@ -55,19 +57,41 @@ public class RatingFacade {
             q.setParameter("id", movieID);
             double avgRating = -1.0;
             if (q.getSingleResult() != null) {
-                /*
-                We return the avg rating for the movie if we allready have 
-                ratings for the movie in the DB.
-                 */
                 avgRating = (double) q.getSingleResult();
-                return avgRating;
-            } else {
-                /*
-                We return a rating of 0.0 if we havent created any 
-                rating for the specific movie yet.
-                 */
-                return avgRating;
             }
+            return avgRating;
+        } finally {
+            em.close();
+        }
+    }
+    
+        public RatingDTO editRating(RatingDTO rdto) throws NotFoundException {
+        EntityManager em = getEntityManager();
+        try {
+            em.getTransaction().begin();
+            Rating r = em.find(Rating.class, rdto.getId());
+            if(r == null || !r.getMovieID().equals(rdto.getMovieID())){
+                throw new NotFoundException();
+            }
+            r.setRating(rdto.getRating());
+            em.getTransaction().commit();
+            return new RatingDTO(r);
+        } finally {
+            em.close();
+        }
+    }
+    
+    public String deleteRating(int id) throws NotFoundException{
+        EntityManager em = getEntityManager();
+        try {
+            em.getTransaction().begin();
+            Rating r = em.find(Rating.class, id);
+            if(r == null){
+                throw new NotFoundException();
+            }
+            em.remove(r);
+            em.getTransaction().commit();
+            return "Rating " + id + " deleted";
         } finally {
             em.close();
         }

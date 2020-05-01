@@ -1,10 +1,13 @@
 package rest;
 
 import dto.MovieDTO;
+import entities.Rating;
+import entities.Review;
 import io.restassured.RestAssured;
 import static io.restassured.RestAssured.given;
 import io.restassured.parsing.Parser;
 import java.net.URI;
+import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.ws.rs.core.UriBuilder;
 import org.glassfish.grizzly.http.server.HttpServer;
@@ -16,6 +19,7 @@ import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import utils.EMF_Creator;
 
@@ -31,8 +35,9 @@ public class MovieResourceTest {
 
     static final URI BASE_URI = UriBuilder.fromUri(SERVER_URL).port(SERVER_PORT).build();
     private static HttpServer httpServer;
-        private static EntityManagerFactory emf;
-
+        private static EntityManagerFactory EMF;
+    private Review re1, re2;
+    private Rating r1, r2;
 
     public MovieResourceTest() {
     }
@@ -46,7 +51,7 @@ public class MovieResourceTest {
     @BeforeAll
     public static void setUpClass() {
         EMF_Creator.startREST_TestWithDB();
-        emf = EMF_Creator.createEntityManagerFactory(EMF_Creator.DbSelector.TEST, EMF_Creator.Strategy.CREATE);
+        EMF = EMF_Creator.createEntityManagerFactory(EMF_Creator.DbSelector.TEST, EMF_Creator.Strategy.DROP_AND_CREATE);
         httpServer = startServer();
         //Setup RestAssured
         RestAssured.baseURI = SERVER_URL;
@@ -58,6 +63,27 @@ public class MovieResourceTest {
     public static void closeTestServer() {
         EMF_Creator.endREST_TestWithDB();
         httpServer.shutdownNow();
+    }
+    
+    @BeforeEach
+    public void setUp() {
+        EntityManager em = EMF.createEntityManager();
+        re1 = new Review("tt0076759", "Good movie!" );
+        re2 = new Review("tt0076759", "Best movie ever");
+        r1 = new Rating("tt0076759", 8);
+        r2 = new Rating("tt0076759", 3);
+        try {
+            em.getTransaction().begin();
+            em.createNamedQuery("Review.deleteAllRows").executeUpdate();
+            em.createNamedQuery("Rating.deleteAllRows").executeUpdate();
+            em.persist(r1);
+            em.persist(r2);
+            em.persist(re1);
+            em.persist(re2);
+            em.getTransaction().commit();
+        } finally {
+            em.close();
+        }
     }
 
 //    @Test
@@ -204,7 +230,33 @@ public class MovieResourceTest {
                 .post("/movies/add/rating/{movieid}/{rating}", movieid, rating).
                 then()
                 .assertThat()
-                .statusCode(HttpStatus.OK_200.getStatusCode());
+                .statusCode(HttpStatus.OK_200.getStatusCode())
+                .body("rating", is(8));
+    }
+    
+        @Test
+    public void testEditRating_ReturnsRating_EqualResults() {
+        System.out.println("testEditRating_ReturnsRating_EqualResults");
+        String movieid = "tt0076759";
+        int rating = 10;
+        given().when()         
+                .put("/movies/edit/rating/{id}/{movieID}/{rating}", r1.getId(), movieid, rating).
+                then()
+                .assertThat()
+                .statusCode(HttpStatus.OK_200.getStatusCode())
+                .body("rating", is(10));
+        
+    }
+    
+        @Test
+    public void testDeleteRating_ReturnsRating_EqualResults() {
+        System.out.println("testDeleteRating_ReturnsRating_EqualResults");
+        given().when()         
+                .delete("/movies/delete/rating/{id}", r1.getId()).
+                then()
+                .assertThat()
+                .statusCode(HttpStatus.OK_200.getStatusCode())
+                .body(is("Rating " + r1.getId() +" deleted"));
     }
 
     @Test
@@ -216,7 +268,31 @@ public class MovieResourceTest {
                 .post("/movies/add/review/{movieid}/{review}", movieid, review).
                 then()
                 .assertThat()
-                .statusCode(HttpStatus.OK_200.getStatusCode());
+                .statusCode(HttpStatus.OK_200.getStatusCode())
+                .body("review",is("Very good movie"));
     }
     
+    @Test
+    public void testEditReview_ReturnsReview_EqualResults() {
+        System.out.println("testEditReview_ReturnsReview_EqualResults");
+        String movieid = "tt0076759";
+        String review = "Very good movie";
+        given().when()         
+                .put("/movies/edit/review/{id}/{movieID}/{review}", re1.getId(), movieid, review).
+                then()
+                .assertThat()
+                .statusCode(HttpStatus.OK_200.getStatusCode())
+                .body("review",is("Very good movie"));
+    }
+    
+        @Test
+    public void testDeleteReview_ReturnsReview_EqualResults() {
+        System.out.println("testDeleteReview_ReturnsReview_EqualResults");
+        given().when()         
+                .delete("/movies/delete/review/{id}", re1.getId()).
+                then()
+                .assertThat()
+                .statusCode(HttpStatus.OK_200.getStatusCode())
+                .body(is("review " + re1.getId() +" deleted"));
+    }
 }

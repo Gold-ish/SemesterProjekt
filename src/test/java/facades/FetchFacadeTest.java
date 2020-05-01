@@ -72,7 +72,7 @@ public class FetchFacadeTest {
     public void testGetMoviesByTitle_ReturnsListOf10Movies_EqualResults() throws IOException, MovieNotFoundException {
         System.out.println("testGetMoviesByTitle_ReturnsListOf10Movies_EqualResults");
         String searchString = "star";
-        int pageNumber = 2;
+        int pageNumber = 1;
         MovieListDTO actualDto = FACADE.getMoviesByTitle(searchString, pageNumber);
         assertEquals(10, actualDto.getMovieDTOs().size());
         assertEquals(2936, actualDto.getTotalResults());
