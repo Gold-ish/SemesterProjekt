@@ -55,6 +55,14 @@ public class MovieFacade {
         return ratingFacade.addRating(movieID, rating);
     }
     
+    public String editRating(int id, String movieID, int rating) throws NotFoundException{
+        return ratingFacade.editRating(id, movieID, rating);
+    }
+    
+    public String deleteRating(int id) throws NotFoundException{
+        return ratingFacade.deleteRating(id);
+    }
+    
     public String addReview(String movieID, String review) {
         return reviewFacade.addReview(movieID, review);
     }

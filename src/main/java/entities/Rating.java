@@ -49,6 +49,16 @@ public class Rating implements Serializable {
         this.id = id;
     }
 
+    public void setMovieID(String movieID) {
+        this.movieID = movieID;
+    }
+
+    public void setRating(int rating) {
+        this.rating = rating;
+    }
+    
+    
+
     @Override
     public int hashCode() {
         int hash = 7;

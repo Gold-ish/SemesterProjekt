@@ -1,6 +1,7 @@
 package rest;
 
 import dto.MovieDTO;
+import entities.Rating;
 import entities.Review;
 import io.restassured.RestAssured;
 import static io.restassured.RestAssured.given;
@@ -36,6 +37,7 @@ public class MovieResourceTest {
     private static HttpServer httpServer;
         private static EntityManagerFactory EMF;
     private Review re1, re2;
+    private Rating r1, r2;
 
     public MovieResourceTest() {
     }
@@ -68,9 +70,14 @@ public class MovieResourceTest {
         EntityManager em = EMF.createEntityManager();
         re1 = new Review("tt0076759", "Good movie!" );
         re2 = new Review("tt0076759", "Best movie ever");
+        r1 = new Rating("tt0076759", 8);
+        r2 = new Rating("tt0076759", 3);
         try {
             em.getTransaction().begin();
+            em.createNamedQuery("Review.deleteAllRows").executeUpdate();
             em.createNamedQuery("Rating.deleteAllRows").executeUpdate();
+            em.persist(r1);
+            em.persist(r2);
             em.persist(re1);
             em.persist(re2);
             em.getTransaction().commit();
@@ -225,6 +232,28 @@ public class MovieResourceTest {
                 .assertThat()
                 .statusCode(HttpStatus.OK_200.getStatusCode());
     }
+    
+        @Test
+    public void testEditRating_ReturnsRating_EqualResults() {
+        System.out.println("testEditRating_ReturnsRating_EqualResults");
+        String movieid = "tt0076759";
+        int rating = 10;
+        given().when()         
+                .put("/movies/edit/rating/{id}/{movieID}/{rating}", r1.getId(), movieid, rating).
+                then()
+                .assertThat()
+                .statusCode(HttpStatus.OK_200.getStatusCode());
+    }
+    
+        @Test
+    public void testDeleteRating_ReturnsRating_EqualResults() {
+        System.out.println("testDeleteRating_ReturnsRating_EqualResults");
+        given().when()         
+                .delete("/movies/delete/rating/{id}", r1.getId()).
+                then()
+                .assertThat()
+                .statusCode(HttpStatus.OK_200.getStatusCode());
+    }
 
     @Test
     public void testAddReview_ReturnsReview_EqualResults() {
@@ -260,5 +289,4 @@ public class MovieResourceTest {
                 .assertThat()
                 .statusCode(HttpStatus.OK_200.getStatusCode());
     }
-    
 }

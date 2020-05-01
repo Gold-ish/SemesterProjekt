@@ -1,6 +1,7 @@
 package facades;
 
 import entities.Rating;
+import errorhandling.NotFoundException;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Query;
@@ -68,6 +69,38 @@ public class RatingFacade {
                  */
                 return avgRating;
             }
+        } finally {
+            em.close();
+        }
+    }
+    
+        public String editRating(int id, String movieID, int rating) throws NotFoundException {
+        EntityManager em = getEntityManager();
+        try {
+            em.getTransaction().begin();
+            Rating r = em.find(Rating.class, id);
+            if(r == null || !r.getMovieID().equals(movieID)){
+                throw new NotFoundException();
+            }
+            r.setRating(rating);
+            em.getTransaction().commit();
+            return "Review for movie: " + movieID + " has been updated to rating: " + rating;
+        } finally {
+            em.close();
+        }
+    }
+    
+    public String deleteRating(int id) throws NotFoundException{
+        EntityManager em = getEntityManager();
+        try {
+            em.getTransaction().begin();
+            Rating r = em.find(Rating.class, id);
+            if(r == null){
+                throw new NotFoundException();
+            }
+            em.remove(r);
+            em.getTransaction().commit();
+            return "Rating " + id + " deleted";
         } finally {
             em.close();
         }

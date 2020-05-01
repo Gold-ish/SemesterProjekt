@@ -1,6 +1,7 @@
 package facades;
 
 import entities.Rating;
+import errorhandling.NotFoundException;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -51,6 +52,24 @@ public class RatingFacadeTest {
     }
 
     @Test
+    public void testGetRatingAvg_ReturnsTheAvgRating_EqualResults() {
+        System.out.println("testGetRatingAvg_ReturnsTheAvgRating_EqualResults");
+        String movieID = "MovieID1";
+        double avgRating = FACADE.getRatingAvg(movieID);
+        double expectedRating = ((double) r1.getRating() + (double) r4.getRating()) / 2;
+        assertEquals(expectedRating, avgRating);
+    }
+
+    @Test
+    public void testGetRatingAvg_ReturnsTheAvgRatingOfNonExistingRating_EqualResults() throws Exception {
+        System.out.println("testGetRatingAvg_ReturnsTheAvgRatingOfNonExistingRating_EqualResults");
+        String movieID = "NonExistingID";
+        double avgRating = FACADE.getRatingAvg(movieID);
+        double expectedRating = -1.0;
+        assertEquals(expectedRating, avgRating);
+    }
+
+    @Test
     public void testAddRating_ReturnsTheRating_EqualResults() {
         System.out.println("testAddRating_ReturnsTheRating_EqualResults");
         Rating dummyRating = new Rating("DummyRating", 5);
@@ -65,20 +84,16 @@ public class RatingFacadeTest {
     }
 
     @Test
-    public void testGetRatingAvg_ReturnsTheAvgRating_EqualResults() {
-        System.out.println("testGetRatingAvg_ReturnsTheAvgRating_EqualResults");
-        String movieID = "MovieID1";
-        double avgRating = FACADE.getRatingAvg(movieID);
-        double expectedRating = ((double) r1.getRating() + (double) r4.getRating())/2;
-        assertEquals(expectedRating, avgRating);
+    public void testEditRating_ReturnsTheNewRating_EqualResults() throws NotFoundException {
+        System.out.println("testEditRating_ReturnsTheNewRating_EqualResults");
+        String editReviewReturn = FACADE.editRating(r1.getId(), r1.getMovieID(), 10);
+        assertEquals("Review for movie: " + r1.getMovieID() + " has been updated to rating: " + 10, editReviewReturn);
     }
 
     @Test
-    public void testGetRatingAvg_ReturnsTheAvgRatingOfNonExistingRating_EqualResults() throws Exception {
-        System.out.println("testGetRatingAvg_ReturnsTheAvgRatingOfNonExistingRating_EqualResults");
-        String movieID = "NonExistingID";
-        double avgRating = FACADE.getRatingAvg(movieID);
-        double expectedRating = -1.0;
-        assertEquals(expectedRating, avgRating);
+    public void testDeleteReview_ReturnsTheDeletedRating_EqualResults() throws NotFoundException {
+        System.out.println("testDeleteReview_ReturnsTheDeletedRating_EqualResults");
+        String deleteReviewReturn = FACADE.deleteRating(r1.getId());
+        assertEquals("Rating " + r1.getId() + " deleted", deleteReviewReturn);
     }
 }

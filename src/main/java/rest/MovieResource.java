@@ -80,6 +80,23 @@ public class MovieResource {
         return Response.ok(addedRating).build();
     }
     
+    @PUT
+    @Path("edit/rating/{id}/{movieid}/{rating}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response editRating(@PathParam("id") int id, @PathParam("movieid") String movieID,
+            @PathParam("rating") int rating) throws NotFoundException {
+        String addedReview = FACADE.editRating(id, movieID, rating);
+        return Response.ok(addedReview).build();
+    }
+    
+    @DELETE
+    @Path("delete/rating/{id}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response deleteRating(@PathParam("id") int id) throws NotFoundException {
+        String addedReview = FACADE.deleteRating(id);
+        return Response.ok(addedReview).build();
+    }
+    
     @POST
     @Path("add/review/{movieid}/{review}")
     @Produces(MediaType.APPLICATION_JSON)
