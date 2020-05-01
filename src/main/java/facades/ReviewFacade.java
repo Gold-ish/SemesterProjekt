@@ -1,6 +1,8 @@
 package facades;
 
+import dto.ReviewDTO;
 import entities.Review;
+import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
@@ -49,7 +51,7 @@ public class ReviewFacade {
             em.close();
         }
     }
-    
+
     public String getReview(String movieID) throws NoResultException {
         EntityManager em = getEntityManager();
         try {
@@ -58,12 +60,12 @@ public class ReviewFacade {
             String review = null;
             try {
                 if (q.getSingleResult() != null) {
-                review = (String) q.getSingleResult();
-                return review;
-            } else {
-                return null;
-            }
-            } catch (NoResultException nre){
+                    review = (String) q.getSingleResult();
+                    return review;
+                } else {
+                    return null;
+                }
+            } catch (NoResultException nre) {
                 return null;
             }
         } finally {
@@ -71,12 +73,16 @@ public class ReviewFacade {
         }
     }
 
-    public List<Review> getReviews(String movieID) {
+    public List<ReviewDTO> getReviews(String movieID) {
         EntityManager em = getEntityManager();
         try {
             TypedQuery<Review> tq = em.createQuery("SELECT r FROM Review r WHERE r.movieID = :id", Review.class);
             tq.setParameter("id", movieID);
-            return tq.getResultList();
+            List<ReviewDTO> qList = new ArrayList<>();
+            for (Review r : tq.getResultList()) {
+                qList.add(new ReviewDTO(r));
+            }
+            return qList;
         } finally {
             em.close();
         }
