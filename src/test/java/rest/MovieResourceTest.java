@@ -230,7 +230,8 @@ public class MovieResourceTest {
                 .post("/movies/add/rating/{movieid}/{rating}", movieid, rating).
                 then()
                 .assertThat()
-                .statusCode(HttpStatus.OK_200.getStatusCode());
+                .statusCode(HttpStatus.OK_200.getStatusCode())
+                .body("rating", is(8));
     }
     
         @Test
@@ -242,7 +243,9 @@ public class MovieResourceTest {
                 .put("/movies/edit/rating/{id}/{movieID}/{rating}", r1.getId(), movieid, rating).
                 then()
                 .assertThat()
-                .statusCode(HttpStatus.OK_200.getStatusCode());
+                .statusCode(HttpStatus.OK_200.getStatusCode())
+                .body("rating", is(10));
+        
     }
     
         @Test
@@ -252,7 +255,8 @@ public class MovieResourceTest {
                 .delete("/movies/delete/rating/{id}", r1.getId()).
                 then()
                 .assertThat()
-                .statusCode(HttpStatus.OK_200.getStatusCode());
+                .statusCode(HttpStatus.OK_200.getStatusCode())
+                .body(is("Rating " + r1.getId() +" deleted"));
     }
 
     @Test
@@ -264,8 +268,8 @@ public class MovieResourceTest {
                 .post("/movies/add/review/{movieid}/{review}", movieid, review).
                 then()
                 .assertThat()
-                .statusCode(HttpStatus.OK_200.getStatusCode());
-                //.body("",equalTo("very good movie"));
+                .statusCode(HttpStatus.OK_200.getStatusCode())
+                .body("review",is("Very good movie"));
     }
     
     @Test
@@ -277,7 +281,8 @@ public class MovieResourceTest {
                 .put("/movies/edit/review/{id}/{movieID}/{review}", re1.getId(), movieid, review).
                 then()
                 .assertThat()
-                .statusCode(HttpStatus.OK_200.getStatusCode());
+                .statusCode(HttpStatus.OK_200.getStatusCode())
+                .body("review",is("Very good movie"));
     }
     
         @Test
@@ -287,6 +292,7 @@ public class MovieResourceTest {
                 .delete("/movies/delete/review/{id}", re1.getId()).
                 then()
                 .assertThat()
-                .statusCode(HttpStatus.OK_200.getStatusCode());
+                .statusCode(HttpStatus.OK_200.getStatusCode())
+                .body(is("review " + re1.getId() +" deleted"));
     }
 }

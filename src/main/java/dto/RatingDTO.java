@@ -1,36 +1,38 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
 package dto;
 
-import entities.Review;
+import entities.Rating;
 import java.util.Objects;
 
-/*
- * @author Nina
+/**
+ *
+ * @author allan
  */
-public class ReviewDTO {
-    
+public class RatingDTO {
     private int id;
     private String movieID;
-    private String review;
+    private int rating;
 
-    public ReviewDTO() {
-    }
-    
-    public ReviewDTO(int id, String movieID, String review) {
+    public RatingDTO(int id, String movieID, int rating) {
         this.id = id;
         this.movieID = movieID;
-        this.review = review;
+        this.rating = rating;
     }
 
-    public ReviewDTO(String movieID, String review) {
+    public RatingDTO(String movieID, int rating) {
         this.movieID = movieID;
-        this.review = review;
+        this.rating = rating;
     }
-
-  public ReviewDTO(Review r) {
+    
+    public RatingDTO(Rating r) {
         this.id = r.getId();
         this.movieID = r.getMovieID();
-        this.review = r.getReview();
-    }    
+        this.rating = r.getRating();
+    }
 
     public int getId() {
         return id;
@@ -48,20 +50,20 @@ public class ReviewDTO {
         this.movieID = movieID;
     }
 
-    public String getReview() {
-        return review;
+    public int getRating() {
+        return rating;
     }
 
-    public void setReview(String review) {
-        this.review = review;
+    public void setRating(int rating) {
+        this.rating = rating;
     }
 
     @Override
     public int hashCode() {
         int hash = 7;
-        hash = 79 * hash + this.id;
-        hash = 79 * hash + Objects.hashCode(this.movieID);
-        hash = 79 * hash + Objects.hashCode(this.review);
+        hash = 37 * hash + this.id;
+        hash = 37 * hash + Objects.hashCode(this.movieID);
+        hash = 37 * hash + this.rating;
         return hash;
     }
 
@@ -76,14 +78,14 @@ public class ReviewDTO {
         if (getClass() != obj.getClass()) {
             return false;
         }
-        final ReviewDTO other = (ReviewDTO) obj;
+        final RatingDTO other = (RatingDTO) obj;
         if (this.id != other.id) {
             return false;
         }
-        if (!Objects.equals(this.movieID, other.movieID)) {
+        if (this.rating != other.rating) {
             return false;
         }
-        if (!Objects.equals(this.review, other.review)) {
+        if (!Objects.equals(this.movieID, other.movieID)) {
             return false;
         }
         return true;
@@ -91,6 +93,8 @@ public class ReviewDTO {
 
     @Override
     public String toString() {
-        return "ReviewDTO{" + "id=" + id + ", movieID=" + movieID + ", review=" + review + '}';
+        return "RatingDTO{" + "id=" + id + ", movieID=" + movieID + ", rating=" + rating + '}';
     }
+    
+    
 }

@@ -1,10 +1,15 @@
 package facades;
 
+import dto.ReviewDTO;
 import entities.Review;
 import errorhandling.NotFoundException;
+import java.util.ArrayList;
+import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
+import org.junit.jupiter.api.Assertions;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -34,7 +39,6 @@ public class ReviewFacadeTest {
         r3 = new Review("MovieID3", "Speciel movie");
         r4 = new Review("MovieID1", "Not good acting");
         r5 = new Review("MovieID2", "disappointed");
-        r6 = new Review("MovieID4", "");
         try {
             em.getTransaction().begin();
             em.createNamedQuery("Review.deleteAllRows").executeUpdate();
@@ -50,61 +54,66 @@ public class ReviewFacadeTest {
     }
 
     @Test
-    public void testGetReview_ReturnsReviewOfNonExistingReview_EqualResults() throws Exception {
-        System.out.println("testGetReview_ReturnsReviewOfNonExistingReview_EqualResults");
-        String movieID = "NonExistingID";
-        String review = FACADE.getReview(movieID);
-        String expectedReview = null;
-        assertEquals(expectedReview, review);
-    }
-    
-    @Test
     public void testGetReviews_ReturnsNumberOfReviews_EqualResults() {
-        System.out.println("testGetReview_ReturnsReviewOfNonExistingReview_EqualResults");
+        System.out.println("testGetReviews_ReturnsNumberOfReviews_EqualResults");
         String movieID = "MovieID2";
         int reviewNo = FACADE.getReviews(movieID).size();
         int expectedReviewNo = 2;
         assertEquals(expectedReviewNo, reviewNo);
     }
-    
+
     @Test
-    public void testGetReviews_ReturnsNumberOfReviewsWhereEmpty_EqualResults() {
-        System.out.println("testGetReviews_ReturnsNumberOfReviewsWhereEmpty_EqualResults");
-        String movieID = "MovieID4";
-        int reviewNo = FACADE.getReviews(movieID).size();
-        int expectedReviewNo = 0;
-        assertEquals(expectedReviewNo, reviewNo);
+    public void testGetReviews_ReturnsEmptyListOfNonExistingMovieID_EqualResults() throws Exception {
+        System.out.println("testGetReviews_ReturnsEmptyListOfNonExistingMovieID_EqualResults");
+        String movieID = "NonExistingID";
+        List<ReviewDTO> resultList = FACADE.getReviews(movieID);
+        List<ReviewDTO> expectedList = new ArrayList<>();
+        assertEquals(resultList, expectedList);
     }
-    
+
     @Test
     public void testAddReview_ReturnsTheReview_EqualResults() {
         System.out.println("testAddReview_ReturnsTheReview_EqualResults");
-        Review dummy = new Review("DummyRev", "It was very good");
-        String addReviewReturn = FACADE.addReview(dummy.getMovieID(), dummy.getReview());
-        String expectedReviewReturned = dummy.getReview();
-        assertEquals(expectedReviewReturned, addReviewReturn);
+        ReviewDTO rdtoExpected = new ReviewDTO("DummyRev", "It was very good");
+        ReviewDTO resultReview = FACADE.addReview(rdtoExpected);
+        assertNotNull(resultReview.getId());
+        assertEquals(resultReview.getMovieID(), rdtoExpected.getMovieID());
+        assertEquals(resultReview.getReview(), rdtoExpected.getReview());
     }
-    
-    
+
     @Test
     public void testEditReview_ReturnsTheReview_EqualResults() throws NotFoundException {
         System.out.println("testEditReview_ReturnsTheReview_EqualResults");
-        String editReviewReturn = FACADE.editReview(r1.getId(), r1.getMovieID(), "I LOVE THE THIS MOVIE!");
-        assertEquals("I LOVE THE THIS MOVIE!", editReviewReturn);
+        ReviewDTO rdtoExpected = new ReviewDTO(r1.getId(), r1.getMovieID(), "ChangeReview");
+        ReviewDTO resultReview = FACADE.editReview(rdtoExpected);
+        assertEquals(resultReview.getId(), rdtoExpected.getId());
+        assertEquals(resultReview.getMovieID(), rdtoExpected.getMovieID());
+        assertEquals(resultReview.getReview(), rdtoExpected.getReview());
     }
-    
+
     @Test
-    public void testDeleteReview_ReturnsTheReview_EqualResults() throws NotFoundException {
+    public void testEditReview_ReturnsNotFoundException_ExceptionAssertion() {
+        System.out.println("testEditReview_ReturnsTheReview_EqualResults");
+        Assertions.assertThrows(NotFoundException.class, () -> {
+            FACADE.editReview(new ReviewDTO(-1, r1.getMovieID(), "ChangeReview"));
+
+        });
+    }
+
+    @Test
+    public void testDeleteReview_ReturnsConfirmationString_EqualResults() throws NotFoundException {
         System.out.println("testDeleteReview_ReturnsTheReview_EqualResults");
         String deleteReviewReturn = FACADE.deleteReview(r1.getId());
-        assertEquals("review " + r1.getId()+ " deleted", deleteReviewReturn);
+        assertEquals("review " + r1.getId() + " deleted", deleteReviewReturn);
     }
-    
-    //Neagive testing
-    //@Test
-    //public void testNegative_NegativeTesting_Negative() {
-    //      System.out.println("ReviewNegativeTesting");
-    //}
-    
+
+    @Test
+    public void testDeleteReview_ReturnsNotFoundException_ExceptionAssertion() {
+        System.out.println("testDeleteReview_ReturnsNotFoundException_ExceptionAssertion");
+        Assertions.assertThrows(NotFoundException.class, () -> {
+            FACADE.deleteReview(-1);
+
+        });
+    }
 
 }

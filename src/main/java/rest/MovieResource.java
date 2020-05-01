@@ -2,6 +2,8 @@ package rest;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import dto.RatingDTO;
+import dto.ReviewDTO;
 import errorhandling.GenericExceptionMapper;
 import errorhandling.MovieNotFoundException;
 import errorhandling.MovieNotFoundExceptionMapper;
@@ -76,8 +78,8 @@ public class MovieResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Response addRating(@PathParam("movieid") String movieID,
             @PathParam("rating") int rating) {
-        double addedRating = FACADE.addRating(movieID, rating);
-        return Response.ok(addedRating).build();
+        String returnRating = GSON.toJson(FACADE.addRating(new RatingDTO(movieID, rating)));
+        return Response.ok(returnRating).build();
     }
     
     @PUT
@@ -85,16 +87,16 @@ public class MovieResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Response editRating(@PathParam("id") int id, @PathParam("movieid") String movieID,
             @PathParam("rating") int rating) throws NotFoundException {
-        String addedReview = FACADE.editRating(id, movieID, rating);
-        return Response.ok(addedReview).build();
+        String returnRating = GSON.toJson(FACADE.editRating(new RatingDTO(id, movieID, rating)));
+        return Response.ok(returnRating).build();
     }
     
     @DELETE
     @Path("delete/rating/{id}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response deleteRating(@PathParam("id") int id) throws NotFoundException {
-        String addedReview = FACADE.deleteRating(id);
-        return Response.ok(addedReview).build();
+        String deletedRating = FACADE.deleteRating(id);
+        return Response.ok(deletedRating).build();
     }
     
     @POST
@@ -102,8 +104,8 @@ public class MovieResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Response addReview(@PathParam("movieid") String movieID,
             @PathParam("review") String review) {
-        String addedReview = FACADE.addReview(movieID, review);
-        return Response.ok(addedReview).build();
+        String returnReview = GSON.toJson(FACADE.addReview(new ReviewDTO(movieID, review)));
+        return Response.ok(returnReview).build();
     }
     
     @PUT
@@ -111,16 +113,16 @@ public class MovieResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Response editReview(@PathParam("id") int id, @PathParam("movieid") String movieID,
             @PathParam("review") String review) throws NotFoundException {
-        String addedReview = FACADE.editReview(id, movieID, review);
-        return Response.ok(addedReview).build();
+        String returnReview = GSON.toJson(FACADE.editReview(new ReviewDTO(id, movieID, review)));
+        return Response.ok(returnReview).build();
     }
     
     @DELETE
     @Path("delete/review/{id}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response editReview(@PathParam("id") int id) throws NotFoundException {
-        String addedReview = FACADE.deleteReview(id);
-        return Response.ok(addedReview).build();
+        String deletedReview = FACADE.deleteReview(id);
+        return Response.ok(deletedReview).build();
     }
     
 }

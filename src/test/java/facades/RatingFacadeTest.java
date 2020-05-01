@@ -1,10 +1,13 @@
 package facades;
 
+import dto.RatingDTO;
 import entities.Rating;
 import errorhandling.NotFoundException;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
+import org.junit.jupiter.api.Assertions;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -72,28 +75,50 @@ public class RatingFacadeTest {
     @Test
     public void testAddRating_ReturnsTheRating_EqualResults() {
         System.out.println("testAddRating_ReturnsTheRating_EqualResults");
-        Rating dummyRating = new Rating("DummyRating", 5);
-        double addRatingReturn = FACADE.addRating(dummyRating.getMovieID(), dummyRating.getRating());
-        double expectedRatingReturned = dummyRating.getRating();
-        assertEquals(expectedRatingReturned, addRatingReturn);
+        RatingDTO rdtoExpected = new RatingDTO("MovieID1", 10);
+        RatingDTO rdtoResult = FACADE.addRating(rdtoExpected);
+        assertNotNull(rdtoResult.getId());
+        assertEquals(rdtoResult.getMovieID(), rdtoExpected.getMovieID());
+        assertEquals(rdtoResult.getRating(), rdtoExpected.getRating());
     }
 
     //@Test (Nothing we can test yet. After user implementation then mby)
     public void testAddRating_CantThinkOfNegativeTest_ThrowSomeException() throws Exception {
         System.out.println("test-negative");
     }
-
+    
     @Test
     public void testEditRating_ReturnsTheNewRating_EqualResults() throws NotFoundException {
         System.out.println("testEditRating_ReturnsTheNewRating_EqualResults");
-        String editReviewReturn = FACADE.editRating(r1.getId(), r1.getMovieID(), 10);
-        assertEquals("Review for movie: " + r1.getMovieID() + " has been updated to rating: " + 10, editReviewReturn);
+        RatingDTO rdtoExpected = new RatingDTO(r1.getId(), r1.getMovieID(), 10);
+        RatingDTO rdtoResult = FACADE.editRating(rdtoExpected);
+        assertEquals(rdtoResult.getId(), rdtoExpected.getId());
+        assertEquals(rdtoResult.getMovieID(), rdtoExpected.getMovieID());
+        assertEquals(rdtoResult.getRating(), rdtoExpected.getRating());
     }
 
     @Test
-    public void testDeleteReview_ReturnsTheDeletedRating_EqualResults() throws NotFoundException {
-        System.out.println("testDeleteReview_ReturnsTheDeletedRating_EqualResults");
+    public void testEditRating_ReturnsNotFoundException_ExceptionAssertion() {
+        System.out.println("testEditRating_ReturnsNotFoundException_ExceptionAssertion");
+        Assertions.assertThrows(NotFoundException.class, () -> {
+            FACADE.editRating(new RatingDTO(-1, r1.getMovieID(), 10));
+
+        });
+    }
+
+    @Test
+    public void testDeleteRating_ReturnsConfirmationString_EqualResults() throws NotFoundException {
+        System.out.println("testDeleteRating_ReturnsConfirmationString_EqualResults");
         String deleteReviewReturn = FACADE.deleteRating(r1.getId());
         assertEquals("Rating " + r1.getId() + " deleted", deleteReviewReturn);
+    }
+
+    @Test
+    public void testDeleteReview_ReturnsNotFoundException_ExceptionAssertion() {
+        System.out.println("testDeleteReview_ReturnsNotFoundException_ExceptionAssertion");
+        Assertions.assertThrows(NotFoundException.class, () -> {
+            FACADE.deleteRating(-1);
+
+        });
     }
 }

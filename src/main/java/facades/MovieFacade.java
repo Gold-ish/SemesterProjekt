@@ -1,6 +1,8 @@
 package facades;
 
 import dto.MovieListDTO;
+import dto.RatingDTO;
+import dto.ReviewDTO;
 import dto.SpecificMovieDTO;
 import errorhandling.MovieNotFoundException;
 import errorhandling.NotFoundException;
@@ -51,24 +53,24 @@ public class MovieFacade {
         return mdtoList;
     }
     
-    public double addRating(String movieID, int rating){
-        return ratingFacade.addRating(movieID, rating);
+    public RatingDTO addRating(RatingDTO ratingDTO){
+        return ratingFacade.addRating(ratingDTO);
     }
     
-    public String editRating(int id, String movieID, int rating) throws NotFoundException{
-        return ratingFacade.editRating(id, movieID, rating);
+    public RatingDTO editRating(RatingDTO ratingDTO) throws NotFoundException{
+        return ratingFacade.editRating(ratingDTO);
     }
     
     public String deleteRating(int id) throws NotFoundException{
         return ratingFacade.deleteRating(id);
     }
     
-    public String addReview(String movieID, String review) {
-        return reviewFacade.addReview(movieID, review);
+    public ReviewDTO addReview(ReviewDTO reviewDTO) {
+        return reviewFacade.addReview(reviewDTO);
     }
     
-    public String editReview(int id, String movieID, String review) throws NotFoundException{
-        return reviewFacade.editReview(id, movieID, review);
+    public ReviewDTO editReview(ReviewDTO reviewDTO) throws NotFoundException{
+        return reviewFacade.editReview(reviewDTO);
     }
     
     public String deleteReview(int id) throws NotFoundException{
