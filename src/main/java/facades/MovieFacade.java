@@ -3,6 +3,7 @@ package facades;
 import dto.MovieListDTO;
 import dto.SpecificMovieDTO;
 import errorhandling.MovieNotFoundException;
+import errorhandling.NotFoundException;
 import java.io.IOException;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
@@ -57,4 +58,10 @@ public class MovieFacade {
     public String addReview(String movieID, String review) {
         return reviewFacade.addReview(movieID, review);
     }
+    
+    public String editReview(int id, String movieID, String review) throws NotFoundException{
+        return reviewFacade.editReview(id, movieID, review);
+    }
+    
+    
 }

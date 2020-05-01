@@ -1,6 +1,7 @@
 package facades;
 
 import entities.Review;
+import errorhandling.NotFoundException;
 import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
@@ -81,6 +82,22 @@ public class ReviewFacade {
             em.close();
         }
 
+    }
+    
+    public String editReview(int id, String movieID, String review) throws NotFoundException {
+        EntityManager em = getEntityManager();
+        try {
+            em.getTransaction().begin();
+            Review r = em.find(Review.class, id);
+            if(r == null || !r.getMovieID().equals(movieID)){
+                throw new NotFoundException();
+            }
+            r.setReview(review);
+            em.getTransaction().commit();
+            return r.getReview();
+        } finally {
+            em.close();
+        }
     }
 
 }

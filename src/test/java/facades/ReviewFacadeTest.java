@@ -1,6 +1,7 @@
 package facades;
 
 import entities.Review;
+import errorhandling.NotFoundException;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -49,15 +50,6 @@ public class ReviewFacadeTest {
     }
 
     @Test
-    public void testAddReview_ReturnsTheReview_EqualResults() {
-        System.out.println("testAddReview_ReturnsTheReview_EqualResults");
-        Review dummy = new Review("DummyRev", "It was very good");
-        String addReviewReturn = FACADE.addReview(dummy.getMovieID(), dummy.getReview());
-        String expectedReviewReturned = dummy.getReview();
-        assertEquals(expectedReviewReturned, addReviewReturn);
-    }
-
-    @Test
     public void testGetReview_ReturnsReviewOfNonExistingReview_EqualResults() throws Exception {
         System.out.println("testGetReview_ReturnsReviewOfNonExistingReview_EqualResults");
         String movieID = "NonExistingID";
@@ -82,6 +74,23 @@ public class ReviewFacadeTest {
         int reviewNo = FACADE.getReviews(movieID).size();
         int expectedReviewNo = 0;
         assertEquals(expectedReviewNo, reviewNo);
+    }
+    
+    @Test
+    public void testAddReview_ReturnsTheReview_EqualResults() {
+        System.out.println("testAddReview_ReturnsTheReview_EqualResults");
+        Review dummy = new Review("DummyRev", "It was very good");
+        String addReviewReturn = FACADE.addReview(dummy.getMovieID(), dummy.getReview());
+        String expectedReviewReturned = dummy.getReview();
+        assertEquals(expectedReviewReturned, addReviewReturn);
+    }
+    
+    
+    @Test
+    public void testEditReview_ReturnsTheReview_EqualResults() throws NotFoundException {
+        System.out.println("testEditReview_ReturnsTheReview_EqualResults");
+        String editReviewReturn = FACADE.editReview(r1.getId(), r1.getMovieID(), "I LOVE THE THIS MOVIE!");
+        assertEquals("I LOVE THE THIS MOVIE!", editReviewReturn);
     }
     
     //Neagive testing

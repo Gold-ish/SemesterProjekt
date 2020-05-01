@@ -5,11 +5,13 @@ import com.google.gson.GsonBuilder;
 import errorhandling.GenericExceptionMapper;
 import errorhandling.MovieNotFoundException;
 import errorhandling.MovieNotFoundExceptionMapper;
+import errorhandling.NotFoundException;
 import facades.MovieFacade;
 import java.io.IOException;
 import javax.persistence.EntityManagerFactory;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -85,4 +87,15 @@ public class MovieResource {
         String addedReview = FACADE.addReview(movieID, review);
         return Response.ok(addedReview).build();
     }
+    
+    @PUT
+    @Path("edit/review/{id}/{movieid}/{review}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response editReview(@PathParam("id") int id, @PathParam("movieid") String movieID,
+            @PathParam("review") String review) throws NotFoundException {
+        String addedReview = FACADE.editReview(id, movieID, review);
+        return Response.ok(addedReview).build();
+    }
+    
+    
 }
