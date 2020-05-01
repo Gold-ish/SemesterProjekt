@@ -93,6 +93,13 @@ public class ReviewFacadeTest {
         assertEquals("I LOVE THE THIS MOVIE!", editReviewReturn);
     }
     
+    @Test
+    public void testDeleteReview_ReturnsTheReview_EqualResults() throws NotFoundException {
+        System.out.println("testDeleteReview_ReturnsTheReview_EqualResults");
+        String deleteReviewReturn = FACADE.deleteReview(r1.getId());
+        assertEquals("review " + r1.getId()+ " deleted", deleteReviewReturn);
+    }
+    
     //Neagive testing
     //@Test
     //public void testNegative_NegativeTesting_Negative() {

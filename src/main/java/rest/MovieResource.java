@@ -9,6 +9,7 @@ import errorhandling.NotFoundException;
 import facades.MovieFacade;
 import java.io.IOException;
 import javax.persistence.EntityManagerFactory;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
@@ -97,5 +98,12 @@ public class MovieResource {
         return Response.ok(addedReview).build();
     }
     
+    @DELETE
+    @Path("delete/review/{id}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response editReview(@PathParam("id") int id) throws NotFoundException {
+        String addedReview = FACADE.deleteReview(id);
+        return Response.ok(addedReview).build();
+    }
     
 }

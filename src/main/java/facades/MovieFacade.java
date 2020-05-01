@@ -63,5 +63,9 @@ public class MovieFacade {
         return reviewFacade.editReview(id, movieID, review);
     }
     
+    public String deleteReview(int id) throws NotFoundException{
+        return reviewFacade.deleteReview(id);
+    }
+    
     
 }

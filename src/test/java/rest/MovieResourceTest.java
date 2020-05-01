@@ -251,4 +251,14 @@ public class MovieResourceTest {
                 .statusCode(HttpStatus.OK_200.getStatusCode());
     }
     
+        @Test
+    public void testDeleteReview_ReturnsReview_EqualResults() {
+        System.out.println("testDeleteReview_ReturnsReview_EqualResults");
+        given().when()         
+                .delete("/movies/delete/review/{id}", re1.getId()).
+                then()
+                .assertThat()
+                .statusCode(HttpStatus.OK_200.getStatusCode());
+    }
+    
 }

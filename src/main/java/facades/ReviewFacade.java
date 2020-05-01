@@ -99,5 +99,21 @@ public class ReviewFacade {
             em.close();
         }
     }
+    
+    public String deleteReview(int id) throws NotFoundException{
+        EntityManager em = getEntityManager();
+        try {
+            em.getTransaction().begin();
+            Review r = em.find(Review.class, id);
+            if(r == null){
+                throw new NotFoundException();
+            }
+            em.remove(r);
+            em.getTransaction().commit();
+            return "review " + id + " deleted";
+        } finally {
+            em.close();
+        }
+    }
 
 }
