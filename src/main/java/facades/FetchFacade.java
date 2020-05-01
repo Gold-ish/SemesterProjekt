@@ -32,7 +32,7 @@ public class FetchFacade {
     }
 
     public SpecificMovieDTO getMovieById(String id) throws IOException, MovieNotFoundException {
-        String movieAPI = HttpUtils.fetchData("http://www.omdbapi.com/?i=" + id + "&apikey=6b10a5de");
+        String movieAPI = HttpUtils.fetchData("http://www.omdbapi.com/?i=" + id + "&plot=full&apikey=6b10a5de");
         if (movieAPI.contains("Error")) {
             throw new MovieNotFoundException("No movie found with id: " + id);
         }
