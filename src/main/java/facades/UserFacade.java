@@ -1,35 +1,41 @@
 package facades;
 
+import dto.UserDTO;
+import entities.Role;
 import entities.User;
+import errorhandling.AuthenticationException;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
-import errorhandling.AuthenticationException;
 
 /**
  * @author lam@cphbusiness.dk
  */
 public class UserFacade {
-  
-    private static EntityManagerFactory emf;
     private static UserFacade instance;
-    
-    private UserFacade(){}
-    
+    private static EntityManagerFactory emf;
+
+    private UserFacade() {
+    }
+
     /**
-     * 
+     *
      * @param _emf
      * @return the instance of this facade.
      */
-    public static UserFacade getUserFacade (EntityManagerFactory _emf) {
+    public static UserFacade getUserFacade(EntityManagerFactory _emf) {
         if (instance == null) {
             emf = _emf;
             instance = new UserFacade();
         }
         return instance;
     }
-    
+
+    private EntityManager getEntityManager() {
+        return emf.createEntityManager();
+    }
+
     public User getVeryfiedUser(String username, String password) throws AuthenticationException {
-        EntityManager em = emf.createEntityManager();
+        EntityManager em = getEntityManager();
         User user;
         try {
             user = em.find(User.class, username);
@@ -42,4 +48,18 @@ public class UserFacade {
         return user;
     }
 
+    public String registerUser(UserDTO userDTO) {
+        EntityManager em = getEntityManager();
+        User userToAdd = new User(userDTO);
+        userToAdd.addRole(new Role("user"));
+        try {
+            em.getTransaction().begin();
+            em.persist(userToAdd);
+            em.getTransaction().commit();
+            return "User was created";
+        } finally {
+            em.close();
+        } 
+    }
+    
 }

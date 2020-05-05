@@ -1,5 +1,6 @@
 package entities;
 
+import dto.UserDTO;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -16,6 +17,7 @@ import javax.validation.constraints.Size;
 import org.mindrot.jbcrypt.BCrypt;
 
 @Entity
+//@NamedQuery(name = "User.deleteAllRows", query = "DELETE FROM users")
 @Table(name = "users")
 public class User implements Serializable {
 
@@ -35,6 +37,8 @@ public class User implements Serializable {
         @JoinColumn(name = "role_name", referencedColumnName = "role_name")})
     @ManyToMany
     private List<Role> roleList = new ArrayList();
+    private String gender;
+    private String birthday;
 
     public List<String> getRolesAsStrings() {
         if (roleList.isEmpty()) {
@@ -46,7 +50,7 @@ public class User implements Serializable {
         }
         return rolesAsStrings;
     }
-    
+
     public String getRolesAsString() {
         if (roleList.isEmpty()) {
             return null;
@@ -55,7 +59,7 @@ public class User implements Serializable {
         for (Role role : roleList) {
             rolesAsString.append(role.getRoleName() + ", ");
         }
-        return rolesAsString.toString().substring(0, rolesAsString.length()-2);
+        return rolesAsString.toString().substring(0, rolesAsString.length() - 2);
     }
 
     public User() {
@@ -69,6 +73,13 @@ public class User implements Serializable {
     public User(String userName, String userPass) {
         this.userName = userName;
         this.userPass = BCrypt.hashpw(userPass, BCrypt.gensalt(10));
+    }
+
+    public User(UserDTO userDTO) {
+        this.userName = userDTO.getUsername();
+        this.userPass = BCrypt.hashpw(userDTO.getPassword(), BCrypt.gensalt(10));
+        this.gender = userDTO.getGender();
+        this.birthday = userDTO.getBirthday();
     }
 
     public String getUserName() {
@@ -97,6 +108,22 @@ public class User implements Serializable {
 
     public void addRole(Role userRole) {
         roleList.add(userRole);
+    }
+
+    public String getGender() {
+        return gender;
+    }
+
+    public void setGender(String gender) {
+        this.gender = gender;
+    }
+
+    public String getBirthday() {
+        return birthday;
+    }
+
+    public void setBirthday(String birthday) {
+        this.birthday = birthday;
     }
 
 }
