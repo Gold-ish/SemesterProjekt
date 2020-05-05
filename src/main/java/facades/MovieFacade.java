@@ -7,7 +7,6 @@ import dto.SpecificMovieDTO;
 import errorhandling.MovieNotFoundException;
 import errorhandling.NotFoundException;
 import java.io.IOException;
-import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 
 /**
@@ -32,10 +31,6 @@ public class MovieFacade {
             instance = new MovieFacade();
         }
         return instance;
-    }
-
-    private EntityManager getEntityManager() {
-        return emf.createEntityManager();
     }
 
     public SpecificMovieDTO getMovieById(String id) throws IOException, MovieNotFoundException {
