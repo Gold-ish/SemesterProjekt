@@ -103,7 +103,7 @@ public class ReviewFacadeTest {
     @Test
     public void testDeleteReview_ReturnsConfirmationString_EqualResults() throws NotFoundException {
         System.out.println("testDeleteReview_ReturnsTheReview_EqualResults");
-        String deleteReviewReturn = FACADE.deleteReview(r1.getId());
+        String deleteReviewReturn = FACADE.deleteReview(new ReviewDTO(r1));
         assertEquals("review " + r1.getId() + " deleted", deleteReviewReturn);
     }
 
@@ -111,7 +111,7 @@ public class ReviewFacadeTest {
     public void testDeleteReview_ReturnsNotFoundException_ExceptionAssertion() {
         System.out.println("testDeleteReview_ReturnsNotFoundException_ExceptionAssertion");
         Assertions.assertThrows(NotFoundException.class, () -> {
-            FACADE.deleteReview(-1);
+            FACADE.deleteReview(new ReviewDTO());
 
         });
     }

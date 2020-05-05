@@ -81,17 +81,17 @@ public class RatingFacade {
         }
     }
     
-    public String deleteRating(int id) throws NotFoundException{
+    public String deleteRating(RatingDTO rdto) throws NotFoundException{
         EntityManager em = getEntityManager();
         try {
             em.getTransaction().begin();
-            Rating r = em.find(Rating.class, id);
+            Rating r = em.find(Rating.class, rdto.getId());
             if(r == null){
                 throw new NotFoundException();
             }
             em.remove(r);
             em.getTransaction().commit();
-            return "Rating " + id + " deleted";
+            return "Rating " + rdto.getId() + " deleted";
         } finally {
             em.close();
         }

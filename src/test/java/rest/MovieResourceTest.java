@@ -1,10 +1,15 @@
 package rest;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import dto.MovieDTO;
+import dto.RatingDTO;
+import dto.ReviewDTO;
 import entities.Rating;
 import entities.Review;
 import io.restassured.RestAssured;
 import static io.restassured.RestAssured.given;
+import io.restassured.http.ContentType;
 import io.restassured.parsing.Parser;
 import java.net.URI;
 import javax.persistence.EntityManager;
@@ -23,7 +28,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import utils.EMF_Creator;
 
-
 /**
  *
  * @author carol
@@ -35,7 +39,8 @@ public class MovieResourceTest {
 
     static final URI BASE_URI = UriBuilder.fromUri(SERVER_URL).port(SERVER_PORT).build();
     private static HttpServer httpServer;
-        private static EntityManagerFactory EMF;
+    private static EntityManagerFactory EMF;
+    private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
     private Review re1, re2;
     private Rating r1, r2;
 
@@ -45,7 +50,7 @@ public class MovieResourceTest {
     static HttpServer startServer() {
         ResourceConfig rc = ResourceConfig.forApplication(new ApplicationConfig());
         return GrizzlyHttpServerFactory.createHttpServer(BASE_URI, rc);
-        
+
     }
 
     @BeforeAll
@@ -64,11 +69,11 @@ public class MovieResourceTest {
         EMF_Creator.endREST_TestWithDB();
         httpServer.shutdownNow();
     }
-    
+
     @BeforeEach
     public void setUp() {
         EntityManager em = EMF.createEntityManager();
-        re1 = new Review("tt0076759", "Good movie!" );
+        re1 = new Review("tt0076759", "Good movie!");
         re2 = new Review("tt0076759", "Best movie ever");
         r1 = new Rating("tt0076759", 8);
         r2 = new Rating("tt0076759", 3);
@@ -86,10 +91,6 @@ public class MovieResourceTest {
         }
     }
 
-//    @Test
-//    public void testTest() {
-//        assertTrue(true);
-//    }
     /**
      * Test of demo method, of class MovieResource.
      */
@@ -205,7 +206,7 @@ public class MovieResourceTest {
                 .body("code", is(404))
                 .body("message", is("No movie found with the search result: " + title));
     }
-    
+
     @Test
     public void testGetMoviesByTitle_SearchDoesNotExist_404MovieNotFoundException() {
         System.out.println("testGetMoviesByTitle_SearchDoesNotExist_404MovieNotFoundException");
@@ -219,80 +220,88 @@ public class MovieResourceTest {
                 .body("code", is(404))
                 .body("message", is("No movie found with the search result: " + title));
     }
-    
-    
+
     @Test
     public void testAddRating_ReturnsRating_EqualResults() {
         System.out.println("testAddRating_ReturnsRating_EqualResults");
-        String movieid = "tt0080684";
-        int rating = 8;
-        given().when()
-                .post("/movies/add/rating/{movieid}/{rating}", movieid, rating).
+        RatingDTO rating = new RatingDTO("tt0080684", 8);
+        String json = GSON.toJson(rating);
+        given().contentType(ContentType.JSON)
+                .body(json)
+                .post("/movies/add/rating").
                 then()
                 .assertThat()
                 .statusCode(HttpStatus.OK_200.getStatusCode())
                 .body("rating", is(8));
     }
-    
-        @Test
+
+    @Test
     public void testEditRating_ReturnsRating_EqualResults() {
         System.out.println("testEditRating_ReturnsRating_EqualResults");
-        String movieid = "tt0076759";
-        int rating = 10;
-        given().when()         
-                .put("/movies/edit/rating/{id}/{movieID}/{rating}", r1.getId(), movieid, rating).
+        RatingDTO rating = new RatingDTO(r1.getId(), "tt0076759", 10);
+        String json = GSON.toJson(rating);
+        given().contentType(ContentType.JSON)
+                .body(json)
+                .put("/movies/edit/rating").
                 then()
                 .assertThat()
                 .statusCode(HttpStatus.OK_200.getStatusCode())
                 .body("rating", is(10));
-        
+
     }
-    
-        @Test
+
+//    @Test
     public void testDeleteRating_ReturnsRating_EqualResults() {
         System.out.println("testDeleteRating_ReturnsRating_EqualResults");
-        given().when()         
-                .delete("/movies/delete/rating/{id}", r1.getId()).
+        String json = GSON.toJson(new RatingDTO(r2));
+        given().contentType(ContentType.JSON)
+                .body(json)
+                .delete("/movies/delete/rating").
                 then()
                 .assertThat()
                 .statusCode(HttpStatus.OK_200.getStatusCode())
-                .body(is("Rating " + r1.getId() +" deleted"));
+                .body(is("Rating " + r2.getId() + " deleted"));
     }
 
     @Test
     public void testAddReview_ReturnsReview_EqualResults() {
         System.out.println("testAddReview_ReturnsReview_EqualResults");
-        String movieid = "tt0080684";
-        String review = "Very good movie";
-        given().when()         
-                .post("/movies/add/review/{movieid}/{review}", movieid, review).
+        ReviewDTO review = new ReviewDTO("tt0080684","Very good movie");
+        String json = GSON.toJson(review);
+        given().contentType(ContentType.JSON)
+                .body(json)
+                .post("/movies/add/review").
                 then()
                 .assertThat()
                 .statusCode(HttpStatus.OK_200.getStatusCode())
-                .body("review",is("Very good movie"));
+                .body("review", is("Very good movie"));
     }
-    
+
     @Test
     public void testEditReview_ReturnsReview_EqualResults() {
         System.out.println("testEditReview_ReturnsReview_EqualResults");
-        String movieid = "tt0076759";
-        String review = "Very good movie";
-        given().when()         
-                .put("/movies/edit/review/{id}/{movieID}/{review}", re1.getId(), movieid, review).
+        ReviewDTO review = new ReviewDTO(re1.getId(), "tt0076759","Very good movie");
+        String json = GSON.toJson(review);
+        given().contentType(ContentType.JSON)
+                .body(json)
+                .put("/movies/edit/review").
                 then()
                 .assertThat()
                 .statusCode(HttpStatus.OK_200.getStatusCode())
-                .body("review",is("Very good movie"));
+                .body("review", is("Very good movie"));
     }
-    
-        @Test
+
+    //@Test
     public void testDeleteReview_ReturnsReview_EqualResults() {
         System.out.println("testDeleteReview_ReturnsReview_EqualResults");
-        given().when()         
-                .delete("/movies/delete/review/{id}", re1.getId()).
+        ReviewDTO review = new ReviewDTO(re1);
+        String json = GSON.toJson(review);
+        given().contentType(ContentType.JSON)
+                .body(json)
+                .delete("/movies/delete/review/").
                 then()
                 .assertThat()
                 .statusCode(HttpStatus.OK_200.getStatusCode())
-                .body(is("review " + re1.getId() +" deleted"));
+                .body(is("review " + re1.getId() + " deleted"));
     }
 }

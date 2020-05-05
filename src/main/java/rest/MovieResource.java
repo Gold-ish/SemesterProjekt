@@ -11,6 +11,7 @@ import errorhandling.NotFoundException;
 import facades.MovieFacade;
 import java.io.IOException;
 import javax.persistence.EntityManagerFactory;
+import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -74,54 +75,60 @@ public class MovieResource {
     }
     
     @POST
-    @Path("add/rating/{movieid}/{rating}")
+    @Path("add/rating")
+    @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response addRating(@PathParam("movieid") String movieID,
-            @PathParam("rating") int rating) {
-        String returnRating = GSON.toJson(FACADE.addRating(new RatingDTO(movieID, rating)));
+    public Response addRating(String json) {
+        RatingDTO rating = GSON.fromJson(json, RatingDTO.class);
+        String returnRating = GSON.toJson(FACADE.addRating(rating));
         return Response.ok(returnRating).build();
     }
     
     @PUT
-    @Path("edit/rating/{id}/{movieid}/{rating}")
+    @Path("edit/rating")
+    @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response editRating(@PathParam("id") int id, @PathParam("movieid") String movieID,
-            @PathParam("rating") int rating) throws NotFoundException {
-        String returnRating = GSON.toJson(FACADE.editRating(new RatingDTO(id, movieID, rating)));
+    public Response editRating(String json) throws NotFoundException {
+        RatingDTO rating = GSON.fromJson(json, RatingDTO.class);
+        String returnRating = GSON.toJson(FACADE.editRating(rating));
         return Response.ok(returnRating).build();
     }
     
     @DELETE
-    @Path("delete/rating/{id}")
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response deleteRating(@PathParam("id") int id) throws NotFoundException {
-        String deletedRating = FACADE.deleteRating(id);
+    @Path("delete/rating")
+    @Consumes(MediaType.APPLICATION_JSON)
+    public Response deleteRating(String json) throws NotFoundException {
+        RatingDTO rating = GSON.fromJson(json, RatingDTO.class);
+        String deletedRating = FACADE.deleteRating(rating);
         return Response.ok(deletedRating).build();
     }
     
     @POST
-    @Path("add/review/{movieid}/{review}")
+    @Path("add/review")
+    @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response addReview(@PathParam("movieid") String movieID,
-            @PathParam("review") String review) {
-        String returnReview = GSON.toJson(FACADE.addReview(new ReviewDTO(movieID, review)));
+    public Response addReview(String json) {
+        ReviewDTO review = GSON.fromJson(json, ReviewDTO.class);
+        String returnReview = GSON.toJson(FACADE.addReview(review));
         return Response.ok(returnReview).build();
     }
     
     @PUT
-    @Path("edit/review/{id}/{movieid}/{review}")
+    @Path("edit/review")
+    @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response editReview(@PathParam("id") int id, @PathParam("movieid") String movieID,
-            @PathParam("review") String review) throws NotFoundException {
-        String returnReview = GSON.toJson(FACADE.editReview(new ReviewDTO(id, movieID, review)));
+    public Response editReview(String json) throws NotFoundException {
+        ReviewDTO review = GSON.fromJson(json, ReviewDTO.class);
+        String returnReview = GSON.toJson(FACADE.editReview(review));
         return Response.ok(returnReview).build();
     }
     
     @DELETE
-    @Path("delete/review/{id}")
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response editReview(@PathParam("id") int id) throws NotFoundException {
-        String deletedReview = FACADE.deleteReview(id);
+    @Path("delete/review")
+    @Consumes(MediaType.APPLICATION_JSON)
+    public Response deleteReview(String json) throws NotFoundException {
+        ReviewDTO review = GSON.fromJson(json, ReviewDTO.class);
+        String deletedReview = FACADE.deleteReview(review);
         return Response.ok(deletedReview).build();
     }
     

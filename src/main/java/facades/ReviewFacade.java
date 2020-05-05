@@ -83,17 +83,17 @@ public class ReviewFacade {
         }
     }
     
-    public String deleteReview(int id) throws NotFoundException{
+    public String deleteReview(ReviewDTO review) throws NotFoundException{
         EntityManager em = getEntityManager();
         try {
             em.getTransaction().begin();
-            Review r = em.find(Review.class, id);
+            Review r = em.find(Review.class, review.getId());
             if(r == null){
                 throw new NotFoundException();
             }
             em.remove(r);
             em.getTransaction().commit();
-            return "review " + id + " deleted";
+            return "review " + review.getId() + " deleted";
         } finally {
             em.close();
         }
