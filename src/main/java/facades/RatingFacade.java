@@ -71,7 +71,7 @@ public class RatingFacade {
             em.getTransaction().begin();
             Rating r = em.find(Rating.class, rdto.getId());
             if(r == null || !r.getMovieID().equals(rdto.getMovieID())){
-                throw new NotFoundException();
+                throw new NotFoundException("Movie or Review ID is wrong");
             }
             r.setRating(rdto.getRating());
             em.getTransaction().commit();
@@ -87,7 +87,7 @@ public class RatingFacade {
             em.getTransaction().begin();
             Rating r = em.find(Rating.class, id);
             if(r == null){
-                throw new NotFoundException();
+                throw new NotFoundException("");
             }
             em.remove(r);
             em.getTransaction().commit();
