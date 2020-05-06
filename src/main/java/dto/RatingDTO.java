@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package dto;
 
 import entities.Rating;
@@ -16,6 +11,9 @@ public class RatingDTO {
     private int id;
     private String movieID;
     private int rating;
+    
+    public RatingDTO() {
+    }
 
     public RatingDTO(int id, String movieID, int rating) {
         this.id = id;
