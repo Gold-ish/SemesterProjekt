@@ -71,7 +71,7 @@ public class MovieFacadeTest {
     @Test
     public void testGetMoviesByTitle_ReturnsListOf10Movies_EqualResults() throws IOException, MovieNotFoundException  {
         System.out.println("testGetMoviesByTitle_ReturnsListOf10Movies_EqualResults");
-        String searchString = "Planet";
+        String searchString = "Star";
         int pageNumber = 1;
         MovieListDTO actualDto = FACADE.getMoviesByTitle(searchString, pageNumber);
         assertEquals(10, actualDto.getMovieDTOs().size());

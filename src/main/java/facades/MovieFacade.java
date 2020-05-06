@@ -40,7 +40,13 @@ public class MovieFacade {
         return mdto;
     }
 
-    public MovieListDTO getMoviesByTitle(String searchString, int page) throws IOException, MovieNotFoundException {
+    public MovieListDTO getMoviesByTitle(String title, int page) throws IOException, 
+            MovieNotFoundException {
+        String searchString = title;
+        if (title.contains("%20")) {
+            searchString = searchString.replaceAll("%20", " ");
+        }
+        
         MovieListDTO mdtoList = fetchFacade.getMoviesByTitle(searchString, page);
         mdtoList.getMovieDTOs().forEach((movie) -> {
             movie.setAvgRating(ratingFacade.getRatingAvg(movie.getImdbID()));
@@ -56,8 +62,8 @@ public class MovieFacade {
         return ratingFacade.editRating(ratingDTO);
     }
     
-    public String deleteRating(int id) throws NotFoundException{
-        return ratingFacade.deleteRating(id);
+    public RatingDTO deleteRating(RatingDTO ratingDTO) throws NotFoundException{
+        return ratingFacade.deleteRating(ratingDTO);
     }
     
     public ReviewDTO addReview(ReviewDTO reviewDTO) {
@@ -68,8 +74,8 @@ public class MovieFacade {
         return reviewFacade.editReview(reviewDTO);
     }
     
-    public String deleteReview(int id) throws NotFoundException{
-        return reviewFacade.deleteReview(id);
+    public ReviewDTO deleteReview(ReviewDTO review) throws NotFoundException{
+        return reviewFacade.deleteReview(review);
     }
     
     
