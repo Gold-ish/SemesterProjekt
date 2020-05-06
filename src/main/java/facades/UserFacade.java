@@ -4,6 +4,8 @@ import dto.UserDTO;
 import entities.Role;
 import entities.User;
 import errorhandling.AuthenticationException;
+import errorhandling.UserException;
+import javax.persistence.EntityExistsException;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 
@@ -48,7 +50,7 @@ public class UserFacade {
         return user;
     }
 
-    public String registerUser(UserDTO userDTO) {
+    public String registerUser(UserDTO userDTO) throws UserException {
         EntityManager em = getEntityManager();
         User userToAdd = new User(userDTO);
         userToAdd.addRole(new Role("user"));
@@ -57,7 +59,10 @@ public class UserFacade {
             em.persist(userToAdd);
             em.getTransaction().commit();
             return "User was created";
-        } finally {
+        } catch(EntityExistsException e) {
+            throw new UserException("Username already taken.");
+        }
+        finally {
             em.close();
         } 
     }

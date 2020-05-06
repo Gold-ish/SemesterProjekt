@@ -15,6 +15,7 @@ import dto.UserDTO;
 import entities.User;
 import errorhandling.AuthenticationException;
 import errorhandling.GenericExceptionMapper;
+import errorhandling.UserException;
 import facades.UserFacade;
 import java.util.Date;
 import java.util.List;
@@ -43,21 +44,29 @@ public class LoginEndpoint {
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response login(String jsonString) throws AuthenticationException {
-        JsonObject json = new JsonParser().parse(jsonString).getAsJsonObject();
-        String username = json.get("username").getAsString();
-        String password = json.get("password").getAsString();
-        return verifyAndGrantToken(username, password, "LoggedIn");
+    public Response login(String jsonString) {
+        try {
+            JsonObject json = new JsonParser().parse(jsonString).getAsJsonObject();
+            String username = json.get("username").getAsString();
+            String password = json.get("password").getAsString();
+            return verifyAndGrantToken(username, password, "LoggedIn");
+        } catch (AuthenticationException e) {
+            return GENERIC_EXCEPTION_MAPPER.toResponse(e);
+        }
     }
 
     @POST
     @Path("register")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response registrUser(String jsonString) throws AuthenticationException {
-        UserDTO userDTO = GSON.fromJson(jsonString, UserDTO.class);
-        String result = USER_FACADE.registerUser(userDTO);//Needs fix.. When DTO is created.. it isn't created with a hashed password.
-        return verifyAndGrantToken(userDTO.getUsername(), userDTO.getPassword(), result);
+    public Response registrUser(String jsonString) {
+        try {
+            UserDTO userDTO = GSON.fromJson(jsonString, UserDTO.class);
+            String result = USER_FACADE.registerUser(userDTO);
+            return verifyAndGrantToken(userDTO.getUsername(), userDTO.getPassword(), result);
+        } catch (UserException | AuthenticationException e) {
+            return GENERIC_EXCEPTION_MAPPER.toResponse(e);
+        }
     }
 
     private Response verifyAndGrantToken(String username, String password, String result) throws AuthenticationException {
