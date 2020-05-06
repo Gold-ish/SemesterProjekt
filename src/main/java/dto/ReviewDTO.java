@@ -1,6 +1,7 @@
 package dto;
 
 import entities.Review;
+import entities.User;
 import java.util.Objects;
 
 /*
@@ -10,25 +11,29 @@ public class ReviewDTO {
     
     private int id;
     private String movieID;
+    private User user;
     private String review;
 
     public ReviewDTO() {
     }
     
-    public ReviewDTO(int id, String movieID, String review) {
+    public ReviewDTO(int id, String movieID, User user, String review) {
         this.id = id;
         this.movieID = movieID;
+        this.user = user;
         this.review = review;
     }
 
-    public ReviewDTO(String movieID, String review) {
+    public ReviewDTO(String movieID, User user, String review) {
         this.movieID = movieID;
+        this.user = user;
         this.review = review;
     }
 
   public ReviewDTO(Review r) {
         this.id = r.getId();
         this.movieID = r.getMovieID();
+        this.user = r.getUser();
         this.review = r.getReview();
     }    
 
@@ -56,12 +61,21 @@ public class ReviewDTO {
         this.review = review;
     }
 
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
     @Override
     public int hashCode() {
-        int hash = 7;
-        hash = 79 * hash + this.id;
-        hash = 79 * hash + Objects.hashCode(this.movieID);
-        hash = 79 * hash + Objects.hashCode(this.review);
+        int hash = 3;
+        hash = 97 * hash + this.id;
+        hash = 97 * hash + Objects.hashCode(this.movieID);
+        hash = 97 * hash + Objects.hashCode(this.user);
+        hash = 97 * hash + Objects.hashCode(this.review);
         return hash;
     }
 
@@ -91,6 +105,7 @@ public class ReviewDTO {
 
     @Override
     public String toString() {
-        return "ReviewDTO{" + "id=" + id + ", movieID=" + movieID + ", review=" + review + '}';
+        return "ReviewDTO{" + "id=" + id + ", movieID=" + movieID + ", userName=" + user + ", review=" + review + '}';
     }
+
 }

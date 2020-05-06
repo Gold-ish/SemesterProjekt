@@ -3,10 +3,12 @@ package facades;
 import dto.MovieListDTO;
 import dto.SpecificMovieDTO;
 import entities.Rating;
+import entities.User;
 import errorhandling.MovieNotFoundException;
 import java.io.IOException;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
+import org.junit.jupiter.api.AfterAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -24,6 +26,7 @@ public class MovieFacadeTest {
     private static EntityManagerFactory EMF;
     private static MovieFacade FACADE;
     private Rating r1, r2;
+    private static User user1 = new User("testuser", "123", "other", "05-05-2020");
 
     @BeforeAll
     public static void setUpClass() {
@@ -35,13 +38,27 @@ public class MovieFacadeTest {
     @BeforeEach
     public void setUp() {
         EntityManager em = EMF.createEntityManager();
-        r1 = new Rating("tt0076759", 8);
-        r2 = new Rating("tt0076759", 3);
+        r1 = new Rating("tt0076759", user1, 8);
+        r2 = new Rating("tt0076759", user1, 3);
         try {
             em.getTransaction().begin();
             em.createNamedQuery("Rating.deleteAllRows").executeUpdate();
+            em.createNamedQuery("User.deleteAllRows").executeUpdate();
             em.persist(r1);
             em.persist(r2);
+            em.getTransaction().commit();
+        } finally {
+            em.close();
+        }
+    }
+    
+    @AfterAll 
+    public static void cleanDatabase() {
+        EntityManager em = EMF.createEntityManager();
+        try {
+            em.getTransaction().begin();
+            em.createNamedQuery("Rating.deleteAllRows").executeUpdate();
+            em.createNamedQuery("User.deleteAllRows").executeUpdate();
             em.getTransaction().commit();
         } finally {
             em.close();

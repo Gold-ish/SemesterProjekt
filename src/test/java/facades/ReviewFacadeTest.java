@@ -2,11 +2,13 @@ package facades;
 
 import dto.ReviewDTO;
 import entities.Review;
+import entities.User;
 import errorhandling.NotFoundException;
 import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -22,7 +24,8 @@ public class ReviewFacadeTest {
 
     private static EntityManagerFactory EMF;
     private static ReviewFacade FACADE;
-    private static Review r1, r2, r3, r4, r5, r6;
+    private static Review r1, r2, r3, r4, r5;
+    private static User user1 = new User("testuser", "123", "other", "05-05-2020");
 
     @BeforeAll
     public static void setUpClass() {
@@ -34,19 +37,33 @@ public class ReviewFacadeTest {
     @BeforeEach
     public void setUp() {
         EntityManager em = EMF.createEntityManager();
-        r1 = new Review("MovieID1", "Very good movie");
-        r2 = new Review("MovieID2", "Very bad movie");
-        r3 = new Review("MovieID3", "Speciel movie");
-        r4 = new Review("MovieID1", "Not good acting");
-        r5 = new Review("MovieID2", "disappointed");
+        r1 = new Review("MovieID1", user1, "Very good movie");
+        r2 = new Review("MovieID2", user1, "Very bad movie");
+        r3 = new Review("MovieID3", user1, "Speciel movie");
+        r4 = new Review("MovieID1", user1, "Not good acting");
+        r5 = new Review("MovieID2", user1, "disappointed");
         try {
             em.getTransaction().begin();
             em.createNamedQuery("Review.deleteAllRows").executeUpdate();
+            em.createNamedQuery("User.deleteAllRows").executeUpdate();
             em.persist(r1);
             em.persist(r2);
             em.persist(r3);
             em.persist(r4);
             em.persist(r5);
+            em.getTransaction().commit();
+        } finally {
+            em.close();
+        }
+    }
+    
+    @AfterAll
+    public static void cleanDatabase() {
+        EntityManager em = EMF.createEntityManager();
+        try {
+            em.getTransaction().begin();
+            em.createNamedQuery("Review.deleteAllRows").executeUpdate();
+            em.createNamedQuery("User.deleteAllRows").executeUpdate();
             em.getTransaction().commit();
         } finally {
             em.close();
@@ -74,7 +91,8 @@ public class ReviewFacadeTest {
     @Test
     public void testAddReview_ReturnsTheReview_EqualResults() {
         System.out.println("testAddReview_ReturnsTheReview_EqualResults");
-        ReviewDTO rdtoExpected = new ReviewDTO("DummyRev", "It was very good");
+        User user = new User("testuser1", "123", "other", "05-05-2020");
+        ReviewDTO rdtoExpected = new ReviewDTO("DummyRev", user, "It was very good");
         ReviewDTO resultReview = FACADE.addReview(rdtoExpected);
         assertNotNull(resultReview.getId());
         assertEquals(resultReview.getMovieID(), rdtoExpected.getMovieID());
@@ -84,7 +102,8 @@ public class ReviewFacadeTest {
     @Test
     public void testEditReview_ReturnsTheReview_EqualResults() throws NotFoundException {
         System.out.println("testEditReview_ReturnsTheReview_EqualResults");
-        ReviewDTO rdtoExpected = new ReviewDTO(r1.getId(), r1.getMovieID(), "ChangeReview");
+        User user = new User("testuser2", "123", "other", "05-05-2020");
+        ReviewDTO rdtoExpected = new ReviewDTO(r1.getId(), r1.getMovieID(), user, "ChangeReview");
         ReviewDTO resultReview = FACADE.editReview(rdtoExpected);
         assertEquals(resultReview.getId(), rdtoExpected.getId());
         assertEquals(resultReview.getMovieID(), rdtoExpected.getMovieID());
@@ -94,14 +113,15 @@ public class ReviewFacadeTest {
     @Test
     public void testEditReview_ReturnsNotFoundException_ExceptionAssertion() {
         System.out.println("testEditReview_ReturnsTheReview_EqualResults");
+        User user = new User("testuser3", "123", "other", "05-05-2020");
         Assertions.assertThrows(NotFoundException.class, () -> {
-            FACADE.editReview(new ReviewDTO(-1, r1.getMovieID(), "ChangeReview"));
+            FACADE.editReview(new ReviewDTO(-1, r1.getMovieID(), user, "ChangeReview"));
 
         });
     }
 
     @Test
-    public void testDeleteReview_ReturnsConfirmationString_EqualResults() throws NotFoundException {
+    public void testDeleteReview_ReturnsReview_EqualResults() throws NotFoundException {
         System.out.println("testDeleteReview_ReturnsTheReview_EqualResults");
         ReviewDTO reviewDTO = new ReviewDTO(r1);
         ReviewDTO deleteReview = FACADE.deleteReview(reviewDTO);

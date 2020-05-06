@@ -40,7 +40,8 @@ public class ReviewFacade {
 
     public ReviewDTO addReview(ReviewDTO rdto) {
         EntityManager em = getEntityManager();
-        Review r = new Review(rdto.getMovieID(), rdto.getReview());
+        Review r = new Review(rdto.getMovieID(), rdto.getUser(),
+                rdto.getReview());
         try {
             em.getTransaction().begin();
             em.persist(r);
@@ -54,7 +55,8 @@ public class ReviewFacade {
     public List<ReviewDTO> getReviews(String movieID) {
         EntityManager em = getEntityManager();
         try {
-            TypedQuery<Review> tq = em.createQuery("SELECT r FROM Review r WHERE r.movieID = :id", Review.class);
+            TypedQuery<Review> tq = em.createQuery("SELECT r FROM Review r "
+                    + "WHERE r.movieID = :id", Review.class);
             tq.setParameter("id", movieID);
             List<ReviewDTO> qList = new ArrayList<>();
             for (Review r : tq.getResultList()) {

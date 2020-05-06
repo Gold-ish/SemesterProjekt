@@ -5,19 +5,22 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.Basic;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
+import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import org.mindrot.jbcrypt.BCrypt;
 
 @Entity
-//@NamedQuery(name = "User.deleteAllRows", query = "DELETE FROM users")
+@NamedQuery(name = "User.deleteAllRows", query = "DELETE FROM User")
 @Table(name = "users")
 public class User implements Serializable {
 
@@ -37,8 +40,27 @@ public class User implements Serializable {
         @JoinColumn(name = "role_name", referencedColumnName = "role_name")})
     @ManyToMany
     private List<Role> roleList = new ArrayList();
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private List<Review> reviews = new ArrayList();
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private List<Rating> ratings = new ArrayList();
     private String gender;
     private String birthday;
+    
+    public User() {
+    }
+
+    public User(String userName, String userPass) {
+        this.userName = userName;
+        this.userPass = BCrypt.hashpw(userPass, BCrypt.gensalt(10));
+    }
+    
+    public User(String userName, String userPass, String gender, String birthday) {
+        this.userName = userName;
+        this.userPass = BCrypt.hashpw(userPass, BCrypt.gensalt(10));
+        this.gender = gender;
+        this.birthday = birthday;
+    }
 
     public List<String> getRolesAsStrings() {
         if (roleList.isEmpty()) {
@@ -57,22 +79,14 @@ public class User implements Serializable {
         }
         StringBuilder rolesAsString = new StringBuilder();
         for (Role role : roleList) {
-            rolesAsString.append(role.getRoleName() + ", ");
+            rolesAsString.append(role.getRoleName()).append(", ");
         }
         return rolesAsString.toString().substring(0, rolesAsString.length() - 2);
-    }
-
-    public User() {
     }
 
     //TODO Change when password is hashed
     public boolean verifyPassword(String pw) {
         return (BCrypt.checkpw(pw, userPass));
-    }
-
-    public User(String userName, String userPass) {
-        this.userName = userName;
-        this.userPass = BCrypt.hashpw(userPass, BCrypt.gensalt(10));
     }
 
     public User(UserDTO userDTO) {
@@ -124,6 +138,32 @@ public class User implements Serializable {
 
     public void setBirthday(String birthday) {
         this.birthday = birthday;
+    }
+
+    public void addReview(Review review) {
+        reviews.add(review);
+        review.setUser(this);
+    }
+    
+    public List<Review> getReviews() {
+        return reviews;
+    }
+
+    public void setReviews(List<Review> reviews) {
+        this.reviews = reviews;
+    }
+    
+    public void addRating(Rating rating) {
+        ratings.add(rating);
+        rating.setUser(this);
+    }
+
+    public List<Rating> getRatings() {
+        return ratings;
+    }
+
+    public void setRatings(List<Rating> ratings) {
+        this.ratings = ratings;
     }
 
 }

@@ -1,6 +1,7 @@
 package dto;
 
 import entities.Rating;
+import entities.User;
 import java.util.Objects;
 
 /**
@@ -8,27 +9,32 @@ import java.util.Objects;
  * @author allan
  */
 public class RatingDTO {
+
     private int id;
     private String movieID;
+    private User user;
     private int rating;
-    
+
     public RatingDTO() {
     }
 
-    public RatingDTO(int id, String movieID, int rating) {
+    public RatingDTO(int id, String movieID, User user, int rating) {
         this.id = id;
         this.movieID = movieID;
+        this.user = user;
         this.rating = rating;
     }
 
-    public RatingDTO(String movieID, int rating) {
+    public RatingDTO(String movieID, User user, int rating) {
         this.movieID = movieID;
+        this.user = user;
         this.rating = rating;
     }
-    
+
     public RatingDTO(Rating r) {
         this.id = r.getId();
         this.movieID = r.getMovieID();
+        this.user = r.getUser();
         this.rating = r.getRating();
     }
 
@@ -56,12 +62,21 @@ public class RatingDTO {
         this.rating = rating;
     }
 
+    public User getUserName() {
+        return user;
+    }
+
+    public void setUserName(User user) {
+        this.user = user;
+    }
+
     @Override
     public int hashCode() {
         int hash = 7;
-        hash = 37 * hash + this.id;
-        hash = 37 * hash + Objects.hashCode(this.movieID);
-        hash = 37 * hash + this.rating;
+        hash = 97 * hash + this.id;
+        hash = 97 * hash + Objects.hashCode(this.movieID);
+        hash = 97 * hash + Objects.hashCode(this.user);
+        hash = 97 * hash + this.rating;
         return hash;
     }
 
@@ -91,8 +106,8 @@ public class RatingDTO {
 
     @Override
     public String toString() {
-        return "RatingDTO{" + "id=" + id + ", movieID=" + movieID + ", rating=" + rating + '}';
+        return "RatingDTO{" + "id=" + id + ", movieID=" + movieID + ", userName=" + user + ", rating=" + rating + '}';
     }
-    
+
     
 }

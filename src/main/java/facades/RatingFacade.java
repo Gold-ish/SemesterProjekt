@@ -39,7 +39,8 @@ public class RatingFacade {
 
     public RatingDTO addRating(RatingDTO rdto) {
         EntityManager em = getEntityManager();
-        Rating r = new Rating(rdto.getMovieID(), rdto.getRating());
+        Rating r = new Rating(rdto.getMovieID(), rdto.getUserName(), 
+                rdto.getRating());
         try {
             em.getTransaction().begin();
             em.persist(r);

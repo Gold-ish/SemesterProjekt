@@ -2,10 +2,13 @@ package entities;
 
 import java.io.Serializable;
 import java.util.Objects;
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 
@@ -23,10 +26,14 @@ public class Rating implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
     private String movieID;
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "user_name")
+    private User user;
     private int rating;
 
-    public Rating(String movieID, int rating) {
+    public Rating(String movieID, User user, int rating) {
         this.movieID = movieID;
+        this.user = user;
         this.rating = rating;
     }
 
@@ -56,15 +63,22 @@ public class Rating implements Serializable {
     public void setRating(int rating) {
         this.rating = rating;
     }
-    
-    
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
 
     @Override
     public int hashCode() {
-        int hash = 7;
-        hash = 53 * hash + this.id;
-        hash = 53 * hash + Objects.hashCode(this.movieID);
-        hash = 53 * hash + this.rating;
+        int hash = 3;
+        hash = 97 * hash + this.id;
+        hash = 97 * hash + Objects.hashCode(this.movieID);
+        hash = 97 * hash + Objects.hashCode(this.user);
+        hash = 97 * hash + this.rating;
         return hash;
     }
 
@@ -89,12 +103,16 @@ public class Rating implements Serializable {
         if (!Objects.equals(this.movieID, other.movieID)) {
             return false;
         }
+        if (!Objects.equals(this.user, other.user)) {
+            return false;
+        }
         return true;
     }
 
     @Override
     public String toString() {
-        return "Rating{" + "id=" + id + ", movieID=" + movieID + ", rating=" + rating + '}';
+        return "Rating{" + "id=" + id + ", movieID=" + movieID + ", userName=" + user + ", rating=" + rating + '}';
     }
-
+    
+    
 }

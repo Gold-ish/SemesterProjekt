@@ -2,10 +2,13 @@ package entities;
 
 import java.io.Serializable;
 import java.util.Objects;
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 
@@ -22,13 +25,17 @@ public class Review implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
     private String movieID;
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "user_name")
+    private User user;
     private String review;
 
     public Review() {
     }
 
-    public Review(String movieID, String review) {
+    public Review(String movieID, User user, String review) {
         this.movieID = movieID;
+        this.user = user;
         this.review = review;
     }
     
@@ -56,12 +63,21 @@ public class Review implements Serializable {
         this.review = review;
     }
 
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
     @Override
     public int hashCode() {
-        int hash = 3;
-        hash = 97 * hash + this.id;
-        hash = 97 * hash + Objects.hashCode(this.movieID);
-        hash = 97 * hash + Objects.hashCode(this.review);
+        int hash = 7;
+        hash = 19 * hash + this.id;
+        hash = 19 * hash + Objects.hashCode(this.movieID);
+        hash = 19 * hash + Objects.hashCode(this.user);
+        hash = 19 * hash + Objects.hashCode(this.review);
         return hash;
     }
 
@@ -83,17 +99,18 @@ public class Review implements Serializable {
         if (!Objects.equals(this.movieID, other.movieID)) {
             return false;
         }
+        if (!Objects.equals(this.user, other.user)) {
+            return false;
+        }
         if (!Objects.equals(this.review, other.review)) {
             return false;
         }
         return true;
     }
 
-
-
     @Override
     public String toString() {
-        return "Review{" + "id=" + id + ", movieID=" + movieID + ", review=" + review + '}';
+        return "Review{" + "id=" + id + ", movieID=" + movieID + ", user=" + user + ", review=" + review + '}';
     }
 
 }

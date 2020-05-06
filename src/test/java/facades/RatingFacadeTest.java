@@ -2,9 +2,11 @@ package facades;
 
 import dto.RatingDTO;
 import entities.Rating;
+import entities.User;
 import errorhandling.NotFoundException;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -22,6 +24,7 @@ public class RatingFacadeTest {
     private static EntityManagerFactory EMF;
     private static RatingFacade FACADE;
     private static Rating r1, r2, r3, r4, r5, r6;
+    private static User user1 = new User("testuser", "123", "other", "05-05-2020");
 
     @BeforeAll
     public static void setUpClass() {
@@ -33,21 +36,35 @@ public class RatingFacadeTest {
     @BeforeEach
     public void setUp() {
         EntityManager em = EMF.createEntityManager();
-        r1 = new Rating("MovieID1", 8);
-        r2 = new Rating("MovieID2", 8);
-        r3 = new Rating("MovieID3", 8);
-        r4 = new Rating("MovieID1", 3);
-        r5 = new Rating("MovieID2", 7);
-        r6 = new Rating("MovieID3", 5);
+        r1 = new Rating("MovieID1", user1, 8);
+        r2 = new Rating("MovieID2", user1, 8);
+        r3 = new Rating("MovieID3", user1, 8);
+        r4 = new Rating("MovieID1", user1, 3);
+        r5 = new Rating("MovieID2", user1, 7);
+        r6 = new Rating("MovieID3", user1, 5);
         try {
             em.getTransaction().begin();
             em.createNamedQuery("Rating.deleteAllRows").executeUpdate();
+            em.createNamedQuery("User.deleteAllRows").executeUpdate();
             em.persist(r1);
             em.persist(r2);
             em.persist(r3);
             em.persist(r4);
             em.persist(r5);
             em.persist(r6);
+            em.getTransaction().commit();
+        } finally {
+            em.close();
+        }
+    }
+    
+    @AfterAll
+    public static void cleanDatabase() {
+        EntityManager em = EMF.createEntityManager();
+        try {
+            em.getTransaction().begin();
+            em.createNamedQuery("Rating.deleteAllRows").executeUpdate();
+            em.createNamedQuery("User.deleteAllRows").executeUpdate();
             em.getTransaction().commit();
         } finally {
             em.close();
@@ -75,7 +92,8 @@ public class RatingFacadeTest {
     @Test
     public void testAddRating_ReturnsTheRating_EqualResults() {
         System.out.println("testAddRating_ReturnsTheRating_EqualResults");
-        RatingDTO rdtoExpected = new RatingDTO("MovieID1", 10);
+        User user = new User("testuser1", "123", "other", "05-05-2020");
+        RatingDTO rdtoExpected = new RatingDTO("MovieID1", user, 10);
         RatingDTO rdtoResult = FACADE.addRating(rdtoExpected);
         assertNotNull(rdtoResult.getId());
         assertEquals(rdtoResult.getMovieID(), rdtoExpected.getMovieID());
@@ -90,7 +108,8 @@ public class RatingFacadeTest {
     @Test
     public void testEditRating_ReturnsTheNewRating_EqualResults() throws NotFoundException {
         System.out.println("testEditRating_ReturnsTheNewRating_EqualResults");
-        RatingDTO rdtoExpected = new RatingDTO(r1.getId(), r1.getMovieID(), 10);
+        User user = new User("testuser2", "123", "other", "05-05-2020");
+        RatingDTO rdtoExpected = new RatingDTO(r1.getId(), r1.getMovieID(), user, 10);
         RatingDTO rdtoResult = FACADE.editRating(rdtoExpected);
         assertEquals(rdtoResult.getId(), rdtoExpected.getId());
         assertEquals(rdtoResult.getMovieID(), rdtoExpected.getMovieID());
@@ -100,8 +119,9 @@ public class RatingFacadeTest {
     @Test
     public void testEditRating_ReturnsNotFoundException_ExceptionAssertion() {
         System.out.println("testEditRating_ReturnsNotFoundException_ExceptionAssertion");
+        User user = new User("testuser3", "123", "other", "05-05-2020");
         Assertions.assertThrows(NotFoundException.class, () -> {
-            FACADE.editRating(new RatingDTO(-1, r1.getMovieID(), 10));
+            FACADE.editRating(new RatingDTO(-1, r1.getMovieID(), user, 10));
 
         });
     }
