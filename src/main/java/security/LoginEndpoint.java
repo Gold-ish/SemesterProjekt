@@ -16,6 +16,7 @@ import entities.User;
 import errorhandling.AuthenticationException;
 import errorhandling.GenericExceptionMapper;
 import errorhandling.UserException;
+import errorhandling.UserExceptionMapper;
 import facades.UserFacade;
 import java.util.Date;
 import java.util.List;
@@ -40,6 +41,8 @@ public class LoginEndpoint {
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
     private static final GenericExceptionMapper GENERIC_EXCEPTION_MAPPER
             = new GenericExceptionMapper();
+    private static final UserExceptionMapper USER_EXCEPTION_MAPPER
+            = new UserExceptionMapper();
 
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
@@ -64,8 +67,10 @@ public class LoginEndpoint {
             UserDTO userDTO = GSON.fromJson(jsonString, UserDTO.class);
             String result = USER_FACADE.registerUser(userDTO);
             return verifyAndGrantToken(userDTO.getUsername(), userDTO.getPassword(), result);
-        } catch (UserException | AuthenticationException e) {
+        } catch (AuthenticationException e) {
             return GENERIC_EXCEPTION_MAPPER.toResponse(e);
+        } catch (UserException e) {
+            return USER_EXCEPTION_MAPPER.toResponse((UserException) e);
         }
     }
 

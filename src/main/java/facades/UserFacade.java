@@ -5,9 +5,9 @@ import entities.Role;
 import entities.User;
 import errorhandling.AuthenticationException;
 import errorhandling.UserException;
-import javax.persistence.EntityExistsException;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
+import javax.persistence.RollbackException;
 
 /**
  * @author lam@cphbusiness.dk
@@ -59,7 +59,7 @@ public class UserFacade {
             em.persist(userToAdd);
             em.getTransaction().commit();
             return "User was created";
-        } catch(EntityExistsException e) {
+        } catch(RollbackException e) {
             throw new UserException("Username already taken.");
         }
         finally {
