@@ -40,13 +40,8 @@ public class MovieFacade {
         return mdto;
     }
 
-    public MovieListDTO getMoviesByTitle(String title, int page) throws IOException,
+    public MovieListDTO getMoviesByTitle(String searchString, int page) throws IOException,
             MovieNotFoundException {
-        String searchString = title;
-        if (title.contains("%20")) {
-            searchString = searchString.replaceAll("%20", "+");
-        }
-
         MovieListDTO mdtoList = fetchFacade.getMoviesByTitle(searchString, page);
         mdtoList.getMovieDTOs().forEach((movie) -> {
             movie.setAvgRating(ratingFacade.getRatingAvg(movie.getImdbID()));
