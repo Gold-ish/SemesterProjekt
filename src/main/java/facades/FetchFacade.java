@@ -31,7 +31,7 @@ public class FetchFacade {
     }
 
     public SpecificMovieDTO getMovieById(String id) throws IOException, MovieNotFoundException {
-        String fetchedJSONString = HttpUtils.fetchData("http://www.omdbapi.com/?i=" + id + "&plot=full&apikey=6b10a5de");
+        String fetchedJSONString = HttpUtils.fetchData("http://www.omdbapi.com/?i=" + id + "&plot=full&apikey=492c3335");
         if (fetchedJSONString.contains("Error")) {
             throw new MovieNotFoundException("No movie found with id: " + id);
         }
@@ -41,7 +41,7 @@ public class FetchFacade {
 
     public MovieListDTO getMoviesByTitle(String searchString, int page) throws IOException, MovieNotFoundException {
         String fetchedJSONString = HttpUtils.fetchData("http://www.omdbapi.com/?s='"
-                + searchString + "'&page=" + page + "&apikey=6b10a5de");
+                + searchString + "'&page=" + page + "&apikey=492c3335");
         if (fetchedJSONString.contains("Movie not found!")) {
             throw new MovieNotFoundException("No movie found with the search result: " + searchString);
         } else if (fetchedJSONString.contains("Too many results.")) {
