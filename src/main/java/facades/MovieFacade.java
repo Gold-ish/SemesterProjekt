@@ -67,7 +67,7 @@ public class MovieFacade {
         return ratingFacade.editRating(ratingDTO);
     }
     
-    public String deleteRating(RatingDTO ratingDTO) throws NotFoundException{
+    public RatingDTO deleteRating(RatingDTO ratingDTO) throws NotFoundException{
         return ratingFacade.deleteRating(ratingDTO);
     }
     
@@ -79,7 +79,7 @@ public class MovieFacade {
         return reviewFacade.editReview(reviewDTO);
     }
     
-    public String deleteReview(ReviewDTO review) throws NotFoundException{
+    public ReviewDTO deleteReview(ReviewDTO review) throws NotFoundException{
         return reviewFacade.deleteReview(review);
     }
     

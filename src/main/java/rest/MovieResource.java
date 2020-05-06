@@ -99,7 +99,7 @@ public class MovieResource {
     @Consumes(MediaType.APPLICATION_JSON)
     public Response deleteRating(String json) throws NotFoundException {
         RatingDTO rating = GSON.fromJson(json, RatingDTO.class);
-        String deletedRating = FACADE.deleteRating(rating);
+        String deletedRating = GSON.toJson(FACADE.deleteRating(rating));
         return Response.ok(deletedRating).build();
     }
     
@@ -128,7 +128,7 @@ public class MovieResource {
     @Consumes(MediaType.APPLICATION_JSON)
     public Response deleteReview(String json) throws NotFoundException {
         ReviewDTO review = GSON.fromJson(json, ReviewDTO.class);
-        String deletedReview = FACADE.deleteReview(review);
+        String deletedReview = GSON.toJson(FACADE.deleteReview(review));
         return Response.ok(deletedReview).build();
     }
     

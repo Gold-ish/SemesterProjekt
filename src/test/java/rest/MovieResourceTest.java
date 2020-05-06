@@ -260,7 +260,9 @@ public class MovieResourceTest {
                 then()
                 .assertThat()
                 .statusCode(HttpStatus.OK_200.getStatusCode())
-                .body(is("Rating " + r2.getId() + " deleted"));
+                .body("id", is(r2.getId()))
+                .body("movieID", is("tt0076759"))
+                .body("rating", is(3));
     }
 
     @Test
@@ -291,7 +293,7 @@ public class MovieResourceTest {
                 .body("review", is("Very good movie"));
     }
 
-    //@Test
+//    @Test
     public void testDeleteReview_ReturnsReview_EqualResults() {
         System.out.println("testDeleteReview_ReturnsReview_EqualResults");
         ReviewDTO review = new ReviewDTO(re1);
@@ -302,6 +304,8 @@ public class MovieResourceTest {
                 then()
                 .assertThat()
                 .statusCode(HttpStatus.OK_200.getStatusCode())
-                .body(is("review " + re1.getId() + " deleted"));
+                .body("id", is(re1.getId()))
+                .body("movieID", is("tt0076759"))
+                .body("review", is("Good movie!"));
     }
 }

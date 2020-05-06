@@ -81,7 +81,7 @@ public class RatingFacade {
         }
     }
     
-    public String deleteRating(RatingDTO rdto) throws NotFoundException{
+    public RatingDTO deleteRating(RatingDTO rdto) throws NotFoundException{
         EntityManager em = getEntityManager();
         try {
             em.getTransaction().begin();
@@ -91,7 +91,7 @@ public class RatingFacade {
             }
             em.remove(r);
             em.getTransaction().commit();
-            return "Rating " + rdto.getId() + " deleted";
+            return new RatingDTO(r);
         } finally {
             em.close();
         }

@@ -109,8 +109,9 @@ public class RatingFacadeTest {
     @Test
     public void testDeleteRating_ReturnsConfirmationString_EqualResults() throws NotFoundException {
         System.out.println("testDeleteRating_ReturnsConfirmationString_EqualResults");
-        String deleteReviewReturn = FACADE.deleteRating(new RatingDTO(r1));
-        assertEquals("Rating " + r1.getId() + " deleted", deleteReviewReturn);
+        RatingDTO ratingDTO = new RatingDTO(r1);
+        RatingDTO deleteRating = FACADE.deleteRating(new RatingDTO(r1));
+        assertEquals(ratingDTO, deleteRating);
     }
 
     @Test
