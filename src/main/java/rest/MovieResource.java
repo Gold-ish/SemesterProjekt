@@ -88,19 +88,27 @@ public class MovieResource {
     @Path("edit/rating")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response editRating(String json) throws NotFoundException {
-        RatingDTO rating = GSON.fromJson(json, RatingDTO.class);
-        String returnRating = GSON.toJson(FACADE.editRating(rating));
-        return Response.ok(returnRating).build();
+    public Response editRating(String json) {
+        try {
+            RatingDTO rating = GSON.fromJson(json, RatingDTO.class);
+            String returnRating = GSON.toJson(FACADE.editRating(rating));
+            return Response.ok(returnRating).build();
+        } catch (NotFoundException ex) {
+            return GENERIC_EXCEPTION_MAPPER.toResponse(ex);
+        }
     }
     
     @DELETE
     @Path("delete/rating")
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response deleteRating(String json) throws NotFoundException {
-        RatingDTO rating = GSON.fromJson(json, RatingDTO.class);
-        String deletedRating = GSON.toJson(FACADE.deleteRating(rating));
-        return Response.ok(deletedRating).build();
+    public Response deleteRating(String json) {
+        try {
+            RatingDTO rating = GSON.fromJson(json, RatingDTO.class);
+            String deletedRating = GSON.toJson(FACADE.deleteRating(rating));
+            return Response.ok(deletedRating).build();
+        } catch (NotFoundException ex) {
+            return GENERIC_EXCEPTION_MAPPER.toResponse(ex);
+        }
     }
     
     @POST
@@ -117,19 +125,27 @@ public class MovieResource {
     @Path("edit/review")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response editReview(String json) throws NotFoundException {
-        ReviewDTO review = GSON.fromJson(json, ReviewDTO.class);
-        String returnReview = GSON.toJson(FACADE.editReview(review));
-        return Response.ok(returnReview).build();
+    public Response editReview(String json) {
+        try {
+            ReviewDTO review = GSON.fromJson(json, ReviewDTO.class);
+            String returnReview = GSON.toJson(FACADE.editReview(review));
+            return Response.ok(returnReview).build();
+        } catch (NotFoundException ex) {
+            return GENERIC_EXCEPTION_MAPPER.toResponse(ex);
+        }
     }
     
     @DELETE
     @Path("delete/review")
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response deleteReview(String json) throws NotFoundException {
-        ReviewDTO review = GSON.fromJson(json, ReviewDTO.class);
-        String deletedReview = GSON.toJson(FACADE.deleteReview(review));
-        return Response.ok(deletedReview).build();
+    public Response deleteReview(String json) {
+        try {
+            ReviewDTO review = GSON.fromJson(json, ReviewDTO.class);
+            String deletedReview = GSON.toJson(FACADE.deleteReview(review));
+            return Response.ok(deletedReview).build();
+        } catch (NotFoundException ex) {
+            return GENERIC_EXCEPTION_MAPPER.toResponse(ex);
+        }
     }
     
 }
