@@ -36,6 +36,11 @@ public class Rating implements Serializable {
         this.user = user;
         this.rating = rating;
     }
+    
+    public Rating(String movieID, int rating) {
+        this.movieID = movieID;
+        this.rating = rating;
+    }
 
     public Rating() {
     }

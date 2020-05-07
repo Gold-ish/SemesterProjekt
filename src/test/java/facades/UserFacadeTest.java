@@ -1,8 +1,11 @@
 package facades;
 
 import dto.UserDTO;
+import entities.Rating;
+import entities.Review;
 import entities.Role;
 import entities.User;
+import errorhandling.AuthenticationException;
 import errorhandling.UserException;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
@@ -22,7 +25,6 @@ public class UserFacadeTest {
     private static EntityManagerFactory EMF;
     private static UserFacade FACADE;
     private User u1, u2;
-    private UserDTO ud1, ud2;
 
     @BeforeAll
     public static void setUpClass() {
@@ -44,16 +46,18 @@ public class UserFacadeTest {
     @BeforeEach
     public void setUp() {
         EntityManager em = EMF.createEntityManager();
-        ud1 = new UserDTO("UserNameTest1", "UserPassword1", "male", "05-05-2020");
-        ud2 = new UserDTO("UserNameTest2", "UserPassword2", "female", "50-50-2020");
-        u1 = new User(ud1);
-        u2 = new User(ud2);
+        u1 = new User("UserNameTest1", "UserPassword1", "male", "05-05-2020");
+        u2 = new User("UserNameTest2", "UserPassword2", "female", "50-50-2020");
+        Rating rating = new Rating("movie", 8);
+        Review review = new Review("movie", "Bad movie");
         u1.addRole(new Role("user"));
         u2.addRole(new Role("user"));
         try {
             em.getTransaction().begin();
             em.createNamedQuery("User.deleteAllRows").executeUpdate();
             em.persist(u1);
+            u1.addRating(rating);
+            u1.addReview(review);
             em.persist(u2);
             em.getTransaction().commit();
         } finally {
@@ -77,6 +81,13 @@ public class UserFacadeTest {
         Assertions.assertThrows(UserException.class, () -> {
             FACADE.registerUser(udto);
         });
+    }
+   
+    @Test
+    public void testGetUser() {
+        System.out.println("testGetUser");
+        User user = FACADE.getUser(u1.getUserName());
+        System.out.println(user);
     }
 
 }

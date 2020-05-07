@@ -2,6 +2,7 @@ package facades;
 
 import dto.ReviewDTO;
 import entities.Review;
+import entities.User;
 import errorhandling.NotFoundException;
 import java.util.ArrayList;
 import java.util.List;
@@ -52,6 +53,18 @@ public class ReviewFacade {
         }
     }
 
+    public List<Review> getReviews(User user) {
+        EntityManager em = getEntityManager();
+        try {
+            TypedQuery<Review> tq = em.createQuery("SELECT r FROM Review r "
+                    + "WHERE r.user = :user", Review.class);
+            tq.setParameter("user", user);
+            return tq.getResultList();
+        } finally {
+            em.close();
+        }
+    }
+
     public List<ReviewDTO> getReviews(String movieID) {
         EntityManager em = getEntityManager();
         try {
@@ -68,13 +81,13 @@ public class ReviewFacade {
         }
 
     }
-    
+
     public ReviewDTO editReview(ReviewDTO rdto) throws NotFoundException {
         EntityManager em = getEntityManager();
         try {
             em.getTransaction().begin();
             Review r = em.find(Review.class, rdto.getId());
-            if(r == null || !r.getMovieID().equals(rdto.getMovieID())){
+            if (r == null || !r.getMovieID().equals(rdto.getMovieID())) {
                 throw new NotFoundException();
             }
             r.setReview(rdto.getReview());
@@ -84,13 +97,13 @@ public class ReviewFacade {
             em.close();
         }
     }
-    
-    public ReviewDTO deleteReview(ReviewDTO review) throws NotFoundException{
+
+    public ReviewDTO deleteReview(ReviewDTO review) throws NotFoundException {
         EntityManager em = getEntityManager();
         try {
             em.getTransaction().begin();
             Review r = em.find(Review.class, review.getId());
-            if(r == null){
+            if (r == null) {
                 throw new NotFoundException();
             }
             em.remove(r);

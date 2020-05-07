@@ -32,6 +32,11 @@ public class Review implements Serializable {
 
     public Review() {
     }
+    
+    public Review(String movieID, String review) {
+        this.movieID = movieID;
+        this.review = review;
+    }
 
     public Review(String movieID, User user, String review) {
         this.movieID = movieID;

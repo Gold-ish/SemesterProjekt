@@ -4,6 +4,7 @@ import dto.UserDTO;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -46,7 +47,7 @@ public class User implements Serializable {
     private List<Rating> ratings = new ArrayList();
     private String gender;
     private String birthday;
-    
+
     public User() {
     }
 
@@ -54,12 +55,21 @@ public class User implements Serializable {
         this.userName = userName;
         this.userPass = BCrypt.hashpw(userPass, BCrypt.gensalt(10));
     }
-    
+
     public User(String userName, String userPass, String gender, String birthday) {
         this.userName = userName;
         this.userPass = BCrypt.hashpw(userPass, BCrypt.gensalt(10));
         this.gender = gender;
         this.birthday = birthday;
+    }
+
+    public User(UserDTO userDTO) {
+        this.userName = userDTO.getUsername();
+        this.userPass = BCrypt.hashpw(userDTO.getPassword(), BCrypt.gensalt(10));
+        this.gender = userDTO.getGender();
+        this.birthday = userDTO.getBirthday();
+        this.ratings = userDTO.getRatings();
+        this.reviews = userDTO.getReviews();
     }
 
     public List<String> getRolesAsStrings() {
@@ -87,13 +97,6 @@ public class User implements Serializable {
     //TODO Change when password is hashed
     public boolean verifyPassword(String pw) {
         return (BCrypt.checkpw(pw, userPass));
-    }
-
-    public User(UserDTO userDTO) {
-        this.userName = userDTO.getUsername();
-        this.userPass = BCrypt.hashpw(userDTO.getPassword(), BCrypt.gensalt(10));
-        this.gender = userDTO.getGender();
-        this.birthday = userDTO.getBirthday();
     }
 
     public String getUserName() {
@@ -142,9 +145,8 @@ public class User implements Serializable {
 
     public void addReview(Review review) {
         reviews.add(review);
-        review.setUser(this);
     }
-    
+
     public List<Review> getReviews() {
         return reviews;
     }
@@ -152,10 +154,9 @@ public class User implements Serializable {
     public void setReviews(List<Review> reviews) {
         this.reviews = reviews;
     }
-    
+
     public void addRating(Rating rating) {
         ratings.add(rating);
-        rating.setUser(this);
     }
 
     public List<Rating> getRatings() {
@@ -164,6 +165,54 @@ public class User implements Serializable {
 
     public void setRatings(List<Rating> ratings) {
         this.ratings = ratings;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 3;
+        hash = 17 * hash + Objects.hashCode(this.userName);
+        hash = 17 * hash + Objects.hashCode(this.userPass);
+        hash = 17 * hash + Objects.hashCode(this.roleList);
+        hash = 17 * hash + Objects.hashCode(this.reviews);
+        hash = 17 * hash + Objects.hashCode(this.ratings);
+        hash = 17 * hash + Objects.hashCode(this.gender);
+        hash = 17 * hash + Objects.hashCode(this.birthday);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final User other = (User) obj;
+        if (!Objects.equals(this.userName, other.userName)) {
+            return false;
+        }
+        if (!Objects.equals(this.userPass, other.userPass)) {
+            return false;
+        }
+        if (!Objects.equals(this.gender, other.gender)) {
+            return false;
+        }
+        if (!Objects.equals(this.birthday, other.birthday)) {
+            return false;
+        }
+        if (!Objects.equals(this.roleList, other.roleList)) {
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    public String toString() {
+        return "User{" + "userName=" + userName + ", roleList=" + roleList + ", reviews=" + reviews + ", ratings=" + ratings + ", gender=" + gender + ", birthday=" + birthday + '}';
     }
 
 }

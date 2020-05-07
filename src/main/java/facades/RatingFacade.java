@@ -2,10 +2,14 @@ package facades;
 
 import dto.RatingDTO;
 import entities.Rating;
+import entities.User;
 import errorhandling.NotFoundException;
+import java.util.ArrayList;
+import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Query;
+import javax.persistence.TypedQuery;
 
 /**
  *
@@ -35,6 +39,20 @@ public class RatingFacade {
 
     private EntityManager getEntityManager() {
         return emf.createEntityManager();
+    }
+    
+    public List<Rating> getRatings(User user) {
+        EntityManager em = getEntityManager();
+        try {
+            em.getTransaction().begin();
+            TypedQuery<Rating> q = em.createQuery("SELECT r FROM Rating r " 
+                    + "WHERE r.user = :user", Rating.class);
+            q.setParameter("user", user);
+            em.getTransaction().commit();
+            return q.getResultList();
+        } finally {
+            em.close();
+        }
     }
 
     public RatingDTO addRating(RatingDTO rdto) {
