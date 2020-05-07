@@ -7,7 +7,6 @@ import entities.Role;
 import entities.User;
 import errorhandling.AuthenticationException;
 import errorhandling.UserException;
-import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
@@ -79,9 +78,9 @@ public class UserFacade {
         try {
             user = em.find(User.class, username);
             if (user != null) {
-                List<Rating> ratings = ratingFacade.getRatings(user);
+                List<Rating> ratings = ratingFacade.getRatings(user.getUserName());
                 user.setRatings(ratings);
-                List<Review> reviews = reviewFacade.getReviews(user);
+                List<Review> reviews = reviewFacade.getReviewsForUser(user.getUserName());
                 user.setReviews(reviews);
             }
             return user;

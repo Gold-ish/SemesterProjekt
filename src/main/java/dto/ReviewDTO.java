@@ -1,7 +1,6 @@
 package dto;
 
 import entities.Review;
-import entities.User;
 import java.util.Objects;
 
 /*
@@ -11,20 +10,20 @@ public class ReviewDTO {
     
     private int id;
     private String movieID;
-    private User user;
+    private String user;
     private String review;
 
     public ReviewDTO() {
     }
     
-    public ReviewDTO(int id, String movieID, User user, String review) {
+    public ReviewDTO(int id, String movieID, String user, String review) {
         this.id = id;
         this.movieID = movieID;
         this.user = user;
         this.review = review;
     }
 
-    public ReviewDTO(String movieID, User user, String review) {
+    public ReviewDTO(String movieID, String user, String review) {
         this.movieID = movieID;
         this.user = user;
         this.review = review;
@@ -61,11 +60,11 @@ public class ReviewDTO {
         this.review = review;
     }
 
-    public User getUser() {
+    public String getUser() {
         return user;
     }
 
-    public void setUser(User user) {
+    public void setUser(String user) {
         this.user = user;
     }
 

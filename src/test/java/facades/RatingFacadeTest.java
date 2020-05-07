@@ -36,12 +36,12 @@ public class RatingFacadeTest {
     @BeforeEach
     public void setUp() {
         EntityManager em = EMF.createEntityManager();
-        r1 = new Rating("MovieID1", user1, 8);
-        r2 = new Rating("MovieID2", user1, 8);
-        r3 = new Rating("MovieID3", user1, 8);
-        r4 = new Rating("MovieID1", user1, 3);
-        r5 = new Rating("MovieID2", user1, 7);
-        r6 = new Rating("MovieID3", user1, 5);
+        r1 = new Rating("MovieID1", "user1", 8);
+        r2 = new Rating("MovieID2", "user1", 8);
+        r3 = new Rating("MovieID3", "user1", 8);
+        r4 = new Rating("MovieID1", "user1", 3);
+        r5 = new Rating("MovieID2", "user1", 7);
+        r6 = new Rating("MovieID3", "user1", 5);
         try {
             em.getTransaction().begin();
             em.createNamedQuery("Rating.deleteAllRows").executeUpdate();
@@ -93,7 +93,7 @@ public class RatingFacadeTest {
     public void testAddRating_ReturnsTheRating_EqualResults() {
         System.out.println("testAddRating_ReturnsTheRating_EqualResults");
         User user = new User("testuser1", "123", "other", "05-05-2020");
-        RatingDTO rdtoExpected = new RatingDTO("MovieID1", user, 10);
+        RatingDTO rdtoExpected = new RatingDTO("MovieID1", user.getUserName(), 10);
         RatingDTO rdtoResult = FACADE.addRating(rdtoExpected);
         assertNotNull(rdtoResult.getId());
         assertEquals(rdtoResult.getMovieID(), rdtoExpected.getMovieID());
@@ -109,7 +109,7 @@ public class RatingFacadeTest {
     public void testEditRating_ReturnsTheNewRating_EqualResults() throws NotFoundException {
         System.out.println("testEditRating_ReturnsTheNewRating_EqualResults");
         User user = new User("testuser2", "123", "other", "05-05-2020");
-        RatingDTO rdtoExpected = new RatingDTO(r1.getId(), r1.getMovieID(), user, 10);
+        RatingDTO rdtoExpected = new RatingDTO(r1.getId(), r1.getMovieID(), user.getUserName(), 10);
         RatingDTO rdtoResult = FACADE.editRating(rdtoExpected);
         assertEquals(rdtoResult.getId(), rdtoExpected.getId());
         assertEquals(rdtoResult.getMovieID(), rdtoExpected.getMovieID());
@@ -121,7 +121,7 @@ public class RatingFacadeTest {
         System.out.println("testEditRating_ReturnsNotFoundException_ExceptionAssertion");
         User user = new User("testuser3", "123", "other", "05-05-2020");
         Assertions.assertThrows(NotFoundException.class, () -> {
-            FACADE.editRating(new RatingDTO(-1, r1.getMovieID(), user, 10));
+            FACADE.editRating(new RatingDTO(-1, r1.getMovieID(), user.getUserName(), 10));
 
         });
     }

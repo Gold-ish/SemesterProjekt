@@ -1,7 +1,6 @@
 package dto;
 
 import entities.Rating;
-import entities.User;
 import java.util.Objects;
 
 /**
@@ -12,20 +11,20 @@ public class RatingDTO {
 
     private int id;
     private String movieID;
-    private User user;
+    private String user;
     private int rating;
 
     public RatingDTO() {
     }
 
-    public RatingDTO(int id, String movieID, User user, int rating) {
+    public RatingDTO(int id, String movieID, String user, int rating) {
         this.id = id;
         this.movieID = movieID;
         this.user = user;
         this.rating = rating;
     }
 
-    public RatingDTO(String movieID, User user, int rating) {
+    public RatingDTO(String movieID, String user, int rating) {
         this.movieID = movieID;
         this.user = user;
         this.rating = rating;
@@ -62,11 +61,11 @@ public class RatingDTO {
         this.rating = rating;
     }
 
-    public User getUserName() {
+    public String getUserName() {
         return user;
     }
 
-    public void setUserName(User user) {
+    public void setUserName(String user) {
         this.user = user;
     }
 

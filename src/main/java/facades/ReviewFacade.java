@@ -2,7 +2,6 @@ package facades;
 
 import dto.ReviewDTO;
 import entities.Review;
-import entities.User;
 import errorhandling.NotFoundException;
 import java.util.ArrayList;
 import java.util.List;
@@ -53,7 +52,7 @@ public class ReviewFacade {
         }
     }
 
-    public List<Review> getReviews(User user) {
+    public List<Review> getReviewsForUser(String user) {
         EntityManager em = getEntityManager();
         try {
             TypedQuery<Review> tq = em.createQuery("SELECT r FROM Review r "

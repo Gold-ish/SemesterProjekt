@@ -2,13 +2,10 @@ package entities;
 
 import java.io.Serializable;
 import java.util.Objects;
-import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 
@@ -26,12 +23,10 @@ public class Rating implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
     private String movieID;
-    @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "user_name")
-    private User user;
+    private String user;
     private int rating;
 
-    public Rating(String movieID, User user, int rating) {
+    public Rating(String movieID, String user, int rating) {
         this.movieID = movieID;
         this.user = user;
         this.rating = rating;
@@ -69,11 +64,11 @@ public class Rating implements Serializable {
         this.rating = rating;
     }
 
-    public User getUser() {
+    public String getUser() {
         return user;
     }
 
-    public void setUser(User user) {
+    public void setUser(String user) {
         this.user = user;
     }
 

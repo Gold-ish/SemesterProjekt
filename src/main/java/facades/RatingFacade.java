@@ -2,9 +2,7 @@ package facades;
 
 import dto.RatingDTO;
 import entities.Rating;
-import entities.User;
 import errorhandling.NotFoundException;
-import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
@@ -41,7 +39,7 @@ public class RatingFacade {
         return emf.createEntityManager();
     }
     
-    public List<Rating> getRatings(User user) {
+    public List<Rating> getRatings(String user) {
         EntityManager em = getEntityManager();
         try {
             em.getTransaction().begin();

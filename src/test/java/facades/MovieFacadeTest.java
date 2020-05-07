@@ -38,8 +38,8 @@ public class MovieFacadeTest {
     @BeforeEach
     public void setUp() {
         EntityManager em = EMF.createEntityManager();
-        r1 = new Rating("tt0076759", user1, 8);
-        r2 = new Rating("tt0076759", user1, 3);
+        r1 = new Rating("tt0076759", "user1", 8);
+        r2 = new Rating("tt0076759", "user1", 3);
         try {
             em.getTransaction().begin();
             em.createNamedQuery("Rating.deleteAllRows").executeUpdate();

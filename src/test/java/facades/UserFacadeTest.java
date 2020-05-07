@@ -5,7 +5,6 @@ import entities.Rating;
 import entities.Review;
 import entities.Role;
 import entities.User;
-import errorhandling.AuthenticationException;
 import errorhandling.UserException;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;

@@ -85,10 +85,10 @@ public class MovieResourceTest {
     @BeforeEach
     public void setUp() {
         EntityManager em = EMF.createEntityManager();
-        re1 = new Review("tt0076759", user1, "Good movie!");
-        re2 = new Review("tt0076759", user1, "Best movie ever");
-        r1 = new Rating("tt0076759", user1, 8);
-        r2 = new Rating("tt0076759", user1, 3);
+        re1 = new Review("tt0076759", "user1", "Good movie!");
+        re2 = new Review("tt0076759", "user1", "Best movie ever");
+        r1 = new Rating("tt0076759", "user1", 8);
+        r2 = new Rating("tt0076759", "user1", 3);
         try {
             em.getTransaction().begin();
             em.createNamedQuery("Review.deleteAllRows").executeUpdate();
@@ -238,7 +238,7 @@ public class MovieResourceTest {
     public void testAddRating_ReturnsRating_EqualResults() {
         System.out.println("testAddRating_ReturnsRating_EqualResults");
         User user = new User("testuser1", "123", "other", "05-05-2020");
-        RatingDTO rating = new RatingDTO("tt0080684", user, 8);
+        RatingDTO rating = new RatingDTO("tt0080684", user.getUserName(), 8);
         String json = GSON.toJson(rating);
         given().contentType(ContentType.JSON)
                 .body(json)
@@ -252,7 +252,7 @@ public class MovieResourceTest {
     @Test
     public void testEditRating_ReturnsRating_EqualResults() {
         System.out.println("testEditRating_ReturnsRating_EqualResults");
-        RatingDTO rating = new RatingDTO(r1.getId(), "tt0076759", user1, 10);
+        RatingDTO rating = new RatingDTO(r1.getId(), "tt0076759", user1.getUserName(), 10);
         String json = GSON.toJson(rating);
         given().contentType(ContentType.JSON)
                 .body(json)
@@ -283,7 +283,7 @@ public class MovieResourceTest {
     public void testAddReview_ReturnsReview_EqualResults() {
         System.out.println("testAddReview_ReturnsReview_EqualResults");
         User user = new User("testuser3", "123", "other", "05-05-2020");
-        ReviewDTO review = new ReviewDTO("tt0080684", user, "Very good movie");
+        ReviewDTO review = new ReviewDTO("tt0080684", user.getUserName(), "Very good movie");
         String json = GSON.toJson(review);
         given().contentType(ContentType.JSON)
                 .body(json)
@@ -297,7 +297,7 @@ public class MovieResourceTest {
     @Test
     public void testEditReview_ReturnsReview_EqualResults() {
         System.out.println("testEditReview_ReturnsReview_EqualResults");
-        ReviewDTO review = new ReviewDTO(re1.getId(), "tt0076759", user1,
+        ReviewDTO review = new ReviewDTO(re1.getId(), "tt0076759", "user1",
                 "Very good movie");
         String json = GSON.toJson(review);
         given().contentType(ContentType.JSON)
