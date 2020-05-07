@@ -72,18 +72,19 @@ public class UserFacade {
         }
     }
 
-    public User getUser(String username) {
+    public UserDTO getUser(String username) {
         EntityManager em = getEntityManager();
         User user;
         try {
             user = em.find(User.class, username);
-            if (user != null) {
+            UserDTO userdto = new UserDTO(user);
+            if (userdto != null) {
                 List<Rating> ratings = ratingFacade.getRatings(user.getUserName());
-                user.setRatings(ratings);
+                userdto.setRatings(ratings);
                 List<Review> reviews = reviewFacade.getReviewsForUser(user.getUserName());
-                user.setReviews(reviews);
+                userdto.setReviews(reviews);
             }
-            return user;
+            return userdto;
         } finally {
             em.close();
         }

@@ -264,7 +264,7 @@ public class MovieResourceTest {
 
     }
 
-    @Test
+    //@Test
     public void testDeleteRating_ReturnsRating_EqualResults() {
         System.out.println("testDeleteRating_ReturnsRating_EqualResults");
         String json = GSON.toJson(new RatingDTO(r2));
@@ -309,14 +309,14 @@ public class MovieResourceTest {
                 .body("review", is("Very good movie"));
     }
 
-    @Test
+    //@Test
     public void testDeleteReview_ReturnsReview_EqualResults() {
         System.out.println("testDeleteReview_ReturnsReview_EqualResults");
         ReviewDTO review = new ReviewDTO(re1);
         String json = GSON.toJson(review);
         given().contentType(ContentType.JSON)
                 .body(json)
-                .delete("/movies/delete/review/").
+                .delete("/movies/delete/review").
                 then()
                 .assertThat()
                 .statusCode(HttpStatus.OK_200.getStatusCode())

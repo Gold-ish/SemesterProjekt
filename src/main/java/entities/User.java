@@ -39,8 +39,6 @@ public class User implements Serializable {
         @JoinColumn(name = "role_name", referencedColumnName = "role_name")})
     @ManyToMany
     private List<Role> roleList = new ArrayList();
-    private List<Review> reviews = new ArrayList();
-    private List<Rating> ratings = new ArrayList();
     private String gender;
     private String birthday;
 
@@ -64,8 +62,6 @@ public class User implements Serializable {
         this.userPass = BCrypt.hashpw(userDTO.getPassword(), BCrypt.gensalt(10));
         this.gender = userDTO.getGender();
         this.birthday = userDTO.getBirthday();
-        this.ratings = userDTO.getRatings();
-        this.reviews = userDTO.getReviews();
     }
 
     public List<String> getRolesAsStrings() {
@@ -139,40 +135,14 @@ public class User implements Serializable {
         this.birthday = birthday;
     }
 
-    public void addReview(Review review) {
-        reviews.add(review);
-    }
-
-    public List<Review> getReviews() {
-        return reviews;
-    }
-
-    public void setReviews(List<Review> reviews) {
-        this.reviews = reviews;
-    }
-
-    public void addRating(Rating rating) {
-        ratings.add(rating);
-    }
-
-    public List<Rating> getRatings() {
-        return ratings;
-    }
-
-    public void setRatings(List<Rating> ratings) {
-        this.ratings = ratings;
-    }
-
     @Override
     public int hashCode() {
-        int hash = 3;
-        hash = 17 * hash + Objects.hashCode(this.userName);
-        hash = 17 * hash + Objects.hashCode(this.userPass);
-        hash = 17 * hash + Objects.hashCode(this.roleList);
-        hash = 17 * hash + Objects.hashCode(this.reviews);
-        hash = 17 * hash + Objects.hashCode(this.ratings);
-        hash = 17 * hash + Objects.hashCode(this.gender);
-        hash = 17 * hash + Objects.hashCode(this.birthday);
+        int hash = 7;
+        hash = 71 * hash + Objects.hashCode(this.userName);
+        hash = 71 * hash + Objects.hashCode(this.userPass);
+        hash = 71 * hash + Objects.hashCode(this.roleList);
+        hash = 71 * hash + Objects.hashCode(this.gender);
+        hash = 71 * hash + Objects.hashCode(this.birthday);
         return hash;
     }
 
@@ -208,7 +178,9 @@ public class User implements Serializable {
 
     @Override
     public String toString() {
-        return "User{" + "userName=" + userName + ", roleList=" + roleList + ", reviews=" + reviews + ", ratings=" + ratings + ", gender=" + gender + ", birthday=" + birthday + '}';
+        return "User{" + "userName=" + userName + ", userPass=" + userPass + ", roleList=" + roleList + ", gender=" + gender + ", birthday=" + birthday + '}';
     }
+    
+    
 
 }

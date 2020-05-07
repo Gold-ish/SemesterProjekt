@@ -2,6 +2,7 @@ package rest;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import dto.UserDTO;
 import entities.User;
 import facades.UserFacade;
 import java.util.List;
@@ -13,6 +14,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
 import javax.ws.rs.core.UriInfo;
 import utils.EMF_Creator;
@@ -58,10 +60,10 @@ public class RoleDemoResource {
     @Produces(MediaType.APPLICATION_JSON)
     @Path("user")
     @RolesAllowed("user")
-    public String getFromUser() {
+    public Response getFromUser() {
         String username = securityContext.getUserPrincipal().getName();
-        User user = FACADE.getUser(username);
-        return GSON.toJson(user);
+        UserDTO user = FACADE.getUser(username);
+        return Response.ok(GSON.toJson(user)).build();
     }
 
     @GET

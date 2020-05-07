@@ -32,8 +32,6 @@ public class UserDTO {
         this.password = user.getUserPass();
         this.gender = user.getGender();
         this.birthday = user.getBirthday();
-        this.ratings = user.getRatings();
-        this.reviews = user.getReviews();
     }
 
     public String getUsername() {

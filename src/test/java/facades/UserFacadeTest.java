@@ -47,13 +47,15 @@ public class UserFacadeTest {
         EntityManager em = EMF.createEntityManager();
         u1 = new User("UserNameTest1", "UserPassword1", "male", "05-05-2020");
         u2 = new User("UserNameTest2", "UserPassword2", "female", "50-50-2020");
-        Rating rating = new Rating("movie", 8);
-        Review review = new Review("movie", "Bad movie");
+        Rating rating = new Rating("movie","UserNameTest1", 8);
+        Review review = new Review("movie","UserNameTest1", "Bad movie");
         u1.addRole(new Role("user"));
         u2.addRole(new Role("user"));
         try {
             em.getTransaction().begin();
             em.createNamedQuery("User.deleteAllRows").executeUpdate();
+            em.persist(rating);
+            em.persist(review);
             em.persist(u1);
             em.persist(u2);
             em.getTransaction().commit();
@@ -83,7 +85,7 @@ public class UserFacadeTest {
     @Test
     public void testGetUser() {
         System.out.println("testGetUser");
-        User user = FACADE.getUser(u1.getUserName());
+        UserDTO user = FACADE.getUser(u1.getUserName());
         System.out.println(user);
     }
 
