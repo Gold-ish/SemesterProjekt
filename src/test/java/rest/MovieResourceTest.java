@@ -249,7 +249,7 @@ public class MovieResourceTest {
                 .body("rating", is(8));
     }
 
-//    @Test
+    @Test
     public void testEditRating_ReturnsRating_EqualResults() {
         System.out.println("testEditRating_ReturnsRating_EqualResults");
         RatingDTO rating = new RatingDTO(r1.getId(), "tt0076759", user1, 10);
@@ -264,7 +264,7 @@ public class MovieResourceTest {
 
     }
 
-//    @Test
+    @Test
     public void testDeleteRating_ReturnsRating_EqualResults() {
         System.out.println("testDeleteRating_ReturnsRating_EqualResults");
         String json = GSON.toJson(new RatingDTO(r2));
@@ -294,10 +294,10 @@ public class MovieResourceTest {
                 .body("review", is("Very good movie"));
     }
 
-//    @Test
+    @Test
     public void testEditReview_ReturnsReview_EqualResults() {
         System.out.println("testEditReview_ReturnsReview_EqualResults");
-        ReviewDTO review = new ReviewDTO(re1.getId(), "tt0076759", user1, 
+        ReviewDTO review = new ReviewDTO(re1.getId(), "tt0076759", user1,
                 "Very good movie");
         String json = GSON.toJson(review);
         given().contentType(ContentType.JSON)
@@ -309,7 +309,7 @@ public class MovieResourceTest {
                 .body("review", is("Very good movie"));
     }
 
-//    @Test
+    @Test
     public void testDeleteReview_ReturnsReview_EqualResults() {
         System.out.println("testDeleteReview_ReturnsReview_EqualResults");
         ReviewDTO review = new ReviewDTO(re1);
