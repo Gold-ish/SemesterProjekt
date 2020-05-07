@@ -40,43 +40,37 @@ public class MovieFacade {
         return mdto;
     }
 
-    public MovieListDTO getMoviesByTitle(String title, int page) throws IOException, 
+    public MovieListDTO getMoviesByTitle(String searchString, int page) throws IOException,
             MovieNotFoundException {
-        String searchString = title;
-        if (title.contains("%20")) {
-            searchString = searchString.replaceAll("%20", " ");
-        }
-        
         MovieListDTO mdtoList = fetchFacade.getMoviesByTitle(searchString, page);
         mdtoList.getMovieDTOs().forEach((movie) -> {
             movie.setAvgRating(ratingFacade.getRatingAvg(movie.getImdbID()));
         });
         return mdtoList;
     }
-    
-    public RatingDTO addRating(RatingDTO ratingDTO){
+
+    public RatingDTO addRating(RatingDTO ratingDTO) {
         return ratingFacade.addRating(ratingDTO);
     }
-    
-    public RatingDTO editRating(RatingDTO ratingDTO) throws NotFoundException{
+
+    public RatingDTO editRating(RatingDTO ratingDTO) throws NotFoundException {
         return ratingFacade.editRating(ratingDTO);
     }
-    
-    public RatingDTO deleteRating(RatingDTO ratingDTO) throws NotFoundException{
+
+    public RatingDTO deleteRating(RatingDTO ratingDTO) throws NotFoundException {
         return ratingFacade.deleteRating(ratingDTO);
     }
-    
+
     public ReviewDTO addReview(ReviewDTO reviewDTO) {
         return reviewFacade.addReview(reviewDTO);
     }
-    
-    public ReviewDTO editReview(ReviewDTO reviewDTO) throws NotFoundException{
+
+    public ReviewDTO editReview(ReviewDTO reviewDTO) throws NotFoundException {
         return reviewFacade.editReview(reviewDTO);
     }
-    
-    public ReviewDTO deleteReview(ReviewDTO review) throws NotFoundException{
+
+    public ReviewDTO deleteReview(ReviewDTO review) throws NotFoundException {
         return reviewFacade.deleteReview(review);
     }
-    
-    
+
 }
