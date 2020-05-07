@@ -55,8 +55,6 @@ public class UserFacadeTest {
             em.getTransaction().begin();
             em.createNamedQuery("User.deleteAllRows").executeUpdate();
             em.persist(u1);
-            u1.addRating(rating);
-            u1.addReview(review);
             em.persist(u2);
             em.getTransaction().commit();
         } finally {
