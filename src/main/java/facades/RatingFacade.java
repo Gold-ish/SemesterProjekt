@@ -3,6 +3,7 @@ package facades;
 import dto.RatingDTO;
 import entities.Rating;
 import errorhandling.NotFoundException;
+import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
@@ -38,12 +39,12 @@ public class RatingFacade {
     private EntityManager getEntityManager() {
         return emf.createEntityManager();
     }
-    
+
     public List<Rating> getRatings(String user) {
         EntityManager em = getEntityManager();
         try {
             em.getTransaction().begin();
-            TypedQuery<Rating> q = em.createQuery("SELECT r FROM Rating r " 
+            TypedQuery<Rating> q = em.createQuery("SELECT r FROM Rating r "
                     + "WHERE r.user = :user", Rating.class);
             q.setParameter("user", user);
             em.getTransaction().commit();
@@ -55,7 +56,7 @@ public class RatingFacade {
 
     public RatingDTO addRating(RatingDTO rdto) {
         EntityManager em = getEntityManager();
-        Rating r = new Rating(rdto.getMovieID(), rdto.getUserName(), 
+        Rating r = new Rating(rdto.getMovieID(), rdto.getUserName(),
                 rdto.getRating());
         try {
             em.getTransaction().begin();
@@ -81,13 +82,13 @@ public class RatingFacade {
             em.close();
         }
     }
-    
-        public RatingDTO editRating(RatingDTO rdto) throws NotFoundException {
+
+    public RatingDTO editRating(RatingDTO rdto) throws NotFoundException {
         EntityManager em = getEntityManager();
         try {
             em.getTransaction().begin();
             Rating r = em.find(Rating.class, rdto.getId());
-            if(r == null || !r.getMovieID().equals(rdto.getMovieID())){
+            if (r == null || !r.getMovieID().equals(rdto.getMovieID())) {
                 throw new NotFoundException("Movie or Review ID is wrong");
             }
             r.setRating(rdto.getRating());
@@ -97,13 +98,13 @@ public class RatingFacade {
             em.close();
         }
     }
-    
-    public RatingDTO deleteRating(RatingDTO rdto) throws NotFoundException{
+
+    public RatingDTO deleteRating(RatingDTO rdto) throws NotFoundException {
         EntityManager em = getEntityManager();
         try {
             em.getTransaction().begin();
             Rating r = em.find(Rating.class, rdto.getId());
-            if(r == null){
+            if (r == null) {
                 throw new NotFoundException("");
             }
             em.remove(r);
@@ -113,5 +114,24 @@ public class RatingFacade {
             em.close();
         }
     }
+    
+    
+        public List<RatingDTO> getRatingsWithMovieID(String movieID) {
+        EntityManager em = getEntityManager();
+        try {
+            TypedQuery<Rating> tq = em.createQuery("SELECT r FROM Rating r "
+                    + "WHERE r.movieID = :id", Rating.class);
+            tq.setParameter("id", movieID);
+            List<RatingDTO> qList = new ArrayList<>();
+            for (Rating r : tq.getResultList()) {
+                qList.add(new RatingDTO(r));
+            }
+            return qList;
+        } finally {
+            em.close();
+        }
 
+    }
+    
+    
 }
