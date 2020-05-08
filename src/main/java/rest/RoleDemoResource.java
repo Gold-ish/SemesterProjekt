@@ -4,6 +4,8 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import dto.UserDTO;
 import entities.User;
+import errorhandling.UserException;
+import errorhandling.UserExceptionMapper;
 import facades.UserFacade;
 import java.util.List;
 import javax.annotation.security.RolesAllowed;
@@ -28,6 +30,8 @@ public class RoleDemoResource {
     private static EntityManagerFactory EMF = EMF_Creator.createEntityManagerFactory(EMF_Creator.DbSelector.DEV, EMF_Creator.Strategy.CREATE);
     private final UserFacade FACADE = UserFacade.getUserFacade(EMF);
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
+    private static final UserExceptionMapper USER_EXCEPTION_MAPPER
+            = new UserExceptionMapper();
 
     @Context
     private UriInfo context;
@@ -61,9 +65,13 @@ public class RoleDemoResource {
     @Path("user")
     @RolesAllowed("user")
     public Response getFromUser() {
-        String username = securityContext.getUserPrincipal().getName();
-        UserDTO user = FACADE.getUser(username);
-        return Response.ok(GSON.toJson(user)).build();
+        try {
+            String username = securityContext.getUserPrincipal().getName();
+            UserDTO user = FACADE.getUser(username);
+            return Response.ok(GSON.toJson(user)).build();
+        } catch (UserException ex) {
+            return USER_EXCEPTION_MAPPER.toResponse((UserException) ex);
+        }
     }
 
     @GET

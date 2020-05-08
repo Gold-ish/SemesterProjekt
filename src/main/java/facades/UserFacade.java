@@ -72,20 +72,21 @@ public class UserFacade {
         }
     }
 
-    public UserDTO getUser(String username) {
+    public UserDTO getUser(String username) throws UserException {
         EntityManager em = getEntityManager();
         User user;
         try {
             user = em.find(User.class, username);
             UserDTO userdto = new UserDTO(user);
-            if (userdto != null) {
-                List<Rating> ratings = ratingFacade.getRatings(user.getUserName());
-                userdto.setRatings(ratings);
-                List<Review> reviews = reviewFacade.getReviewsForUser(user.getUserName());
-                userdto.setReviews(reviews);
-            }
+            List<Rating> ratings = ratingFacade.getRatings(user.getUserName());
+            userdto.setRatings(ratings);
+            List<Review> reviews = reviewFacade.getReviewsForUser(user.getUserName());
+            userdto.setReviews(reviews);
             return userdto;
-        } finally {
+        } catch (RollbackException e) {
+            //This error should not be able to be thrown.
+            throw new UserException("Can't find user.");
+        }  finally {
             em.close();
         }
     }

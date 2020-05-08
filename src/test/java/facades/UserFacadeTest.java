@@ -83,7 +83,7 @@ public class UserFacadeTest {
     }
    
     @Test
-    public void testGetUser() {
+    public void testGetUser() throws UserException {
         System.out.println("testGetUser");
         UserDTO user = FACADE.getUser(u1.getUserName());
         System.out.println(user);
