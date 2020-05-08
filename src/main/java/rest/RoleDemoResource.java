@@ -11,7 +11,10 @@ import java.util.List;
 import javax.annotation.security.RolesAllowed;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
@@ -72,6 +75,29 @@ public class RoleDemoResource {
         } catch (UserException ex) {
             return USER_EXCEPTION_MAPPER.toResponse((UserException) ex);
         }
+    }
+
+    @PUT
+    @Path("user/edit")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response editUser(String json) {
+        try {
+            UserDTO userDTO = GSON.fromJson(json, UserDTO.class);
+            String returnedUser = GSON.toJson(FACADE.editUser(userDTO));
+            return Response.ok(returnedUser).build();
+        } catch (UserException ex) {
+            return USER_EXCEPTION_MAPPER.toResponse(ex);
+        }
+    }
+
+    @DELETE
+    @Path("user/delete")
+    @Consumes(MediaType.APPLICATION_JSON)
+    public Response deleteRating(String json) {
+        UserDTO userDTO = GSON.fromJson(json, UserDTO.class);
+        String deletedUser = GSON.toJson(FACADE.deleteUser(userDTO));
+        return Response.ok(deletedUser).build();
     }
 
     @GET
