@@ -75,7 +75,7 @@ public class FetchFacadeTest {
         int pageNumber = 1;
         MovieListDTO actualDto = FACADE.getMoviesByTitle(searchString, pageNumber);
         assertEquals(10, actualDto.getMovieDTOs().size());
-        assertEquals(2936, actualDto.getTotalResults());
+        assertEquals(2944, actualDto.getTotalResults());
     }
 
     @Test
