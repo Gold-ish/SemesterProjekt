@@ -1,8 +1,10 @@
 package entities;
 
+import dto.UserDTO;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -10,12 +12,14 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
+import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import org.mindrot.jbcrypt.BCrypt;
 
 @Entity
+@NamedQuery(name = "User.deleteAllRows", query = "DELETE FROM User")
 @Table(name = "users")
 public class User implements Serializable {
 
@@ -35,6 +39,30 @@ public class User implements Serializable {
         @JoinColumn(name = "role_name", referencedColumnName = "role_name")})
     @ManyToMany
     private List<Role> roleList = new ArrayList();
+    private String gender;
+    private String birthday;
+
+    public User() {
+    }
+
+    public User(String userName, String userPass) {
+        this.userName = userName;
+        this.userPass = BCrypt.hashpw(userPass, BCrypt.gensalt(10));
+    }
+
+    public User(String userName, String userPass, String gender, String birthday) {
+        this.userName = userName;
+        this.userPass = BCrypt.hashpw(userPass, BCrypt.gensalt(10));
+        this.gender = gender;
+        this.birthday = birthday;
+    }
+
+    public User(UserDTO userDTO) {
+        this.userName = userDTO.getUsername();
+        this.userPass = BCrypt.hashpw(userDTO.getPassword(), BCrypt.gensalt(10));
+        this.gender = userDTO.getGender();
+        this.birthday = userDTO.getBirthday();
+    }
 
     public List<String> getRolesAsStrings() {
         if (roleList.isEmpty()) {
@@ -46,29 +74,21 @@ public class User implements Serializable {
         }
         return rolesAsStrings;
     }
-    
+
     public String getRolesAsString() {
         if (roleList.isEmpty()) {
             return null;
         }
         StringBuilder rolesAsString = new StringBuilder();
         for (Role role : roleList) {
-            rolesAsString.append(role.getRoleName() + ", ");
+            rolesAsString.append(role.getRoleName()).append(", ");
         }
-        return rolesAsString.toString().substring(0, rolesAsString.length()-2);
-    }
-
-    public User() {
+        return rolesAsString.toString().substring(0, rolesAsString.length() - 2);
     }
 
     //TODO Change when password is hashed
     public boolean verifyPassword(String pw) {
         return (BCrypt.checkpw(pw, userPass));
-    }
-
-    public User(String userName, String userPass) {
-        this.userName = userName;
-        this.userPass = BCrypt.hashpw(userPass, BCrypt.gensalt(10));
     }
 
     public String getUserName() {
@@ -98,5 +118,69 @@ public class User implements Serializable {
     public void addRole(Role userRole) {
         roleList.add(userRole);
     }
+
+    public String getGender() {
+        return gender;
+    }
+
+    public void setGender(String gender) {
+        this.gender = gender;
+    }
+
+    public String getBirthday() {
+        return birthday;
+    }
+
+    public void setBirthday(String birthday) {
+        this.birthday = birthday;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 71 * hash + Objects.hashCode(this.userName);
+        hash = 71 * hash + Objects.hashCode(this.userPass);
+        hash = 71 * hash + Objects.hashCode(this.roleList);
+        hash = 71 * hash + Objects.hashCode(this.gender);
+        hash = 71 * hash + Objects.hashCode(this.birthday);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final User other = (User) obj;
+        if (!Objects.equals(this.userName, other.userName)) {
+            return false;
+        }
+        if (!Objects.equals(this.userPass, other.userPass)) {
+            return false;
+        }
+        if (!Objects.equals(this.gender, other.gender)) {
+            return false;
+        }
+        if (!Objects.equals(this.birthday, other.birthday)) {
+            return false;
+        }
+        if (!Objects.equals(this.roleList, other.roleList)) {
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    public String toString() {
+        return "User{" + "userName=" + userName + ", userPass=" + userPass + ", roleList=" + roleList + ", gender=" + gender + ", birthday=" + birthday + '}';
+    }
+    
+    
 
 }
