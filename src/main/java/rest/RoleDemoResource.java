@@ -79,7 +79,6 @@ public class RoleDemoResource {
 
     @PUT
     @Path("user/edit")
-    @RolesAllowed("user")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response editUser(String json) {
@@ -95,7 +94,6 @@ public class RoleDemoResource {
 
     @DELETE
     @Path("user/delete")
-    @RolesAllowed("user")
     @Consumes(MediaType.APPLICATION_JSON)
     public Response deleteRating() {
         String username = securityContext.getUserPrincipal().getName();
@@ -106,7 +104,6 @@ public class RoleDemoResource {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     @Path("admin")
-    @RolesAllowed("admin")
     public String getFromAdmin() {
         String thisuser = securityContext.getUserPrincipal().getName();
         return "{\"msg\": \"Hello to (admin) User: " + thisuser + "\"}";
