@@ -74,4 +74,8 @@ public class MovieFacade {
         return reviewFacade.deleteReview(review);
     }
 
+    public MovieListDTO getTopTenMovies() {
+        MovieListDTO mldto = (MovieListDTO) ratingFacade.getTopTenMovies();
+        return mldto;
+    }
 }

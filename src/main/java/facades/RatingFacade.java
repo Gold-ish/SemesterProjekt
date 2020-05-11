@@ -114,9 +114,8 @@ public class RatingFacade {
             em.close();
         }
     }
-    
-    
-        public List<RatingDTO> getRatingsWithMovieID(String movieID) {
+
+    public List<RatingDTO> getRatingsWithMovieID(String movieID) {
         EntityManager em = getEntityManager();
         try {
             TypedQuery<Rating> tq = em.createQuery("SELECT r FROM Rating r "
@@ -132,6 +131,21 @@ public class RatingFacade {
         }
 
     }
-    
-    
+
+    public List<RatingDTO> getTopTenMovies() {
+        EntityManager em = getEntityManager();
+        try {
+            TypedQuery<Rating> tq = em.createQuery("SELECT r.movieID FROM Rating r"
+                    + " HAVING COUNT(r.rating) > 4 ORDER BY r.rating ASC", Rating.class);
+            tq.setMaxResults(10);
+            List<RatingDTO> qList = new ArrayList<>();
+            for (Rating r : tq.getResultList()) {
+                qList.add(new RatingDTO(r));
+            }
+            return qList;
+        } finally {
+            em.close();
+        }
+    }
+
 }
