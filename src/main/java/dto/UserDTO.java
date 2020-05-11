@@ -27,9 +27,10 @@ public class UserDTO {
         this.birthday = birthday;
     }
     
+    //Only used for find opperations. We don't want to show the password.
     public UserDTO(User user) {
         this.username = user.getUserName();
-        this.password = user.getUserPass();
+        this.password = null;
         this.gender = user.getGender();
         this.birthday = user.getBirthday();
     }

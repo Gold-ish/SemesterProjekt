@@ -189,17 +189,17 @@ public class MovieResourceTest {
      * title
      */
     @Test
-    public void testGetMoviesByTitle_SearchTooUnspecific_500IllegalArgumentException() {
-        System.out.println("testGetMoviesByTitle_SearchTooUnspecific_500IllegalArgumentException");
+    public void testGetMoviesByTitle_SearchTooUnspecific_404IllegalArgumentException() {
+        System.out.println("testGetMoviesByTitle_SearchTooUnspecific_404IllegalArgumentException");
         String title = "x";
         int page = 1;
         given().when()
                 .get("/movies/search/{title}/{page}", title, page).
                 then()
                 .assertThat()
-                .statusCode(HttpStatus.INTERNAL_SERVER_ERROR_500.getStatusCode())
-                .body("code", is(500))
-                .body("message", is("Internal Server Error"));
+                .statusCode(HttpStatus.NOT_FOUND_404.getStatusCode())
+                .body("code", is(404))
+                .body("message", is("Too many search results, not specific enough search: x"));
     }
 
     /**

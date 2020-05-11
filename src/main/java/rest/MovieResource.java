@@ -8,6 +8,7 @@ import errorhandling.GenericExceptionMapper;
 import errorhandling.MovieNotFoundException;
 import errorhandling.MovieNotFoundExceptionMapper;
 import errorhandling.NotFoundException;
+import errorhandling.TooUnspecificSearchExceptionMapper;
 import facades.MovieFacade;
 import java.io.IOException;
 import javax.persistence.EntityManagerFactory;
@@ -36,6 +37,8 @@ public class MovieResource {
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
     private static final GenericExceptionMapper GENERIC_EXCEPTION_MAPPER
             = new GenericExceptionMapper();
+    private static final TooUnspecificSearchExceptionMapper TOO_UNSPECIFIC_SEARCH
+            = new TooUnspecificSearchExceptionMapper();
     private static final MovieNotFoundExceptionMapper MOVIE_EXCEPTION_MAPPER 
             = new MovieNotFoundExceptionMapper();
 
@@ -71,6 +74,8 @@ public class MovieResource {
              return GENERIC_EXCEPTION_MAPPER.toResponse(ex);
         } catch (MovieNotFoundException ex) {
             return MOVIE_EXCEPTION_MAPPER.toResponse(ex);
+        } catch (IllegalArgumentException ex){
+            return TOO_UNSPECIFIC_SEARCH.toResponse(ex);
         }
     }
     
