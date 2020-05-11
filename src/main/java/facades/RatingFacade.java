@@ -132,15 +132,15 @@ public class RatingFacade {
 
     }
 
-    public List<RatingDTO> getTopTenMovies() {
+    public List<String> getTopTenMovies() {
         EntityManager em = getEntityManager();
         try {
             TypedQuery<Rating> tq = em.createQuery("SELECT r.movieID FROM Rating r"
                     + " HAVING COUNT(r.rating) > 4 ORDER BY r.rating ASC", Rating.class);
             tq.setMaxResults(10);
-            List<RatingDTO> qList = new ArrayList<>();
+            List<String> qList = new ArrayList<>();
             for (Rating r : tq.getResultList()) {
-                qList.add(new RatingDTO(r));
+                qList.add(r.getMovieID());
             }
             return qList;
         } finally {
