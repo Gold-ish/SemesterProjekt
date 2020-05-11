@@ -94,11 +94,10 @@ public class RoleDemoResource {
 
     @DELETE
     @Path("user/delete")
-    @Consumes(MediaType.APPLICATION_JSON)
     public Response deleteRating() {
         String username = securityContext.getUserPrincipal().getName();
         String deletedUser = GSON.toJson(FACADE.deleteUser(username));
-        return Response.ok(deletedUser).build();
+        return Response.ok(username).build();
     }
 
     @GET
