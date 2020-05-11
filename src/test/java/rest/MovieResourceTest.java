@@ -5,6 +5,7 @@ import com.google.gson.GsonBuilder;
 import dto.MovieDTO;
 import dto.RatingDTO;
 import dto.ReviewDTO;
+import dto.SpecificMovieDTO;
 import entities.Rating;
 import entities.Review;
 import entities.User;
@@ -124,9 +125,10 @@ public class MovieResourceTest {
     @Test
     public void testGetMovieById_ReturnsMovie_EqualResults() {
         System.out.println("testGetMovieById_ReturnsMovie_EqualResults");
-        MovieDTO movie = new MovieDTO("Star Wars: Episode V - The Empire Strikes Back", "1980",
-                "https://m.media-amazon.com/images/M/MV5BYmU1NDRjNDgtMzhiMi00NjZmLTg5NGItZDNiZjU5NTU4OTE0XkEyXkFqcGdeQXVyNzkwMjQ5NzM@._V1_SX300.jpg",
-                "tt0080684");
+        SpecificMovieDTO movie = new SpecificMovieDTO("Star Wars: Episode V - The Empire Strikes Back", "1980", "PG", "20 Jun 1980", "124 min", "Action, Adventure, Fantasy, Sci-Fi", "Irvin Kershner" , "Mark Hamill, Harrison Ford, Carrie Fisher, Billy Dee Williams",
+                "Luke Skywalker, Han Solo, Princess Leia and Chewbacca face attack by the Imperial forces and its AT-AT walkers on the ice planet Hoth. While Han and Leia escape in the Millennium Falcon, Luke travels to Dagobah in search of Yoda. Only with the Jedi master's help will Luke survive when the dark side of the Force beckons him into the ultimate duel with Darth Vader.",
+                "English", "Won 1 Oscar. Another 24 wins & 20 nominations.", "https://m.media-amazon.com/images/M/MV5BYmU1NDRjNDgtMzhiMi00NjZmLTg5NGItZDNiZjU5NTU4OTE0XkEyXkFqcGdeQXVyNzkwMjQ5NzM@._V1_SX300.jpg",
+                "tt0080684","movie", "21 Sep 2004","Twentieth Century Fox"); 
         given().when()
                 .get("/movies/{id}", movie.getImdbID()).
                 then()
@@ -135,7 +137,19 @@ public class MovieResourceTest {
                 .body("Title", is(movie.getTitle()))
                 .body("Year", is(movie.getYear()))
                 .body("Poster", is(movie.getPoster()))
-                .body("imdbID", is(movie.getImdbID()));
+                .body("imdbID", is(movie.getImdbID()))
+                .body("Rated", is(movie.getRated()))
+                .body("Released", is(movie.getReleased()))
+                .body("Runtime", is(movie.getRuntime()))
+                .body("Genre", is(movie.getGenre()))
+                .body("Director", is(movie.getDirector()))
+                .body("Actors", is(movie.getActors()))
+                .body("Plot", is(movie.getPlot()))
+                .body("Language", is(movie.getLanguage()))
+                .body("Awards", is(movie.getAwards()))
+                .body("Type", is(movie.getType()))
+                .body("DVD", is(movie.getDVD()))
+                .body("Production", is(movie.getProduction()));
     }
 
     /**
@@ -144,8 +158,7 @@ public class MovieResourceTest {
     @Test
     public void testGetMovieByID_NonExistentMovieID_404MovieNotFoundException() {
         System.out.println("testGetMovieByID_NonExistentMovieID_404MovieNotFoundException");
-        MovieDTO movie = new MovieDTO("", "0", "",
-                "tt1");
+        MovieDTO movie = new MovieDTO("", "0", "", "tt1", "" , "" , "" ,"" ,"");
         given().when()
                 .get("/movies/{id}", movie.getImdbID()).
                 then()
@@ -260,7 +273,8 @@ public class MovieResourceTest {
                 then()
                 .assertThat()
                 .statusCode(HttpStatus.OK_200.getStatusCode())
-                .body("rating", is(10));
+                .body("rating", is(10))
+                .body("user", is("user1"));
 
     }
 
@@ -306,7 +320,8 @@ public class MovieResourceTest {
                 then()
                 .assertThat()
                 .statusCode(HttpStatus.OK_200.getStatusCode())
-                .body("review", is("Very good movie"));
+                .body("review", is("Very good movie"))
+                .body("user", is("user1"));
     }
 
     //@Test

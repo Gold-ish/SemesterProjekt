@@ -92,12 +92,11 @@ public class UserFacade {
         }
     }
 
-    public UserDTO editUser(UserDTO userDTO) throws UserException {
+    public UserDTO editUser(String username, UserDTO userDTO) throws UserException {
         EntityManager em = getEntityManager();
         try {
             em.getTransaction().begin();
-            User u = em.find(User.class, userDTO.getUsername());
-            u.setUserName(userDTO.getUsername());
+            User u = em.find(User.class, username);
             u.setGender(userDTO.getGender());
             u.setBirthday(userDTO.getBirthday());
             em.getTransaction().commit();
@@ -109,18 +108,18 @@ public class UserFacade {
         }
     }
 
-    public String deleteUser(UserDTO userDTO) {
+    public String deleteUser(String username) {
         EntityManager em = getEntityManager();
         try {
             em.getTransaction().begin();
-            User u = em.find(User.class, userDTO.getUsername());
+            User u = em.find(User.class, username);
             Query qRating = em.createQuery("DELETE FROM Rating r WHERE r.user = :uName");
-            int deletedRatingCount = qRating.setParameter("uName", userDTO.getUsername()).executeUpdate();
+            int deletedRatingCount = qRating.setParameter("uName", username).executeUpdate();
             Query qReview = em.createQuery("DELETE FROM Review r WHERE r.user = :uName");
-            int deletedReviewCount = qReview.setParameter("uName", userDTO.getUsername()).executeUpdate();
+            int deletedReviewCount = qReview.setParameter("uName", username).executeUpdate();
             em.remove(u);
             em.getTransaction().commit();
-            return "User: "+userDTO.getUsername() + " Ratings: " + deletedRatingCount + " Reviews: " + deletedReviewCount + " were deleted";
+            return "User: " + username + " Ratings: " + deletedRatingCount + " Reviews: " + deletedReviewCount + " were deleted";
         } finally {
             em.close();
         }

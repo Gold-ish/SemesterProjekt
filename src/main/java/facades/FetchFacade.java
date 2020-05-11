@@ -6,8 +6,13 @@ import dto.MovieDTO;
 import dto.MovieListDTO;
 import dto.SpecificMovieDTO;
 import errorhandling.MovieNotFoundException;
+import fetch.MovieFetchCall;
 import java.io.IOException;
-import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 import utils.HttpUtils;
 
 /**
@@ -30,7 +35,7 @@ public class FetchFacade {
         return instance;
     }
 
-    public SpecificMovieDTO getMovieById(String id) throws IOException, MovieNotFoundException {
+    public SpecificMovieDTO getMovieByIdSpecific(String id) throws IOException, MovieNotFoundException {
         String fetchedJSONString = HttpUtils.fetchData("http://www.omdbapi.com/?i=" + id + "&plot=full&apikey=492c3335");
         if (fetchedJSONString.contains("Error")) {
             throw new MovieNotFoundException("No movie found with id: " + id);
@@ -38,8 +43,17 @@ public class FetchFacade {
         SpecificMovieDTO fetchedmovie = GSON.fromJson(fetchedJSONString, SpecificMovieDTO.class);
         return fetchedmovie;
     }
+    
+    public MovieDTO getMovieByIdSimple(String id) throws IOException, MovieNotFoundException {
+        String fetchedJSONString = HttpUtils.fetchData("http://www.omdbapi.com/?i=" + id + "&plot=short&apikey=492c3335");
+        if (fetchedJSONString.contains("Error")) {
+            throw new MovieNotFoundException("No movie found with id: " + id);
+        }
+        MovieDTO fetchedmovie = GSON.fromJson(fetchedJSONString, MovieDTO.class);
+        return fetchedmovie;
+    }
 
-    public MovieListDTO getMoviesByTitle(String searchString, int page) throws IOException, MovieNotFoundException {
+    public MovieListDTO getMoviesByTitle(String searchString, int page) throws IOException, MovieNotFoundException, InterruptedException {
         String fetchedJSONString = HttpUtils.fetchData("http://www.omdbapi.com/?s='"
                 + searchString + "'&page=" + page + "&apikey=492c3335");
         if (fetchedJSONString.contains("Movie not found!")) {
@@ -52,7 +66,33 @@ public class FetchFacade {
         MovieDTO[] movieDTOs = GSON.fromJson("[" + jsonStringSplit[0] + "]", MovieDTO[].class);
         JsonObject jobj = new Gson().fromJson("{" + jsonStringSplit[1].substring(1), JsonObject.class);
 
-        return new MovieListDTO(Arrays.asList(movieDTOs), jobj.get("totalResults").getAsInt());
+        return new MovieListDTO(fetchParralel(movieDTOs), jobj.get("totalResults").getAsInt());
 
     }
+    
+    
+    private List<MovieDTO> fetchParralel(MovieDTO[] searchList) throws InterruptedException{
+        List<MovieFetchCall> fetchCalls = new ArrayList<>();
+        for(MovieDTO mdto : searchList){
+            fetchCalls.add(new MovieFetchCall(mdto.getImdbID()));
+        }
+        ExecutorService workingJack = Executors.newFixedThreadPool(10);
+        for (MovieFetchCall fc : fetchCalls) {
+            Runnable task = () -> {
+                try {
+                    fc.doWork();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            };
+            workingJack.submit(task);
+        }
+        workingJack.shutdown();
+        workingJack.awaitTermination(15, TimeUnit.SECONDS);
+        List<MovieDTO> returnList = new ArrayList<>();
+        for(MovieFetchCall fc : fetchCalls){
+            returnList.add(fc.getMdto());
+        }
+        return returnList;
+        }
 }
