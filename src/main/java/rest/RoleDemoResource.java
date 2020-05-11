@@ -79,12 +79,14 @@ public class RoleDemoResource {
 
     @PUT
     @Path("user/edit")
+    @RolesAllowed("user")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response editUser(String json) {
         try {
+            String username = securityContext.getUserPrincipal().getName();
             UserDTO userDTO = GSON.fromJson(json, UserDTO.class);
-            String returnedUser = GSON.toJson(FACADE.editUser(userDTO));
+            String returnedUser = GSON.toJson(FACADE.editUser(username, userDTO));
             return Response.ok(returnedUser).build();
         } catch (UserException ex) {
             return USER_EXCEPTION_MAPPER.toResponse(ex);
@@ -93,10 +95,11 @@ public class RoleDemoResource {
 
     @DELETE
     @Path("user/delete")
+    @RolesAllowed("user")
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response deleteRating(String json) {
-        UserDTO userDTO = GSON.fromJson(json, UserDTO.class);
-        String deletedUser = GSON.toJson(FACADE.deleteUser(userDTO));
+    public Response deleteRating() {
+        String username = securityContext.getUserPrincipal().getName();
+        String deletedUser = GSON.toJson(FACADE.deleteUser(username));
         return Response.ok(deletedUser).build();
     }
 
