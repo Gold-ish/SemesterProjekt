@@ -104,6 +104,7 @@ public class RoleDemoResource {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     @Path("admin")
+    @RolesAllowed("admin")
     public String getFromAdmin() {
         String thisuser = securityContext.getUserPrincipal().getName();
         return "{\"msg\": \"Hello to (admin) User: " + thisuser + "\"}";
