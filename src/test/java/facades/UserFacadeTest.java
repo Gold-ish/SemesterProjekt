@@ -87,18 +87,19 @@ public class UserFacadeTest {
     @Test
     public void testEditUser_ReturnsEditedUser_EqualResults() throws UserException {
         System.out.println("testEditUser_ReturnsEditedUser_EqualResults");
+        String username = u1.getUserName();
         u1.setBirthday("11-09-2001");
         UserDTO udto = new UserDTO(u1);
-        UserDTO result = FACADE.editUser(udto);
+        UserDTO result = FACADE.editUser(username, udto);
         String expectedResult = "11-09-2001";
         assertEquals(expectedResult, result.getBirthday());
     }
 
-    @Test
+    //@Test //This test is depricated. Delete dosn't need a body anymore.
     public void testDeleteUser_ReturnsConfirmationString_EqualResults() throws UserException {
         System.out.println("testDeleteUser_ReturnsConfirmationString_EqualResults");
         UserDTO udto = new UserDTO(u1);
-        String result = FACADE.deleteUser(udto);
+        String result = FACADE.deleteUser("");
         String expectedResult = "User: " + u1.getUserName() + " Ratings: 1 Reviews: 1 were deleted";
         assertEquals(expectedResult, result);
     }
