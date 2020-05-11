@@ -66,7 +66,7 @@ public class MovieResource {
     @Path("search/{title}/{page}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getByTitle(@PathParam("title") String title,
-            @PathParam("page") int page) {
+            @PathParam("page") int page) throws InterruptedException {
         try {
             String movie = GSON.toJson(FACADE.getMoviesByTitle(title, page));
             return Response.ok(movie).build();

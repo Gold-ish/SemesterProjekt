@@ -42,7 +42,8 @@ public class MovieFacade {
     }
 
     public MovieListDTO getMoviesByTitle(String searchString, int page) throws IOException,
-            MovieNotFoundException {
+            MovieNotFoundException,
+            InterruptedException {
         MovieListDTO mdtoList = fetchFacade.getMoviesByTitle(searchString, page);
         mdtoList.getMovieDTOs().forEach((movie) -> {
             movie.setAvgRating(ratingFacade.getRatingAvg(movie.getImdbID()));
