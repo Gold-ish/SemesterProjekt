@@ -94,7 +94,7 @@ public class MovieResource {
             String returnRating = GSON.toJson(FACADE.editRating(rating));
             return Response.ok(returnRating).build();
         } catch (NotFoundException ex) {
-            return GENERIC_EXCEPTION_MAPPER.toResponse(ex);
+            return MOVIE_EXCEPTION_MAPPER.toResponse(new MovieNotFoundException(ex.getMessage()));
         }
     }
     

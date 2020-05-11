@@ -260,7 +260,8 @@ public class MovieResourceTest {
                 then()
                 .assertThat()
                 .statusCode(HttpStatus.OK_200.getStatusCode())
-                .body("rating", is(10));
+                .body("rating", is(10))
+                .body("user", is("user1"));
 
     }
 
@@ -306,7 +307,8 @@ public class MovieResourceTest {
                 then()
                 .assertThat()
                 .statusCode(HttpStatus.OK_200.getStatusCode())
-                .body("review", is("Very good movie"));
+                .body("review", is("Very good movie"))
+                .body("user", is("user1"));
     }
 
     //@Test
