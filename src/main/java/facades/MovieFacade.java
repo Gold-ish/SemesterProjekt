@@ -34,7 +34,7 @@ public class MovieFacade {
     }
 
     public SpecificMovieDTO getMovieById(String id) throws IOException, MovieNotFoundException {
-        SpecificMovieDTO mdto = fetchFacade.getMovieById(id);
+        SpecificMovieDTO mdto = fetchFacade.getMovieByIdSpecific(id);
         mdto.setAvgRating(ratingFacade.getRatingAvg(mdto.getImdbID()));
         mdto.setReviews(reviewFacade.getReviews(mdto.getImdbID()));
         mdto.setRatings(ratingFacade.getRatingsWithMovieID(mdto.getImdbID()));
@@ -42,7 +42,8 @@ public class MovieFacade {
     }
 
     public MovieListDTO getMoviesByTitle(String searchString, int page) throws IOException,
-            MovieNotFoundException {
+            MovieNotFoundException,
+            InterruptedException {
         MovieListDTO mdtoList = fetchFacade.getMoviesByTitle(searchString, page);
         mdtoList.getMovieDTOs().forEach((movie) -> {
             movie.setAvgRating(ratingFacade.getRatingAvg(movie.getImdbID()));

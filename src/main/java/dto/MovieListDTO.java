@@ -16,7 +16,7 @@ public class MovieListDTO {
     public MovieListDTO(List<MovieDTO> m , int totalResults) {
         this.totalResults = totalResults;
         m.forEach((movieDTO) -> {
-            movieDTOs.add(new MovieDTO(movieDTO));
+            movieDTOs.add(movieDTO);
         });
     }
 

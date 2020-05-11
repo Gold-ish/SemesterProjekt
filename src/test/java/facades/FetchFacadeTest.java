@@ -21,7 +21,7 @@ public class FetchFacadeTest {
     }
 
     /**
-     * Test of getMovieById method, of class FetchFacade.
+     * Test of getMovieByIdSpecific method, of class FetchFacade.
      *
      * @throws java.lang.Exception
      */
@@ -51,7 +51,7 @@ public class FetchFacadeTest {
                 "movie",
                 "21 Sep 2004",
                 "20th Century Fox");
-        SpecificMovieDTO result = FACADE.getMovieById("tt0076759");
+        SpecificMovieDTO result = FACADE.getMovieByIdSpecific("tt0076759");
         assertEquals(expResult, result);
     }
 
@@ -59,7 +59,7 @@ public class FetchFacadeTest {
     public void testGetMovieByID_NonExistentMovieID_ThrowMovieNotFoundException() {
         System.out.println("testGetMovieByID_NonExistentMovieID_ThrowMovieNotFoundException");
         Exception exception = assertThrows(MovieNotFoundException.class, () -> {
-            FACADE.getMovieById("tt00767555555559");
+            FACADE.getMovieByIdSpecific("tt00767555555559");
         });
 
         String expectedMessage = "No movie found with id: tt00767555555559";
@@ -69,13 +69,14 @@ public class FetchFacadeTest {
     }
 
     @Test
-    public void testGetMoviesByTitle_ReturnsListOf10Movies_EqualResults() throws IOException, MovieNotFoundException {
+    public void testGetMoviesByTitle_ReturnsListOf10Movies_EqualResults() throws IOException, MovieNotFoundException, InterruptedException {
         System.out.println("testGetMoviesByTitle_ReturnsListOf10Movies_EqualResults");
         String searchString = "star";
         int pageNumber = 1;
         MovieListDTO actualDto = FACADE.getMoviesByTitle(searchString, pageNumber);
         assertEquals(10, actualDto.getMovieDTOs().size());
         assertEquals(2944, actualDto.getTotalResults());
+
     }
 
     @Test

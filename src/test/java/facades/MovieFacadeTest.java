@@ -86,7 +86,7 @@ public class MovieFacadeTest {
     }
 
     @Test
-    public void testGetMoviesByTitle_ReturnsListOf10Movies_EqualResults() throws IOException, MovieNotFoundException  {
+    public void testGetMoviesByTitle_ReturnsListOf10Movies_EqualResults() throws IOException, MovieNotFoundException, InterruptedException  {
         System.out.println("testGetMoviesByTitle_ReturnsListOf10Movies_EqualResults");
         String searchString = "Star";
         int pageNumber = 1;
@@ -95,7 +95,7 @@ public class MovieFacadeTest {
     }
 
     @Test
-    public void testGetMoviesByTitle_ChecksIfMoviesHaveRating_EqualResults() throws IOException, MovieNotFoundException{
+    public void testGetMoviesByTitle_ChecksIfMoviesHaveRating_EqualResults() throws IOException, MovieNotFoundException, InterruptedException{
         System.out.println("testGetMoviesByTitle_ReturnsListOf10Movies_EqualResults");
         String searchString = "Planet";
         int pageNumber = 1;
