@@ -12,23 +12,26 @@ public class MovieDTO {
     private final String Year;
     private final String Poster;
     private final String imdbID;
+    private final String Plot;
+    private final String Rated;
+    private final String Released;
+    private final String Runtime;
+    private final String Genre;
     private double avgRating;
 
-    public MovieDTO(String Title, String Year, String Poster, String imdbID) {
+    public MovieDTO(String Title, String Year, String Poster, String imdbID, String Plot, String Rated, String Released, String Runtime, String Genre) {
         this.Title = Title;
         this.Year = Year;
         this.Poster = Poster;
         this.imdbID = imdbID;
+        this.Plot = Plot;
+        this.Rated = Rated;
+        this.Released = Released;
+        this.Runtime = Runtime;
+        this.Genre = Genre;
         this.avgRating = 0.0;
     }
 
-    public MovieDTO(MovieDTO movieDTO) {
-        this.Title = movieDTO.getTitle();
-        this.Year = movieDTO.getYear();
-        this.Poster = movieDTO.getPoster();
-        this.imdbID = movieDTO.getImdbID();
-        this.avgRating = 0.0;
-    }
 
     public String getTitle() {
         return Title;
@@ -45,10 +48,34 @@ public class MovieDTO {
     public String getImdbID() {
         return imdbID;
     }
+    
+    
+    public String getPlot() {
+        return Plot;
+    }
 
+    public String getRated() {
+        return Rated;
+    }
+
+    public String getReleased() {
+        return Released;
+    }
+
+    public String getRuntime() {
+        return Runtime;
+    }
+
+    public String getGenre() {
+        return Genre;
+    }
+
+    
+    
     public double getAvgRating() {
         return avgRating;
     }
+    
 
     public void setAvgRating(double avgRating) {
         this.avgRating = avgRating;
@@ -56,12 +83,17 @@ public class MovieDTO {
 
     @Override
     public int hashCode() {
-        int hash = 3;
-        hash = 61 * hash + Objects.hashCode(this.Title);
-        hash = 61 * hash + Objects.hashCode(this.Year);
-        hash = 61 * hash + Objects.hashCode(this.Poster);
-        hash = 61 * hash + Objects.hashCode(this.imdbID);
-        hash = 61 * hash + (int) (Double.doubleToLongBits(this.avgRating) ^ (Double.doubleToLongBits(this.avgRating) >>> 32));
+        int hash = 7;
+        hash = 13 * hash + Objects.hashCode(this.Title);
+        hash = 13 * hash + Objects.hashCode(this.Year);
+        hash = 13 * hash + Objects.hashCode(this.Poster);
+        hash = 13 * hash + Objects.hashCode(this.imdbID);
+        hash = 13 * hash + Objects.hashCode(this.Plot);
+        hash = 13 * hash + Objects.hashCode(this.Rated);
+        hash = 13 * hash + Objects.hashCode(this.Released);
+        hash = 13 * hash + Objects.hashCode(this.Runtime);
+        hash = 13 * hash + Objects.hashCode(this.Genre);
+        hash = 13 * hash + (int) (Double.doubleToLongBits(this.avgRating) ^ (Double.doubleToLongBits(this.avgRating) >>> 32));
         return hash;
     }
 
@@ -92,11 +124,29 @@ public class MovieDTO {
         if (!Objects.equals(this.imdbID, other.imdbID)) {
             return false;
         }
+        if (!Objects.equals(this.Plot, other.Plot)) {
+            return false;
+        }
+        if (!Objects.equals(this.Rated, other.Rated)) {
+            return false;
+        }
+        if (!Objects.equals(this.Released, other.Released)) {
+            return false;
+        }
+        if (!Objects.equals(this.Runtime, other.Runtime)) {
+            return false;
+        }
+        if (!Objects.equals(this.Genre, other.Genre)) {
+            return false;
+        }
         return true;
     }
 
     @Override
     public String toString() {
-        return "MovieDTO{" + "Title=" + Title + ", Year=" + Year + ", Poster=" + Poster + ", imdbID=" + imdbID + ", avgRating=" + avgRating + '}';
+        return "MovieDTO{" + "Title=" + Title + ", Year=" + Year + ", Poster=" + Poster + ", imdbID=" + imdbID + ", Plot=" + Plot + ", Rated=" + Rated + ", Released=" + Released + ", Runtime=" + Runtime + ", Genre=" + Genre + ", avgRating=" + avgRating + '}';
     }
+
+    
+    
 }
