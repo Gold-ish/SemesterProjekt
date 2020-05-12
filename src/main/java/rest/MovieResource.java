@@ -156,7 +156,7 @@ public class MovieResource {
     @GET
     @Path("topten")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getTopTenMovies() {
+    public Response getTopTenMovies() throws InterruptedException {
             String movie = GSON.toJson(FACADE.getTopTenMovies());
             return Response.ok(movie).build();
     }

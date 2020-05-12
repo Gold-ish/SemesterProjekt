@@ -9,7 +9,6 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
-import utils.EMF_Creator;
 
 /**
  *
@@ -144,12 +143,5 @@ public class RatingFacade {
         }
     }
 
-    public static void main(String[] args) {
-        emf = EMF_Creator.createEntityManagerFactory(EMF_Creator.DbSelector.DEV,
-                EMF_Creator.Strategy.CREATE);
-        RatingFacade rf = RatingFacade.getRatingFacade(emf);
-        System.out.println(rf.getTopTenMovies());
-
-    }
 
 }
