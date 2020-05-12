@@ -154,14 +154,10 @@ public class MovieResource {
     }
     
     @GET
-    @Path("home")
+    @Path("topten")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getTopTenMovies() {
-        try {
             String movie = GSON.toJson(FACADE.getTopTenMovies());
             return Response.ok(movie).build();
-        } catch (IllegalArgumentException ex){
-            return TOO_UNSPECIFIC_SEARCH.toResponse(ex);
-        }
     }
 }

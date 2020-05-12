@@ -1,6 +1,5 @@
 package facades;
 
-import dto.MovieDTO;
 import dto.MovieListDTO;
 import dto.RatingDTO;
 import dto.ReviewDTO;
@@ -9,7 +8,6 @@ import dto.TopTenMoviesDTO;
 import errorhandling.MovieNotFoundException;
 import errorhandling.NotFoundException;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.EntityManagerFactory;
 
@@ -79,13 +77,8 @@ public class MovieFacade {
         return reviewFacade.deleteReview(review);
     }
 
-    public TopTenMoviesDTO getTopTenMovies() {
+    public TopTenMoviesDTO getTopTenMovies() throws InterruptedException {
         List<String> ttm = ratingFacade.getTopTenMovies();
-        List<MovieDTO> list = new ArrayList<>();
-        for (String s : ttm) {
-            MovieDTO md = (MovieDTO) ((Object) s);
-            list.add(md);
-        }
-        return new TopTenMoviesDTO(list);
+        return new TopTenMoviesDTO(fetchFacade.fetchParallel(ttm));
     }
 }

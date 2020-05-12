@@ -9,6 +9,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
+import utils.EMF_Creator;
 
 /**
  *
@@ -135,17 +136,20 @@ public class RatingFacade {
     public List<String> getTopTenMovies() {
         EntityManager em = getEntityManager();
         try {
-            TypedQuery<Rating> tq = em.createQuery("SELECT r.movieID FROM Rating r"
-                    + " HAVING COUNT(r.rating) > 4 ORDER BY r.rating ASC", Rating.class);
-            tq.setMaxResults(10);
-            List<String> qList = new ArrayList<>();
-            for (Rating r : tq.getResultList()) {
-                qList.add(r.getMovieID());
-            }
-            return qList;
+            Query tq = em.createNativeQuery("SELECT MOVIEID FROM RATING WHERE MOVIEID IN (SELECT MOVIEID FROM RATING GROUP BY MOVIEID HAVING COUNT(*) > 1) GROUP BY MOVIEID ORDER BY AVG(rating)desc LIMIT 10;");
+            List<String> list = (List<String>)(List<?>) tq.getResultList();
+            return list;
         } finally {
             em.close();
         }
+    }
+
+    public static void main(String[] args) {
+        emf = EMF_Creator.createEntityManagerFactory(EMF_Creator.DbSelector.DEV,
+                EMF_Creator.Strategy.CREATE);
+        RatingFacade rf = RatingFacade.getRatingFacade(emf);
+        System.out.println(rf.getTopTenMovies());
+
     }
 
 }
