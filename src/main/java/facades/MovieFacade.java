@@ -4,9 +4,11 @@ import dto.MovieListDTO;
 import dto.RatingDTO;
 import dto.ReviewDTO;
 import dto.SpecificMovieDTO;
+import dto.TopTenMoviesDTO;
 import errorhandling.MovieNotFoundException;
 import errorhandling.NotFoundException;
 import java.io.IOException;
+import java.util.List;
 import javax.persistence.EntityManagerFactory;
 
 /**
@@ -75,4 +77,8 @@ public class MovieFacade {
         return reviewFacade.deleteReview(review);
     }
 
+    public TopTenMoviesDTO getTopTenMovies() throws InterruptedException {
+        List<String> ttm = ratingFacade.getTopTenMovies();
+        return new TopTenMoviesDTO(fetchFacade.fetchParallel(ttm));
+    }
 }

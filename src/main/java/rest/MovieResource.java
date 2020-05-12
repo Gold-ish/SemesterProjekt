@@ -153,4 +153,11 @@ public class MovieResource {
         }
     }
     
+    @GET
+    @Path("topten")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getTopTenMovies() {
+            String movie = GSON.toJson(FACADE.getTopTenMovies());
+            return Response.ok(movie).build();
+    }
 }
