@@ -1,5 +1,6 @@
 package facades;
 
+import dto.MovieDTO;
 import dto.MovieListDTO;
 import dto.RatingDTO;
 import dto.ReviewDTO;
@@ -78,7 +79,10 @@ public class MovieFacade {
     }
 
     public TopTenMoviesDTO getTopTenMovies() throws InterruptedException {
-        List<String> ttm = ratingFacade.getTopTenMovies();
-        return new TopTenMoviesDTO(fetchFacade.fetchParallel(ttm));
+        List<MovieDTO> mdtoList = fetchFacade.fetchParallel(ratingFacade.getTopTenMovies());
+        mdtoList.forEach((movie) -> {
+            movie.setAvgRating(ratingFacade.getRatingAvg(movie.getImdbID()));
+        });
+        return new TopTenMoviesDTO(mdtoList);
     }
 }
