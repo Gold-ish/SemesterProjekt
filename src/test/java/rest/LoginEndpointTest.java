@@ -91,7 +91,7 @@ public class LoginEndpointTest {
             em.close();
         }
     }
-    
+
     //This is how we hold on to the token after login, similar to that a client must store the token somewhere
   private static String securityToken;
 
@@ -162,7 +162,7 @@ public class LoginEndpointTest {
             .when()
             .get("/info/user").then()
             .statusCode(200)
-            .body("username", equalTo("user"));
+            .body("username", equalTo("critic"));
   }
   
   @Test
@@ -237,4 +237,15 @@ public class LoginEndpointTest {
   }
     
     
+    @Test
+    public void testGetCriticCode_ReturnsRandomGeneratedString_EqualResults() {
+        login("user_admin", "test");
+        given()
+                .contentType("application/json")
+                .header("x-access-token", securityToken)
+                .when()
+                .get("/info/critic/code").then()
+                .statusCode(200);
+    }
+
 }

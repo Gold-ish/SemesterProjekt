@@ -27,6 +27,7 @@ public class ApplicationConfig extends Application {
         resources.add(errorhandling.MovieNotFoundExceptionMapper.class);
         resources.add(errorhandling.TooUnspecificSearchExceptionMapper.class);
         resources.add(errorhandling.UserExceptionMapper.class);
+        resources.add(errorhandling.WrongCriticCodeExceptionMapper.class);
         resources.add(org.glassfish.jersey.server.wadl.internal.WadlResource.class);
         resources.add(rest.FetchDemoResource.class);
         resources.add(rest.MovieResource.class);

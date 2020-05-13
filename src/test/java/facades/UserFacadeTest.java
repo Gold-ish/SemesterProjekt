@@ -5,7 +5,9 @@ import entities.Rating;
 import entities.Review;
 import entities.Role;
 import entities.User;
+import errorhandling.NotFoundException;
 import errorhandling.UserException;
+import errorhandling.WrongCriticCodeException;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import org.junit.jupiter.api.Assertions;
@@ -67,9 +69,9 @@ public class UserFacadeTest {
     }
 
     @Test
-    public void testRegisterUser_ReturnsConfirmationString_EqualResults() throws UserException {
+    public void testRegisterUser_ReturnsConfirmationString_EqualResults() throws UserException, WrongCriticCodeException {
         System.out.println("testRegisterUser_ReturnsConfirmationString_EqualResults");
-        UserDTO udto = new UserDTO("registerUser", "registerPassword", "female", "08-08-2020");
+        UserDTO udto = new UserDTO("registerUser", "registerPassword", "female", "08-08-2020", "");
         String actualResult = FACADE.registerUser(udto);
         String expectedResult = "User was created";
         assertEquals(expectedResult, actualResult);
@@ -78,7 +80,7 @@ public class UserFacadeTest {
     @Test
     public void testRegisterUser_ReturnsErrorMSG_ThrowsUserException() {
         System.out.println("testRegisterExistingUser_ReturnsErrorMSG_ThrowsUserException");
-        UserDTO udto = new UserDTO(u1.getUserName(), "registerPassword", "female", "08-08-2020");
+        UserDTO udto = new UserDTO(u1.getUserName(), "registerPassword", "female", "08-08-2020", "");
         Assertions.assertThrows(UserException.class, () -> {
             FACADE.registerUser(udto);
         });
@@ -96,7 +98,7 @@ public class UserFacadeTest {
     }
 
     //@Test //This test is depricated. Delete dosn't need a body anymore.
-    public void testDeleteUser_ReturnsConfirmationString_EqualResults() throws UserException {
+    public void testDeleteUser_ReturnsConfirmationString_EqualResults() throws UserException, NotFoundException {
         System.out.println("testDeleteUser_ReturnsConfirmationString_EqualResults");
         UserDTO udto = new UserDTO(u1);
         String result = FACADE.deleteUser("");

@@ -17,7 +17,7 @@ public class UserDTO {
     private final String password;
     private final String gender;
     private final String birthday;
-    private final String role;
+    private String role;
     private List<Review> reviews = new ArrayList();
     private List<Rating> ratings = new ArrayList();
 
@@ -58,6 +58,12 @@ public class UserDTO {
         return role;
     }
 
+    public void setRole(String role) {
+        this.role = role;
+    }
+
+    
+    
     public List<Review> getReviews() {
         return reviews;
     }

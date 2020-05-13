@@ -1,11 +1,14 @@
 package facades;
 
 import dto.UserDTO;
+import entities.CriticCode;
 import entities.Rating;
 import entities.Review;
 import entities.User;
 import errorhandling.AuthenticationException;
+import errorhandling.NotFoundException;
 import errorhandling.UserException;
+import errorhandling.WrongCriticCodeException;
 import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
@@ -48,7 +51,7 @@ public class UserFacade {
         try {
             user = em.find(User.class, username);
             if (user == null || !user.verifyPassword(password)) {
-                throw new AuthenticationException("Invalid user name or password");
+                throw new AuthenticationException("Invalid username or password");
             }
         } finally {
             em.close();
@@ -56,8 +59,17 @@ public class UserFacade {
         return user;
     }
 
-    public String registerUser(UserDTO userDTO) throws UserException {
+    public String registerUser(UserDTO userDTO) throws UserException, WrongCriticCodeException {
         EntityManager em = getEntityManager();
+        if(userDTO.getRole() == null || userDTO.getRole().isEmpty()){
+            userDTO.setRole("user");
+        }else{
+            if(AdminFacade.getAdminFacade(emf).verifyCriticCode(new CriticCode(userDTO.getRole()))){
+                userDTO.setRole("critic");
+            }else{
+                throw new WrongCriticCodeException("incorrect critic code");
+            }
+        }
         User userToAdd = new User(userDTO);
         try {
             em.getTransaction().begin();
@@ -106,11 +118,14 @@ public class UserFacade {
         }
     }
 
-    public String deleteUser(String username) {
+    public String deleteUser(String username) throws NotFoundException {
         EntityManager em = getEntityManager();
         try {
             em.getTransaction().begin();
             User u = em.find(User.class, username);
+            if (u == null) {
+                throw new NotFoundException("Cannot find user");
+            }
             Query qRating = em.createQuery("DELETE FROM Rating r WHERE r.user = :uName");
             int deletedRatingCount = qRating.setParameter("uName", username).executeUpdate();
             Query qReview = em.createQuery("DELETE FROM Review r WHERE r.user = :uName");

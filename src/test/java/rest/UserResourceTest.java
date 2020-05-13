@@ -3,8 +3,10 @@ package rest;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import dto.UserDTO;
+import entities.CriticCode;
 import entities.Role;
 import entities.User;
+import facades.AdminFacade;
 import facades.UserFacade;
 import io.restassured.RestAssured;
 import static io.restassured.RestAssured.given;
@@ -41,6 +43,7 @@ public class UserResourceTest {
     private static UserFacade FACADE;
     private User u1, u2, u3;
     private static Role userRole, criticRole;
+    private static CriticCode criticcode;
 
     public UserResourceTest() {
     }
@@ -59,11 +62,14 @@ public class UserResourceTest {
         EntityManager em = EMF.createEntityManager();
         userRole = new Role("user");
         criticRole = new Role("critic");
+        criticcode = AdminFacade.getAdminFacade(EMF).generateUniqueCriticCode(0);
         try {
             em.getTransaction().begin();
             em.createNamedQuery("Role.deleteAllRows").executeUpdate();
+            em.createNamedQuery("Critic.deleteAllRows").executeUpdate();
             em.persist(userRole);
             em.persist(criticRole);
+            em.persist(criticcode);
             em.getTransaction().commit();
         } finally {
             em.close();
@@ -106,7 +112,7 @@ public class UserResourceTest {
     @Test
     public void testRegisterUser_ReturnsConfirmationString_EqualResults() {
         System.out.println("testRegisterUser_ReturnsConfirmationString_EqualResults");
-        UserDTO udto = new UserDTO("registerUser", "registerPassword", "female", "08-08-2020", "user");
+        UserDTO udto = new UserDTO("registerUser", "registerPassword", "female", "08-08-2020", "");
         String json = GSON.toJson(udto);
         given().contentType(ContentType.JSON)
                 .body(json)
@@ -120,7 +126,7 @@ public class UserResourceTest {
     @Test
     public void testRegisterCritic_ReturnsConfirmationString_EqualResults() {
         System.out.println("testRegisterCritic_ReturnsConfirmationString_EqualResults");
-        UserDTO udto = new UserDTO("registerCritic", "registerPassword", "female", "08-08-2020", "critic");
+        UserDTO udto = new UserDTO("registerCritic", "registerPassword", "female", "08-08-2020", criticcode.getCode());
         String json = GSON.toJson(udto);
         given().contentType(ContentType.JSON)
                 .body(json)
@@ -130,11 +136,25 @@ public class UserResourceTest {
                 .statusCode(HttpStatus.OK_200.getStatusCode())
                 .body("creation", is("User was created"));
     }
+    @Test
+    public void testRegisterCritic_WrongCriticCode_ThrowsWrongCriticCodeException() {
+        System.out.println("testRegisterCritic_WrongCriticCode_ThrowsWrongCriticCodeException");
+        UserDTO udto = new UserDTO("registerCritic2", "registerPassword", "female", "08-08-2020", criticcode.getCode()+"asd");
+        String json = GSON.toJson(udto);
+        given().contentType(ContentType.JSON)
+                .body(json)
+                .post("/login/register").
+                then()
+                .assertThat()
+                .statusCode(HttpStatus.CONFLICT_409.getStatusCode())
+                .body("code", is(409))
+                .body("message", is("incorrect critic code"));
+    }
 
     @Test
     public void testRegisterUser_RegisteringExistingUser_ThrowsUserException() {
         System.out.println("testRegisterUser_RegisteringExistingUser_ThrowsUserException");
-        UserDTO udto = new UserDTO(u1.getUserName(), "registerPassword", "female", "08-08-2020", "user");
+        UserDTO udto = new UserDTO(u1.getUserName(), "registerPassword", "female", "08-08-2020", "");
         String json = GSON.toJson(udto);
         given().contentType(ContentType.JSON)
                 .body(json)
