@@ -6,6 +6,7 @@ import entities.Review;
 import entities.Role;
 import entities.User;
 import errorhandling.AuthenticationException;
+import errorhandling.NotFoundException;
 import errorhandling.UserException;
 import java.util.List;
 import javax.persistence.EntityManager;
@@ -49,7 +50,7 @@ public class UserFacade {
         try {
             user = em.find(User.class, username);
             if (user == null || !user.verifyPassword(password)) {
-                throw new AuthenticationException("Invalid user name or password");
+                throw new AuthenticationException("Invalid username or password");
             }
         } finally {
             em.close();
@@ -109,11 +110,14 @@ public class UserFacade {
         }
     }
 
-    public String deleteUser(UserDTO userDTO) {
+    public String deleteUser(UserDTO userDTO) throws NotFoundException {
         EntityManager em = getEntityManager();
         try {
             em.getTransaction().begin();
             User u = em.find(User.class, userDTO.getUsername());
+            if (u == null) {
+                throw new NotFoundException("Cannot find user to delete");
+            }
             Query qRating = em.createQuery("DELETE FROM Rating r WHERE r.user = :uName");
             int deletedRatingCount = qRating.setParameter("uName", userDTO.getUsername()).executeUpdate();
             Query qReview = em.createQuery("DELETE FROM Review r WHERE r.user = :uName");

@@ -4,6 +4,8 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import dto.UserDTO;
 import entities.User;
+import errorhandling.GenericExceptionMapper;
+import errorhandling.NotFoundException;
 import errorhandling.UserException;
 import errorhandling.UserExceptionMapper;
 import facades.UserFacade;
@@ -35,6 +37,8 @@ public class RoleDemoResource {
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
     private static final UserExceptionMapper USER_EXCEPTION_MAPPER
             = new UserExceptionMapper();
+    private static final GenericExceptionMapper GENERIC_EXCEPTION_MAPPER
+            = new GenericExceptionMapper();
 
     @Context
     private UriInfo context;
@@ -95,9 +99,13 @@ public class RoleDemoResource {
     @Path("user/delete")
     @Consumes(MediaType.APPLICATION_JSON)
     public Response deleteRating(String json) {
-        UserDTO userDTO = GSON.fromJson(json, UserDTO.class);
-        String deletedUser = GSON.toJson(FACADE.deleteUser(userDTO));
-        return Response.ok(deletedUser).build();
+        try {
+            UserDTO userDTO = GSON.fromJson(json, UserDTO.class);
+            String deletedUser = GSON.toJson(FACADE.deleteUser(userDTO));
+            return Response.ok(deletedUser).build();
+        } catch (NotFoundException ex) {
+            return GENERIC_EXCEPTION_MAPPER.toResponse(ex);
+        }
     }
 
     @GET
