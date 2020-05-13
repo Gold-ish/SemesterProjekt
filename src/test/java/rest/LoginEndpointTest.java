@@ -219,15 +219,4 @@ public class LoginEndpointTest {
                 .body("message", equalTo("Not authenticated - do login"));
     }
 
-    @Test
-    public void testGetCriticCode_ReturnsRandomGeneratedString_EqualResults() {
-        login("user_admin", "test");
-        given()
-                .contentType("application/json")
-                .header("x-access-token", securityToken)
-                .when()
-                .get("/info/critic/code").then()
-                .statusCode(200);
-    }
-
 }

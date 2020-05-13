@@ -28,9 +28,9 @@ public class ApplicationConfig extends Application {
         resources.add(errorhandling.TooUnspecificSearchExceptionMapper.class);
         resources.add(errorhandling.UserExceptionMapper.class);
         resources.add(org.glassfish.jersey.server.wadl.internal.WadlResource.class);
-        resources.add(rest.FetchDemoResource.class);
+        resources.add(rest.FetchResource.class);
         resources.add(rest.MovieResource.class);
-        resources.add(rest.RoleDemoResource.class);
+        resources.add(rest.RoleResource.class);
         resources.add(security.JWTAuthenticationFilter.class);
         resources.add(security.LoginEndpoint.class);
         resources.add(security.RolesAllowedFilter.class);

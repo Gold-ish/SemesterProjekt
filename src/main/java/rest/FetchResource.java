@@ -12,7 +12,7 @@ import javax.ws.rs.Path;
  */
 @Path("fetch")
 @RolesAllowed("admin")
-public class FetchDemoResource {
+public class FetchResource {
     private Gson gson = new Gson();
     private FetchFacade facade = FetchFacade.getFetchFacade();
     

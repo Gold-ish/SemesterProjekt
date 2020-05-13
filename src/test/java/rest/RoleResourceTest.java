@@ -28,7 +28,7 @@ import utils.EMF_Creator;
  *
  * @author carol
  */
-public class RoleDemoResourceTest {
+public class RoleResourceTest {
 
     private static final int SERVER_PORT = 7777;
     private static final String SERVER_URL = "http://localhost/api";
@@ -39,7 +39,7 @@ public class RoleDemoResourceTest {
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
     private User u1, u2;
 
-    public RoleDemoResourceTest() {
+    public RoleResourceTest() {
     }
 
     static HttpServer startServer() {
@@ -80,14 +80,20 @@ public class RoleDemoResourceTest {
         u1 = new User("UserNameTest1", "UserPassword1", "male", "05-05-2020");
         u2 = new User("UserNameTest2", "UserPassword2", "female", "50-50-2020");
         Role userRole = new Role("user");
+        Role adminRole = new Role("admin");
+        User both = new User("user_admin", "test");
         try {
             em.getTransaction().begin();
             em.createNamedQuery("Role.deleteAllRows").executeUpdate();
             em.createNamedQuery("User.deleteAllRows").executeUpdate();
             em.persist(userRole);
+            em.persist(adminRole);
             em.persist(u1);
             em.persist(u2);
             u1.addRole(userRole);
+            em.persist(both);
+            both.addRole(userRole);
+            both.addRole(adminRole);
             em.getTransaction().commit();
         } finally {
             em.close();
@@ -115,7 +121,7 @@ public class RoleDemoResourceTest {
     }
 
     /**
-     * Test of getInfoForAll method, of class RoleDemoResource.
+     * Test of getInfoForAll method, of class RoleResource.
      */
     @Test
     public void testServerConnection_EnsuresThatTheServerIsUp_200() {
@@ -128,7 +134,7 @@ public class RoleDemoResourceTest {
     }
 
     /**
-     * Test of allUsers method, of class RoleDemoResource.
+     * Test of allUsers method, of class RoleResource.
      */
     @Test
     public void testAllUsers_ReturnsAmountOfUsers_EqualsResult() {
@@ -137,11 +143,11 @@ public class RoleDemoResourceTest {
                 then()
                 .assertThat()
                 .statusCode(HttpStatus.OK_200.getStatusCode())
-                .body(is("[2]"));
+                .body(is("[3]"));
     }
 
     /**
-     * Test of getFromUser method, of class RoleDemoResource.
+     * Test of getFromUser method, of class RoleResource.
      */
     @Test
     public void testGetFromUser_LoggedIn_EqualsResult() {
@@ -155,9 +161,9 @@ public class RoleDemoResourceTest {
                 .statusCode(HttpStatus.OK_200.getStatusCode())
                 .body("username", is(u1.getUserName()));
     }
-    
+
     /**
-     * Test of getFromUser method, of class RoleDemoResource, not logged in.
+     * Test of getFromUser method, of class RoleResource, not logged in.
      */
     @Test
     public void testGetFromUser_NotLoggedIn_403() {
@@ -169,7 +175,7 @@ public class RoleDemoResourceTest {
     }
 
     /**
-     * Test of editUser method, of class RoleDemoResource.
+     * Test of editUser method, of class RoleResource.
      */
     @Test
     public void testEditUser_LoggedIn_EqualsResult() {
@@ -187,9 +193,9 @@ public class RoleDemoResourceTest {
                 .body("username", is(u1.getUserName()))
                 .body("birthday", is("15-05-2020"));
     }
-    
+
     /**
-     * Test of editUser method, of class RoleDemoResource, not logged in.
+     * Test of editUser method, of class RoleResource, not logged in.
      */
     @Test
     public void testEditUser_NotLoggedIn_403() {
@@ -201,7 +207,7 @@ public class RoleDemoResourceTest {
     }
 
     /**
-     * Test of deleteRating method, of class RoleDemoResource.
+     * Test of deleteRating method, of class RoleResource.
      */
     @Test
     public void testDeleteUser_LoggedIn_EqualsResult() {
@@ -217,10 +223,57 @@ public class RoleDemoResourceTest {
     }
 
     /**
-     * Test of getFromAdmin method, of class RoleDemoResource.
+     * Test of deleteRating method, of class RoleResource, not logged in.
      */
     @Test
-    public void testGetFromAdmin() {
+    public void testDeleteUser_NotLoggedIn_403() {
+        given().when()
+                .delete("/info/user/delete").
+                then()
+                .assertThat()
+                .statusCode(HttpStatus.FORBIDDEN_403.getStatusCode());
+    }
+
+    /**
+     * Test of getFromAdmin method, of class RoleResource.
+     */
+    @Test
+    public void testGetFromAdmin_LoggedIn_EqualsResult() {
+        login("user_admin", "test");
+        given()
+                .header("x-access-token", securityToken).
+                when()
+                .get("/info/admin").
+                then()
+                .assertThat()
+                .statusCode(HttpStatus.OK_200.getStatusCode())
+                .body("msg", is("Hello to (admin) User: user_admin"));
+    }
+    
+    /**
+     * Test of getFromAdmin method, of class RoleResource, not logged in.
+     */
+    @Test
+    public void testGetFromAdmin_NotLoggedIn_403() {
+        given().
+                when()
+                .get("/info/admin").
+                then()
+                .assertThat()
+                .statusCode(HttpStatus.FORBIDDEN_403.getStatusCode());
+    }
+
+    /**
+     * Test of getCriticCode method, of class RoleResource.
+     */
+    @Test
+    public void testGetCriticCode_ReturnsRandomGeneratedString_EqualResults() {
+        login("user_admin", "test");
+        given().contentType("application/json")
+                .header("x-access-token", securityToken)
+                .when()
+                .get("/info/critic/code").then()
+                .statusCode(200);
     }
 
 }
