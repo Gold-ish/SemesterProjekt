@@ -1,13 +1,14 @@
 package facades;
 
 import dto.UserDTO;
+import entities.CriticCode;
 import entities.Rating;
 import entities.Review;
-import entities.Role;
 import entities.User;
 import errorhandling.AuthenticationException;
 import errorhandling.NotFoundException;
 import errorhandling.UserException;
+import errorhandling.WrongCriticCodeException;
 import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
@@ -58,10 +59,18 @@ public class UserFacade {
         return user;
     }
 
-    public String registerUser(UserDTO userDTO) throws UserException {
+    public String registerUser(UserDTO userDTO) throws UserException, WrongCriticCodeException {
         EntityManager em = getEntityManager();
+        if(userDTO.getRole() == null || userDTO.getRole().isEmpty()){
+            userDTO.setRole("user");
+        }else{
+            if(AdminFacade.getAdminFacade(emf).verifyCriticCode(new CriticCode(userDTO.getRole()))){
+                userDTO.setRole("critic");
+            }else{
+                throw new WrongCriticCodeException("incorrect critic code");
+            }
+        }
         User userToAdd = new User(userDTO);
-        userToAdd.addRole(new Role("user"));
         try {
             em.getTransaction().begin();
             em.persist(userToAdd);

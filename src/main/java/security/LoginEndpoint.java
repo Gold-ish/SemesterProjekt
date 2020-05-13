@@ -18,6 +18,8 @@ import errorhandling.AuthenticationExceptionMapper;
 import errorhandling.GenericExceptionMapper;
 import errorhandling.UserException;
 import errorhandling.UserExceptionMapper;
+import errorhandling.WrongCriticCodeException;
+import errorhandling.WrongCriticCodeExceptionMapper;
 import facades.UserFacade;
 import java.util.Date;
 import java.util.List;
@@ -44,6 +46,8 @@ public class LoginEndpoint {
             = new AuthenticationExceptionMapper();
     private static final UserExceptionMapper USER_EXCEPTION_MAPPER
             = new UserExceptionMapper();
+    private static final WrongCriticCodeExceptionMapper WRONG_CRITIC_CODE_EXCEPTION_MAPPER
+            = new WrongCriticCodeExceptionMapper();
 
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
@@ -66,6 +70,8 @@ public class LoginEndpoint {
             return verifyAndGrantToken(userDTO.getUsername(), userDTO.getPassword(), result);
         } catch (UserException e) {
             return USER_EXCEPTION_MAPPER.toResponse((UserException) e);
+        } catch (WrongCriticCodeException e) {
+            return WRONG_CRITIC_CODE_EXCEPTION_MAPPER.toResponse((WrongCriticCodeException) e);
         }
     }
 

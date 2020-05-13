@@ -73,7 +73,7 @@ public class RoleResource {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     @Path("user")
-    @RolesAllowed("user")
+    @RolesAllowed({"user","critic"})
     public Response getFromUser() {
         try {
             String username = securityContext.getUserPrincipal().getName();
@@ -88,7 +88,7 @@ public class RoleResource {
     @Path("user/edit")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @RolesAllowed("user")
+    @RolesAllowed({"user","critic"})
     public Response editUser(String json) {
         try {
             String username = securityContext.getUserPrincipal().getName();
@@ -102,7 +102,7 @@ public class RoleResource {
 
     @DELETE
     @Path("user/delete")
-    @RolesAllowed("user")
+     @RolesAllowed({"user","critic"})
     public Response deleteUser() {
         try {
             String username = securityContext.getUserPrincipal().getName();

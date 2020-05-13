@@ -8,6 +8,7 @@ import entities.User;
 import errorhandling.AuthenticationException;
 import errorhandling.NotFoundException;
 import errorhandling.UserException;
+import errorhandling.WrongCriticCodeException;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import org.junit.jupiter.api.Assertions;
@@ -101,9 +102,9 @@ public class UserFacadeTest {
     }
 
     @Test
-    public void testRegisterUser_ReturnsConfirmationString_EqualResults() throws UserException {
+    public void testRegisterUser_ReturnsConfirmationString_EqualResults() throws UserException, WrongCriticCodeException {
         System.out.println("testRegisterUser_ReturnsConfirmationString_EqualResults");
-        UserDTO udto = new UserDTO("registerUser", "registerPassword", "female", "08-08-2020");
+        UserDTO udto = new UserDTO("registerUser", "registerPassword", "female", "08-08-2020", "");
         String actualResult = FACADE.registerUser(udto);
         String expectedResult = "User was created";
         assertEquals(expectedResult, actualResult);
@@ -111,8 +112,8 @@ public class UserFacadeTest {
 
     @Test
     public void testRegisterUser_UsernameAlreadyTaken_ThrowsUserException() {
-        System.out.println("testRegisterExistingUser_UsernameAlreadyTaken_ThrowsUserException");
-        UserDTO udto = new UserDTO(u1.getUserName(), "registerPassword", "female", "08-08-2020");
+        System.out.println("testRegisterUser_UsernameAlreadyTaken_ThrowsUserException");
+        UserDTO udto = new UserDTO(u1.getUserName(), "registerPassword", "female", "08-08-2020", "");
         Assertions.assertThrows(UserException.class, () -> {
             FACADE.registerUser(udto);
         });
@@ -132,7 +133,7 @@ public class UserFacadeTest {
     @Test
     public void testEditUser_UserNotFound_ThrowsUserException() throws UserException {
         System.out.println("testEditUser_UserNotFound_ThrowsUserException");
-        UserDTO udto = new UserDTO("NotRealName", "", "", "");
+        UserDTO udto = new UserDTO("NotRealName", "", "", "", "");
         Assertions.assertThrows(UserException.class, () -> {
             FACADE.editUser("NotRealName", udto);
         });

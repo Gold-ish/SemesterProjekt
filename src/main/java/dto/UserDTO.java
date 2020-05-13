@@ -18,14 +18,16 @@ public class UserDTO {
     private final String password;
     private final String gender;
     private final String birthday;
+    private String role;
     private List<Review> reviews = new ArrayList();
     private List<Rating> ratings = new ArrayList();
 
-    public UserDTO(String username, String password, String gender, String birthday) {
+    public UserDTO(String username, String password, String gender, String birthday, String role) {
         this.username = username;
         this.password = BCrypt.hashpw(password, BCrypt.gensalt(10));
         this.gender = gender;
         this.birthday = birthday;
+        this.role = role;
     }
     
     //Only used for find opperations. We don't want to show the password.
@@ -34,6 +36,7 @@ public class UserDTO {
         this.password = null;
         this.gender = user.getGender();
         this.birthday = user.getBirthday();
+        this.role = user.getRolesAsString();
     }
 
     public String getUsername() {
@@ -52,6 +55,16 @@ public class UserDTO {
         return birthday;
     }
 
+    public String getRole() {
+        return role;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
+    }
+
+    
+    
     public List<Review> getReviews() {
         return reviews;
     }

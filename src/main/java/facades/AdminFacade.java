@@ -41,6 +41,20 @@ public class AdminFacade {
             em.close();
         }
     }
+    
+    public boolean verifyCriticCode(CriticCode incomingCode){
+        EntityManager em = getEntityManager();
+        CriticCode found = em.find(CriticCode.class, incomingCode.getCode());
+        
+        if(found != null){
+            em.getTransaction().begin();
+            em.remove(found);
+            em.getTransaction().commit();
+            return true;
+        }else{
+            return false;
+        }
+    }
 
     private String getAlphaNumericString(double random) {
         //Choose a Character random from this String
