@@ -5,6 +5,7 @@ import entities.Rating;
 import entities.Review;
 import entities.Role;
 import entities.User;
+import errorhandling.AuthenticationException;
 import errorhandling.NotFoundException;
 import errorhandling.UserException;
 import javax.persistence.EntityManager;
@@ -68,6 +69,38 @@ public class UserFacadeTest {
     }
 
     @Test
+    public void testGetVerifiedUser_ReturnsUser_EqualsResults() throws AuthenticationException {
+        System.out.println("testGetVerifiedUser_ReturnsUser_EqualsResults");
+        User userResult = FACADE.getVerifiedUser(u1.getUserName(), "UserPassword1");
+        assertEquals(u1, userResult);
+    }
+    
+    @Test
+    public void testGetVerifiedUser_UsernameNotCorrect_ThrowsAuthenticationException()
+            throws AuthenticationException {
+        System.out.println("testGetVerifiedUser_UsernameNotCorrect_ThrowsUserException");
+        Assertions.assertThrows(AuthenticationException.class, () -> {
+            FACADE.getVerifiedUser("WrongUserName", "UserPassword1");
+        });
+    }
+
+    @Test
+    public void testGetUser_ReturnsUser_EqualsResults() throws UserException {
+        System.out.println("testGetUser_ReturnsUser_EqualsResults");
+        UserDTO user1 = new UserDTO(u1);
+        UserDTO user = FACADE.getUser(u1.getUserName());
+        assertEquals(user1, user);
+    }
+
+    @Test
+    public void testGetUser_UsernameNotRegistered_ThrowsUserException() throws UserException {
+        System.out.println("testGetUser_UsernameNotRegistered_ThrowsException");
+        Assertions.assertThrows(UserException.class, () -> {
+            FACADE.getUser("NotRealUsername");
+        });
+    }
+
+    @Test
     public void testRegisterUser_ReturnsConfirmationString_EqualResults() throws UserException {
         System.out.println("testRegisterUser_ReturnsConfirmationString_EqualResults");
         UserDTO udto = new UserDTO("registerUser", "registerPassword", "female", "08-08-2020");
@@ -77,8 +110,8 @@ public class UserFacadeTest {
     }
 
     @Test
-    public void testRegisterUser_ReturnsErrorMSG_ThrowsUserException() {
-        System.out.println("testRegisterExistingUser_ReturnsErrorMSG_ThrowsUserException");
+    public void testRegisterUser_UsernameAlreadyTaken_ThrowsUserException() {
+        System.out.println("testRegisterExistingUser_UsernameAlreadyTaken_ThrowsUserException");
         UserDTO udto = new UserDTO(u1.getUserName(), "registerPassword", "female", "08-08-2020");
         Assertions.assertThrows(UserException.class, () -> {
             FACADE.registerUser(udto);
@@ -96,20 +129,29 @@ public class UserFacadeTest {
         assertEquals(expectedResult, result.getBirthday());
     }
 
-    //@Test //This test is depricated. Delete dosn't need a body anymore.
+    @Test
+    public void testEditUser_UserNotFound_ThrowsUserException() throws UserException {
+        System.out.println("testEditUser_UserNotFound_ThrowsUserException");
+        UserDTO udto = new UserDTO("NotRealName", "", "", "");
+        Assertions.assertThrows(UserException.class, () -> {
+            FACADE.editUser("NotRealName", udto);
+        });
+    }
+
+    @Test
     public void testDeleteUser_ReturnsConfirmationString_EqualResults() throws UserException, NotFoundException {
         System.out.println("testDeleteUser_ReturnsConfirmationString_EqualResults");
-        UserDTO udto = new UserDTO(u1);
-        String result = FACADE.deleteUser("");
+        String result = FACADE.deleteUser(u1.getUserName());
         String expectedResult = "User: " + u1.getUserName() + " Ratings: 1 Reviews: 1 were deleted";
         assertEquals(expectedResult, result);
     }
 
     @Test
-    public void testGetUser() throws UserException {
-        System.out.println("testGetUser");
-        UserDTO user = FACADE.getUser(u1.getUserName());
-        System.out.println(user);
+    public void testDeleteUser_UserNotFound_ThrowsNotFoundException() throws UserException, NotFoundException {
+        System.out.println("testDeleteUser_UserNotFound_ThrowsNotFoundException");
+        Assertions.assertThrows(NotFoundException.class, () -> {
+            FACADE.deleteUser("NotRealUsername");
+        });
     }
 
 }

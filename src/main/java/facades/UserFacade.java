@@ -44,7 +44,7 @@ public class UserFacade {
         return emf.createEntityManager();
     }
 
-    public User getVeryfiedUser(String username, String password) throws AuthenticationException {
+    public User getVerifiedUser(String username, String password) throws AuthenticationException {
         EntityManager em = getEntityManager();
         User user;
         try {
@@ -79,6 +79,9 @@ public class UserFacade {
         User user;
         try {
             user = em.find(User.class, username);
+            if (user == null) {
+                throw new UserException("Can't find user.");
+            }
             UserDTO userdto = new UserDTO(user);
             List<Rating> ratings = ratingFacade.getRatings(user.getUserName());
             userdto.setRatings(ratings);
@@ -98,6 +101,9 @@ public class UserFacade {
         try {
             em.getTransaction().begin();
             User u = em.find(User.class, username);
+            if (u == null) {
+                throw new UserException("Can't find user to edit.");
+            }
             u.setGender(userDTO.getGender());
             u.setBirthday(userDTO.getBirthday());
             em.getTransaction().commit();
