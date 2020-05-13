@@ -3,9 +3,11 @@ package rest;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import dto.UserDTO;
+import entities.CriticCode;
 import entities.User;
 import errorhandling.UserException;
 import errorhandling.UserExceptionMapper;
+import facades.AdminFacade;
 import facades.UserFacade;
 import java.util.List;
 import javax.annotation.security.RolesAllowed;
@@ -31,7 +33,8 @@ import utils.EMF_Creator;
 public class RoleDemoResource {
 
     private static EntityManagerFactory EMF = EMF_Creator.createEntityManagerFactory(EMF_Creator.DbSelector.DEV, EMF_Creator.Strategy.CREATE);
-    private final UserFacade FACADE = UserFacade.getUserFacade(EMF);
+    private final UserFacade FACADE_USER = UserFacade.getUserFacade(EMF);
+    private final AdminFacade FACADE_ADMIN = AdminFacade.getAdminFacade(EMF);
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
     private static final UserExceptionMapper USER_EXCEPTION_MAPPER
             = new UserExceptionMapper();
@@ -70,7 +73,7 @@ public class RoleDemoResource {
     public Response getFromUser() {
         try {
             String username = securityContext.getUserPrincipal().getName();
-            UserDTO user = FACADE.getUser(username);
+            UserDTO user = FACADE_USER.getUser(username);
             return Response.ok(GSON.toJson(user)).build();
         } catch (UserException ex) {
             return USER_EXCEPTION_MAPPER.toResponse((UserException) ex);
@@ -86,7 +89,7 @@ public class RoleDemoResource {
         try {
             String username = securityContext.getUserPrincipal().getName();
             UserDTO userDTO = GSON.fromJson(json, UserDTO.class);
-            String returnedUser = GSON.toJson(FACADE.editUser(username, userDTO));
+            String returnedUser = GSON.toJson(FACADE_USER.editUser(username, userDTO));
             return Response.ok(returnedUser).build();
         } catch (UserException ex) {
             return USER_EXCEPTION_MAPPER.toResponse(ex);
@@ -98,7 +101,7 @@ public class RoleDemoResource {
     @RolesAllowed("user")
     public Response deleteRating() {
         String username = securityContext.getUserPrincipal().getName();
-        String deletedUser = GSON.toJson(FACADE.deleteUser(username));
+        String deletedUser = GSON.toJson(FACADE_USER.deleteUser(username));
         return Response.ok(deletedUser).build();
     }
 
@@ -109,5 +112,14 @@ public class RoleDemoResource {
     public String getFromAdmin() {
         String thisuser = securityContext.getUserPrincipal().getName();
         return "{\"msg\": \"Hello to (admin) User: " + thisuser + "\"}";
+    }
+
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    @Path("critic/code")
+    @RolesAllowed("admin")
+    public Response getCriticCode() {
+        CriticCode generatedCriticCode = FACADE_ADMIN.generateUniqueCriticCode(0);
+        return Response.ok(generatedCriticCode).build();
     }
 }
