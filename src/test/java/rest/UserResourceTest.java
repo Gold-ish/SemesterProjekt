@@ -39,8 +39,8 @@ public class UserResourceTest {
     private static EntityManagerFactory EMF;
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
     private static UserFacade FACADE;
-    private User u1, u2;
-    private UserDTO ud1, ud2;
+    private User u1, u2, u3;
+    private static Role userRole, criticRole;
 
     public UserResourceTest() {
     }
@@ -57,11 +57,13 @@ public class UserResourceTest {
         EMF = EMF_Creator.createEntityManagerFactory(EMF_Creator.DbSelector.TEST, EMF_Creator.Strategy.DROP_AND_CREATE);
         FACADE = UserFacade.getUserFacade(EMF);
         EntityManager em = EMF.createEntityManager();
+        userRole = new Role("user");
+        criticRole = new Role("critic");
         try {
             em.getTransaction().begin();
             em.createNamedQuery("Role.deleteAllRows").executeUpdate();
-            em.persist(new Role("user"));
-            em.persist(new Role("admin"));
+            em.persist(userRole);
+            em.persist(criticRole);
             em.getTransaction().commit();
         } finally {
             em.close();
@@ -82,17 +84,19 @@ public class UserResourceTest {
     @BeforeEach
     public void setUp() {
         EntityManager em = EMF.createEntityManager();
-        ud1 = new UserDTO("UserNameTest1", "UserPassword1", "male", "05-05-2020");
-        ud2 = new UserDTO("UserNameTest2", "UserPassword2", "female", "50-50-2020");
-        u1 = new User(ud1);
-        u2 = new User(ud2);
-        u1.addRole(new Role("user"));
-        u2.addRole(new Role("user"));
+
+        u1 = new User("UserNameTest1", "UserPassword1", "male", "05-05-2020");
+        u1.addRole(userRole);
+        u2 = new User("UserNameTest2", "UserPassword2", "female", "50-50-2020");
+        u2.addRole(userRole);
+        u3 = new User("UserNameTest3", "UserPassword3", "other", "04-04-2020");
+        u3.addRole(criticRole);
         try {
             em.getTransaction().begin();
             em.createNamedQuery("User.deleteAllRows").executeUpdate();
             em.persist(u1);
             em.persist(u2);
+            em.persist(u3);
             em.getTransaction().commit();
         } finally {
             em.close();
@@ -102,7 +106,21 @@ public class UserResourceTest {
     @Test
     public void testRegisterUser_ReturnsConfirmationString_EqualResults() {
         System.out.println("testRegisterUser_ReturnsConfirmationString_EqualResults");
-        UserDTO udto = new UserDTO("registerUser", "registerPassword", "female", "08-08-2020");
+        UserDTO udto = new UserDTO("registerUser", "registerPassword", "female", "08-08-2020", "user");
+        String json = GSON.toJson(udto);
+        given().contentType(ContentType.JSON)
+                .body(json)
+                .post("/login/register").
+                then()
+                .assertThat()
+                .statusCode(HttpStatus.OK_200.getStatusCode())
+                .body("creation", is("User was created"));
+    }
+    
+    @Test
+    public void testRegisterCritic_ReturnsConfirmationString_EqualResults() {
+        System.out.println("testRegisterCritic_ReturnsConfirmationString_EqualResults");
+        UserDTO udto = new UserDTO("registerCritic", "registerPassword", "female", "08-08-2020", "critic");
         String json = GSON.toJson(udto);
         given().contentType(ContentType.JSON)
                 .body(json)
@@ -116,7 +134,7 @@ public class UserResourceTest {
     @Test
     public void testRegisterUser_RegisteringExistingUser_ThrowsUserException() {
         System.out.println("testRegisterUser_RegisteringExistingUser_ThrowsUserException");
-        UserDTO udto = new UserDTO(u1.getUserName(), "registerPassword", "female", "08-08-2020");
+        UserDTO udto = new UserDTO(u1.getUserName(), "registerPassword", "female", "08-08-2020", "user");
         String json = GSON.toJson(udto);
         given().contentType(ContentType.JSON)
                 .body(json)

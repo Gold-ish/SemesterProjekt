@@ -66,7 +66,7 @@ public class RoleDemoResource {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     @Path("user")
-    @RolesAllowed("user")
+    @RolesAllowed({"user","critic"})
     public Response getFromUser() {
         try {
             String username = securityContext.getUserPrincipal().getName();
@@ -81,7 +81,7 @@ public class RoleDemoResource {
     @Path("user/edit")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @RolesAllowed("user")
+    @RolesAllowed({"user","critic"})
     public Response editUser(String json) {
         try {
             String username = securityContext.getUserPrincipal().getName();
@@ -95,7 +95,7 @@ public class RoleDemoResource {
 
     @DELETE
     @Path("user/delete")
-    @RolesAllowed("user")
+    @RolesAllowed({"user","critic"})
     public Response deleteRating() {
         String username = securityContext.getUserPrincipal().getName();
         String deletedUser = GSON.toJson(FACADE.deleteUser(username));

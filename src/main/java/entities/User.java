@@ -62,6 +62,7 @@ public class User implements Serializable {
         this.userPass = BCrypt.hashpw(userDTO.getPassword(), BCrypt.gensalt(10));
         this.gender = userDTO.getGender();
         this.birthday = userDTO.getBirthday();
+        roleList.add(new Role(userDTO.getRole()));
     }
 
     public List<String> getRolesAsStrings() {

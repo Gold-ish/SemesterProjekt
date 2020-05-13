@@ -3,7 +3,6 @@ package facades;
 import dto.UserDTO;
 import entities.Rating;
 import entities.Review;
-import entities.Role;
 import entities.User;
 import errorhandling.AuthenticationException;
 import errorhandling.UserException;
@@ -60,7 +59,6 @@ public class UserFacade {
     public String registerUser(UserDTO userDTO) throws UserException {
         EntityManager em = getEntityManager();
         User userToAdd = new User(userDTO);
-        userToAdd.addRole(new Role("user"));
         try {
             em.getTransaction().begin();
             em.persist(userToAdd);

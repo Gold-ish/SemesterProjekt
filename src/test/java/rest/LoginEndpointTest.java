@@ -68,6 +68,7 @@ public class LoginEndpointTest {
 
             Role userRole = new Role("user");
             Role adminRole = new Role("admin");
+            Role criticRole = new Role("critic");
             User user = new User("user", "test");
             user.addRole(userRole);
             User admin = new User("admin", "test");
@@ -75,11 +76,15 @@ public class LoginEndpointTest {
             User both = new User("user_admin", "test");
             both.addRole(userRole);
             both.addRole(adminRole);
+            User critic = new User("critic", "test");
+            critic.addRole(criticRole);
             em.persist(userRole);
             em.persist(adminRole);
+            em.persist(criticRole);
             em.persist(user);
             em.persist(admin);
             em.persist(both);
+            em.persist(critic);
             System.out.println("Saved test data to database");
             em.getTransaction().commit();
         } finally {
@@ -139,6 +144,18 @@ public class LoginEndpointTest {
   @Test
   public void testRestForUser() {
     login("user", "test");
+    given()
+            .contentType("application/json")
+            .header("x-access-token", securityToken)
+            .when()
+            .get("/info/user").then()
+            .statusCode(200)
+            .body("username", equalTo("user"));
+  }
+  
+  @Test
+  public void testRestForCritic() {
+    login("critic", "test");
     given()
             .contentType("application/json")
             .header("x-access-token", securityToken)
