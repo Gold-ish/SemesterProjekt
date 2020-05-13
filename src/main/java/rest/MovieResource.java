@@ -11,6 +11,7 @@ import errorhandling.NotFoundException;
 import errorhandling.TooUnspecificSearchExceptionMapper;
 import facades.MovieFacade;
 import java.io.IOException;
+import javax.annotation.security.RolesAllowed;
 import javax.persistence.EntityManagerFactory;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -20,8 +21,11 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.SecurityContext;
+import javax.ws.rs.core.UriInfo;
 import utils.EMF_Creator;
 
 /**
@@ -42,6 +46,12 @@ public class MovieResource {
     private static final MovieNotFoundExceptionMapper MOVIE_EXCEPTION_MAPPER 
             = new MovieNotFoundExceptionMapper();
 
+    @Context
+    private UriInfo context;
+
+    @Context
+    SecurityContext securityContext;
+    
     @GET
     @Produces({MediaType.APPLICATION_JSON})
     public String demo() {
@@ -83,8 +93,14 @@ public class MovieResource {
     @Path("add/rating")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
+    @RolesAllowed({"user", "critic"})
     public Response addRating(String json) {
         RatingDTO rating = GSON.fromJson(json, RatingDTO.class);
+        
+        //We manually set the user to be the user from the JWT token, 
+        //to ensure that a user can't edit the Request to the server with a different username.
+        rating.setUserName(securityContext.getUserPrincipal().getName());
+        
         String returnRating = GSON.toJson(FACADE.addRating(rating));
         return Response.ok(returnRating).build();
     }
@@ -93,9 +109,11 @@ public class MovieResource {
     @Path("edit/rating")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
+    @RolesAllowed({"user", "critic"})
     public Response editRating(String json) {
         try {
             RatingDTO rating = GSON.fromJson(json, RatingDTO.class);
+            rating.setUserName(securityContext.getUserPrincipal().getName());
             String returnRating = GSON.toJson(FACADE.editRating(rating));
             return Response.ok(returnRating).build();
         } catch (NotFoundException ex) {
@@ -106,9 +124,11 @@ public class MovieResource {
     @DELETE
     @Path("delete/rating")
     @Consumes(MediaType.APPLICATION_JSON)
+    @RolesAllowed({"user", "critic", "delete"})
     public Response deleteRating(String json) {
         try {
             RatingDTO rating = GSON.fromJson(json, RatingDTO.class);
+            rating.setUserName(securityContext.getUserPrincipal().getName());
             String deletedRating = GSON.toJson(FACADE.deleteRating(rating));
             return Response.ok(deletedRating).build();
         } catch (NotFoundException ex) {
@@ -120,8 +140,10 @@ public class MovieResource {
     @Path("add/review")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
+    @RolesAllowed({"user", "critic"})
     public Response addReview(String json) {
         ReviewDTO review = GSON.fromJson(json, ReviewDTO.class);
+        review.setUser(securityContext.getUserPrincipal().getName());
         String returnReview = GSON.toJson(FACADE.addReview(review));
         return Response.ok(returnReview).build();
     }
@@ -130,9 +152,11 @@ public class MovieResource {
     @Path("edit/review")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
+    @RolesAllowed({"user", "critic"})
     public Response editReview(String json) {
         try {
             ReviewDTO review = GSON.fromJson(json, ReviewDTO.class);
+            review.setUser(securityContext.getUserPrincipal().getName());
             String returnReview = GSON.toJson(FACADE.editReview(review));
             return Response.ok(returnReview).build();
         } catch (NotFoundException ex) {
@@ -143,9 +167,11 @@ public class MovieResource {
     @DELETE
     @Path("delete/review")
     @Consumes(MediaType.APPLICATION_JSON)
+    @RolesAllowed({"user", "critic", "admin"})
     public Response deleteReview(String json) {
         try {
             ReviewDTO review = GSON.fromJson(json, ReviewDTO.class);
+            review.setUser(securityContext.getUserPrincipal().getName());
             String deletedReview = GSON.toJson(FACADE.deleteReview(review));
             return Response.ok(deletedReview).build();
         } catch (NotFoundException ex) {

@@ -103,7 +103,7 @@ public class RoleDemoResource {
     @DELETE
     @Path("user/delete")
     @RolesAllowed("user")
-    public Response deleteRating() {
+    public Response deleteUser() {
         try {
             String username = securityContext.getUserPrincipal().getName();
             String deletedUser = GSON.toJson(FACADE_USER.deleteUser(username));
