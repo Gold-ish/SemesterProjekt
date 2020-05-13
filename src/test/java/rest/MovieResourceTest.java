@@ -8,6 +8,7 @@ import dto.ReviewDTO;
 import dto.SpecificMovieDTO;
 import entities.Rating;
 import entities.Review;
+import entities.Role;
 import entities.User;
 import io.restassured.RestAssured;
 import static io.restassured.RestAssured.given;
@@ -59,7 +60,7 @@ public class MovieResourceTest {
     @BeforeAll
     public static void setUpClass() {
         EMF_Creator.startREST_TestWithDB();
-        EMF = EMF_Creator.createEntityManagerFactory(EMF_Creator.DbSelector.TEST, EMF_Creator.Strategy.DROP_AND_CREATE);
+        EMF = EMF_Creator.createEntityManagerFactory(EMF_Creator.DbSelector.TEST, EMF_Creator.Strategy.CREATE);
         httpServer = startServer();
         //Setup RestAssured
         RestAssured.baseURI = SERVER_URL;
@@ -90,11 +91,22 @@ public class MovieResourceTest {
         re2 = new Review("tt0076759", "user1", "Best movie ever");
         r1 = new Rating("tt0076759", "user1", 8);
         r2 = new Rating("tt0076759", "user1", 3);
+        Role userRole = new Role("user");
+        Role criticRole = new Role("critic");
+        User user = new User("user", "test");
+        user.addRole(userRole);
+        User critic = new User("critic", "test");
+        critic.addRole(criticRole);
         try {
             em.getTransaction().begin();
             em.createNamedQuery("Review.deleteAllRows").executeUpdate();
             em.createNamedQuery("Rating.deleteAllRows").executeUpdate();
+            em.createNamedQuery("Role.deleteAllRows").executeUpdate();
             em.createNamedQuery("User.deleteAllRows").executeUpdate();
+            em.persist(userRole);
+            em.persist(criticRole);
+            em.persist(user);
+            em.persist(critic);
             em.persist(r1);
             em.persist(r2);
             em.persist(re1);
@@ -103,6 +115,26 @@ public class MovieResourceTest {
         } finally {
             em.close();
         }
+    }
+
+    //This is how we hold on to the token after login, similar to that a client must store the token somewhere
+    private static String securityToken;
+
+    //Utility method to login and set the returned securityToken
+    private static void login(String role, String password) {
+        String json = String.format("{username: \"%s\", password: \"%s\"}", role, password);
+        securityToken = given()
+                .contentType("application/json")
+                .body(json)
+                //.when().post("/api/login")
+                .when().post("/login")
+                .then()
+                .extract().path("token");
+        System.out.println("TOKEN ---> " + securityToken);
+    }
+
+    private void logOut() {
+        securityToken = null;
     }
 
     /**
@@ -125,10 +157,10 @@ public class MovieResourceTest {
     @Test
     public void testGetMovieById_ReturnsMovie_EqualResults() {
         System.out.println("testGetMovieById_ReturnsMovie_EqualResults");
-        SpecificMovieDTO movie = new SpecificMovieDTO("Star Wars: Episode V - The Empire Strikes Back", "1980", "PG", "20 Jun 1980", "124 min", "Action, Adventure, Fantasy, Sci-Fi", "Irvin Kershner" , "Mark Hamill, Harrison Ford, Carrie Fisher, Billy Dee Williams",
+        SpecificMovieDTO movie = new SpecificMovieDTO("Star Wars: Episode V - The Empire Strikes Back", "1980", "PG", "20 Jun 1980", "124 min", "Action, Adventure, Fantasy, Sci-Fi", "Irvin Kershner", "Mark Hamill, Harrison Ford, Carrie Fisher, Billy Dee Williams",
                 "Luke Skywalker, Han Solo, Princess Leia and Chewbacca face attack by the Imperial forces and its AT-AT walkers on the ice planet Hoth. While Han and Leia escape in the Millennium Falcon, Luke travels to Dagobah in search of Yoda. Only with the Jedi master's help will Luke survive when the dark side of the Force beckons him into the ultimate duel with Darth Vader.",
                 "English", "Won 1 Oscar. Another 24 wins & 20 nominations.", "https://m.media-amazon.com/images/M/MV5BYmU1NDRjNDgtMzhiMi00NjZmLTg5NGItZDNiZjU5NTU4OTE0XkEyXkFqcGdeQXVyNzkwMjQ5NzM@._V1_SX300.jpg",
-                "tt0080684","movie", "21 Sep 2004","Twentieth Century Fox"); 
+                "tt0080684", "movie", "21 Sep 2004", "Twentieth Century Fox");
         given().when()
                 .get("/movies/{id}", movie.getImdbID()).
                 then()
@@ -158,7 +190,7 @@ public class MovieResourceTest {
     @Test
     public void testGetMovieByID_NonExistentMovieID_404MovieNotFoundException() {
         System.out.println("testGetMovieByID_NonExistentMovieID_404MovieNotFoundException");
-        MovieDTO movie = new MovieDTO("", "0", "", "tt1", "" , "" , "" ,"" ,"");
+        MovieDTO movie = new MovieDTO("", "0", "", "tt1", "", "", "", "", "");
         given().when()
                 .get("/movies/{id}", movie.getImdbID()).
                 then()
@@ -253,10 +285,13 @@ public class MovieResourceTest {
         User user = new User("testuser1", "123", "other", "05-05-2020");
         RatingDTO rating = new RatingDTO("tt0080684", user.getUserName(), 8);
         String json = GSON.toJson(rating);
+        login("user", "test");
         given().contentType(ContentType.JSON)
+                .header("x-access-token", securityToken)
                 .body(json)
-                .post("/movies/add/rating").
-                then()
+                .when()
+                .post("/movies/add/rating")
+                .then()
                 .assertThat()
                 .statusCode(HttpStatus.OK_200.getStatusCode())
                 .body("rating", is(8));
@@ -267,10 +302,13 @@ public class MovieResourceTest {
         System.out.println("testEditRating_ReturnsRating_EqualResults");
         RatingDTO rating = new RatingDTO(r1.getId(), "tt0076759", user1.getUserName(), 10);
         String json = GSON.toJson(rating);
+        login("user", "test");
         given().contentType(ContentType.JSON)
+                .header("x-access-token", securityToken)
                 .body(json)
-                .put("/movies/edit/rating").
-                then()
+                .when()
+                .put("/movies/edit/rating")
+                .then()
                 .assertThat()
                 .statusCode(HttpStatus.OK_200.getStatusCode())
                 .body("rating", is(10))
@@ -284,8 +322,8 @@ public class MovieResourceTest {
         String json = GSON.toJson(new RatingDTO(r2));
         given().contentType(ContentType.JSON)
                 .body(json)
-                .delete("/movies/delete/rating").
-                then()
+                .delete("/movies/delete/rating")
+                .then()
                 .assertThat()
                 .statusCode(HttpStatus.OK_200.getStatusCode())
                 .body("id", is(r2.getId()))
@@ -299,10 +337,13 @@ public class MovieResourceTest {
         User user = new User("testuser3", "123", "other", "05-05-2020");
         ReviewDTO review = new ReviewDTO("tt0080684", user.getUserName(), "Very good movie");
         String json = GSON.toJson(review);
+        login("user", "test");
         given().contentType(ContentType.JSON)
+                .header("x-access-token", securityToken)
                 .body(json)
-                .post("/movies/add/review").
-                then()
+                .when()
+                .post("/movies/add/review")
+                .then()
                 .assertThat()
                 .statusCode(HttpStatus.OK_200.getStatusCode())
                 .body("review", is("Very good movie"));
@@ -314,10 +355,13 @@ public class MovieResourceTest {
         ReviewDTO review = new ReviewDTO(re1.getId(), "tt0076759", "user1",
                 "Very good movie");
         String json = GSON.toJson(review);
+        login("user", "test");
         given().contentType(ContentType.JSON)
+                .header("x-access-token", securityToken)
                 .body(json)
-                .put("/movies/edit/review").
-                then()
+                .when()
+                .put("/movies/edit/review")
+                .then()
                 .assertThat()
                 .statusCode(HttpStatus.OK_200.getStatusCode())
                 .body("review", is("Very good movie"))
