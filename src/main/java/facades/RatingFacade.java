@@ -114,9 +114,8 @@ public class RatingFacade {
             em.close();
         }
     }
-    
-    
-        public List<RatingDTO> getRatingsWithMovieID(String movieID) {
+
+    public List<RatingDTO> getRatingsWithMovieID(String movieID) {
         EntityManager em = getEntityManager();
         try {
             TypedQuery<Rating> tq = em.createQuery("SELECT r FROM Rating r "
@@ -132,6 +131,17 @@ public class RatingFacade {
         }
 
     }
-    
-    
+
+    public List<String> getTopTenMovies() {
+        EntityManager em = getEntityManager();
+        try {
+            Query tq = em.createNativeQuery("SELECT MOVIEID FROM RATING WHERE MOVIEID IN (SELECT MOVIEID FROM RATING GROUP BY MOVIEID HAVING COUNT(*) > 1) GROUP BY MOVIEID ORDER BY AVG(rating)desc LIMIT 10;");
+            List<String> list = (List<String>)(List<?>) tq.getResultList();
+            return list;
+        } finally {
+            em.close();
+        }
+    }
+
+
 }

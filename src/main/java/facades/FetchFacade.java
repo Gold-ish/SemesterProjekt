@@ -65,16 +65,20 @@ public class FetchFacade {
         String[] jsonStringSplit = fetchedJSONString.substring(11).split("\\]");
         MovieDTO[] movieDTOs = GSON.fromJson("[" + jsonStringSplit[0] + "]", MovieDTO[].class);
         JsonObject jobj = new Gson().fromJson("{" + jsonStringSplit[1].substring(1), JsonObject.class);
-
-        return new MovieListDTO(fetchParralel(movieDTOs), jobj.get("totalResults").getAsInt());
+        ArrayList<String> arr = new ArrayList<>();
+        for (MovieDTO m : movieDTOs) {
+            arr.add(m.getImdbID());
+        }
+        
+        return new MovieListDTO(fetchParallel(arr), jobj.get("totalResults").getAsInt());
 
     }
     
     
-    private List<MovieDTO> fetchParralel(MovieDTO[] searchList) throws InterruptedException{
+    public List<MovieDTO> fetchParallel(List<String> searchList) throws InterruptedException{
         List<MovieFetchCall> fetchCalls = new ArrayList<>();
-        for(MovieDTO mdto : searchList){
-            fetchCalls.add(new MovieFetchCall(mdto.getImdbID()));
+        for(String imdbID : searchList){
+            fetchCalls.add(new MovieFetchCall(imdbID));
         }
         ExecutorService workingJack = Executors.newFixedThreadPool(10);
         for (MovieFetchCall fc : fetchCalls) {

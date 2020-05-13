@@ -2,6 +2,7 @@ package facades;
 
 import dto.MovieListDTO;
 import dto.SpecificMovieDTO;
+import dto.TopTenMoviesDTO;
 import entities.Rating;
 import entities.User;
 import errorhandling.MovieNotFoundException;
@@ -128,5 +129,11 @@ public class MovieFacadeTest {
         String actualMessage = exception.getMessage();
         assertTrue(actualMessage.contains(expectedMessage));
     }
-
+    
+    @Test
+    public void testGetTopTenMovies_ReturnsListNrOf10Movies_EqualResults() throws InterruptedException {
+        System.out.println("testGetTopTenMovies_ReturnsListNrOf10Movies_EqualResults");
+        TopTenMoviesDTO actualDto = FACADE.getTopTenMovies();
+        assertEquals(1, actualDto.getMovieDTOs().size());
+    }
 }
