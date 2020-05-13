@@ -5,6 +5,7 @@ import entities.Rating;
 import entities.Review;
 import entities.Role;
 import entities.User;
+import errorhandling.NotFoundException;
 import errorhandling.UserException;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
@@ -96,7 +97,7 @@ public class UserFacadeTest {
     }
 
     //@Test //This test is depricated. Delete dosn't need a body anymore.
-    public void testDeleteUser_ReturnsConfirmationString_EqualResults() throws UserException {
+    public void testDeleteUser_ReturnsConfirmationString_EqualResults() throws UserException, NotFoundException {
         System.out.println("testDeleteUser_ReturnsConfirmationString_EqualResults");
         UserDTO udto = new UserDTO(u1);
         String result = FACADE.deleteUser("");

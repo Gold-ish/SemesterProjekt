@@ -14,14 +14,13 @@ import com.nimbusds.jwt.SignedJWT;
 import dto.UserDTO;
 import entities.User;
 import errorhandling.AuthenticationException;
+import errorhandling.AuthenticationExceptionMapper;
 import errorhandling.GenericExceptionMapper;
 import errorhandling.UserException;
 import errorhandling.UserExceptionMapper;
 import facades.UserFacade;
 import java.util.Date;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.persistence.EntityManagerFactory;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
@@ -41,6 +40,8 @@ public class LoginEndpoint {
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
     private static final GenericExceptionMapper GENERIC_EXCEPTION_MAPPER
             = new GenericExceptionMapper();
+    private static final AuthenticationExceptionMapper AUTHENTICATION_EXCEPTION_MAPPER 
+            = new AuthenticationExceptionMapper();
     private static final UserExceptionMapper USER_EXCEPTION_MAPPER
             = new UserExceptionMapper();
 
@@ -48,14 +49,10 @@ public class LoginEndpoint {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response login(String jsonString) {
-        try {
-            JsonObject json = new JsonParser().parse(jsonString).getAsJsonObject();
-            String username = json.get("username").getAsString();
-            String password = json.get("password").getAsString();
-            return verifyAndGrantToken(username, password, "LoggedIn");
-        } catch (AuthenticationException e) {
-            return GENERIC_EXCEPTION_MAPPER.toResponse(e);
-        }
+        JsonObject json = new JsonParser().parse(jsonString).getAsJsonObject();
+        String username = json.get("username").getAsString();
+        String password = json.get("password").getAsString();
+        return verifyAndGrantToken(username, password, "LoggedIn");
     }
 
     @POST
@@ -67,14 +64,12 @@ public class LoginEndpoint {
             UserDTO userDTO = GSON.fromJson(jsonString, UserDTO.class);
             String result = USER_FACADE.registerUser(userDTO);
             return verifyAndGrantToken(userDTO.getUsername(), userDTO.getPassword(), result);
-        } catch (AuthenticationException e) {
-            return GENERIC_EXCEPTION_MAPPER.toResponse(e);
         } catch (UserException e) {
             return USER_EXCEPTION_MAPPER.toResponse((UserException) e);
         }
     }
 
-    private Response verifyAndGrantToken(String username, String password, String result) throws AuthenticationException {
+    private Response verifyAndGrantToken(String username, String password, String result) {
         try {
             User user = USER_FACADE.getVeryfiedUser(username, password);
             String token = createToken(username, user.getRolesAsStrings());
@@ -84,21 +79,18 @@ public class LoginEndpoint {
             responseJson.addProperty("token", token);
             responseJson.addProperty("creation", result);
             return Response.ok(new Gson().toJson(responseJson)).build();
-        } catch (JOSEException | AuthenticationException ex) {
-            if (ex instanceof AuthenticationException) {
-                throw (AuthenticationException) ex;
-            }
-            Logger.getLogger(GenericExceptionMapper.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (JOSEException ex) {
+            return GENERIC_EXCEPTION_MAPPER.toResponse(ex);
+        } catch (AuthenticationException ex) {
+            return AUTHENTICATION_EXCEPTION_MAPPER.toResponse(ex);
         }
-        throw new AuthenticationException("Invalid username or password! Please try again");
     }
 
     private String createToken(String userName, List<String> roles) throws JOSEException {
 
         StringBuilder res = new StringBuilder();
         for (String string : roles) {
-            res.append(string);
-            res.append(",");
+            res.append(string).append(",");
         }
         String rolesAsString = res.length() > 0 ? res.substring(0, res.length() - 1) : "";
         String issuer = "semesterstartcode-dat3";
