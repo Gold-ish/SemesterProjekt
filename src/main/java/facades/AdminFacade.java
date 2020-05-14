@@ -1,8 +1,10 @@
 package facades;
 
 import entities.CriticCode;
+import errorhandling.WrongCriticCodeException;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
+import javax.persistence.TypedQuery;
 
 /**
  *
@@ -41,18 +43,20 @@ public class AdminFacade {
             em.close();
         }
     }
-    
-    public boolean verifyCriticCode(CriticCode incomingCode){
+
+    public boolean verifyCriticCode(CriticCode incomingCode) throws WrongCriticCodeException {
         EntityManager em = getEntityManager();
-        CriticCode found = em.find(CriticCode.class, incomingCode.getCode());
-        
-        if(found != null){
+        CriticCode cc;
+        try {
             em.getTransaction().begin();
-            em.remove(found);
+            TypedQuery<CriticCode> q = em.createQuery("SELECT c FROM CriticCode c WHERE c.code = :code", CriticCode.class);
+            cc = q.setParameter("code", incomingCode.getCode()).getSingleResult();
             em.getTransaction().commit();
-            return true;
-        }else{
-            return false;
+            return cc != null;
+        } catch (Exception e) {
+            throw new WrongCriticCodeException("incorrect critic code");
+        } finally {
+            em.close();
         }
     }
 
@@ -65,7 +69,7 @@ public class AdminFacade {
         for (int i = 0; i < 50; i++) {
             //Generate a random number between
             //0 to AlphaNumericString variable length
-            int index = (int) (AlphaNumericString.length() * (random == 0 ? Math.random(): random));
+            int index = (int) (AlphaNumericString.length() * (random == 0 ? Math.random() : random));
             sb.append(AlphaNumericString.charAt(index));
         }
         return sb.toString();
