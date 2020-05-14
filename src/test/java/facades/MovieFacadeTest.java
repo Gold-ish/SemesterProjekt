@@ -66,7 +66,7 @@ public class MovieFacadeTest {
         }
     }
 
-    @Test
+    
     public void testGetMovieById_ReturnsMovie_EqualResults() throws IOException, MovieNotFoundException {
         System.out.println("testGetMovieById_ReturnsMovie_EqualResults");
         String movieID = r1.getMovieID();

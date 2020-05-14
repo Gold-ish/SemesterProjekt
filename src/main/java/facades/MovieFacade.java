@@ -38,7 +38,8 @@ public class MovieFacade {
 
     public SpecificMovieDTO getMovieById(String id) throws IOException, MovieNotFoundException {
         SpecificMovieDTO mdto = fetchFacade.getMovieByIdSpecific(id);
-        mdto.setAvgRating(ratingFacade.getRatingAvg(mdto.getImdbID()));
+        mdto.setAvgRating(ratingFacade.getRatingAvgUser(mdto.getImdbID()));
+        mdto.setAvgRatingCritic(ratingFacade.getRatingAvgCritic(mdto.getImdbID()));
         mdto.setReviews(reviewFacade.getReviews(mdto.getImdbID()));
         mdto.setRatings(ratingFacade.getRatingsWithMovieID(mdto.getImdbID()));
         return mdto;
