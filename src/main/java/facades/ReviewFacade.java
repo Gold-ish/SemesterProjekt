@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
+import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 
 /*
@@ -67,14 +68,13 @@ public class ReviewFacade {
     public List<ReviewDTO> getReviews(String movieID) {
         EntityManager em = getEntityManager();
         try {
-            TypedQuery<Review> tq = em.createQuery("SELECT r FROM Review r "
-                    + "WHERE r.movieID = :id", Review.class);
-            tq.setParameter("id", movieID);
-            List<ReviewDTO> qList = new ArrayList<>();
-            for (Review r : tq.getResultList()) {
-                qList.add(new ReviewDTO(r));
+            Query tq = em.createNativeQuery("select ID, MOVIEID, REVIEW, USER, role_name AS role from users join REVIEW on user_name = USER join user_roles on users.user_name = user_roles.user_name where MOVIEID = '" + movieID+"'");
+            List<ReviewDTO> returnList = new ArrayList<>();
+            for(Object[] o : (List<Object[]>)tq.getResultList()){
+                returnList.add(new ReviewDTO((Number)o[0],(String)o[1],(String)o[3],(String)o[2],(String)o[4]));
+                
             }
-            return qList;
+                return returnList;
         } finally {
             em.close();
         }
