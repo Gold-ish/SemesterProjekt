@@ -137,15 +137,6 @@ public class User implements Serializable {
     }
 
     @Override
-    public int hashCode() {
-        int hash = 3;
-        hash = 47 * hash + Objects.hashCode(this.userName);
-        hash = 47 * hash + Objects.hashCode(this.gender);
-        hash = 47 * hash + Objects.hashCode(this.birthday);
-        return hash;
-    }
-
-    @Override
     public boolean equals(Object obj) {
         if (this == obj) {
             return true;
@@ -160,10 +151,16 @@ public class User implements Serializable {
         if (!Objects.equals(this.userName, other.userName)) {
             return false;
         }
+        if (!Objects.equals(this.userPass, other.userPass)) {
+            return false;
+        }
         if (!Objects.equals(this.gender, other.gender)) {
             return false;
         }
         if (!Objects.equals(this.birthday, other.birthday)) {
+            return false;
+        }
+        if (!Objects.equals(this.roleList, other.roleList)) {
             return false;
         }
         return true;
@@ -173,7 +170,5 @@ public class User implements Serializable {
     public String toString() {
         return "User{" + "userName=" + userName + ", userPass=" + userPass + ", roleList=" + roleList + ", gender=" + gender + ", birthday=" + birthday + '}';
     }
-    
-    
 
 }

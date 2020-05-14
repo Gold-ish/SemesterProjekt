@@ -100,9 +100,6 @@ public class UserFacade {
             List<Review> reviews = reviewFacade.getReviewsForUser(user.getUserName());
             userdto.setReviews(reviews);
             return userdto;
-        } catch (RollbackException e) {
-            //This error should not be able to be thrown.
-            throw new UserException("Can't find user.");
         } finally {
             em.close();
         }
@@ -120,8 +117,6 @@ public class UserFacade {
             u.setBirthday(userDTO.getBirthday());
             em.getTransaction().commit();
             return new UserDTO(u);
-        } catch (RollbackException e) {
-            throw new UserException("Can't find user to edit.");
         } finally {
             em.close();
         }

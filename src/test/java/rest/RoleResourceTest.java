@@ -275,5 +275,18 @@ public class RoleResourceTest {
                 .get("/info/critic/code").then()
                 .statusCode(200);
     }
+    
+    /**
+     * Test of getFromUser method, of class RoleResource.
+     */
+    @Test
+    public void testGetFromUser_ThrowsUserException_409() {
+        login("user_admin", "test");
+        given().contentType("application/json")
+                .header("x-access-token", securityToken)
+                .when()
+                .get("/info/critic/code").then()
+                .statusCode(200);
+    }
 
 }

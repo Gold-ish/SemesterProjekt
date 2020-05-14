@@ -7,7 +7,7 @@ import java.util.Objects;
  * @author Nina
  */
 public class ReviewDTO {
-    
+
     private int id;
     private String movieID;
     private String user;
@@ -16,7 +16,7 @@ public class ReviewDTO {
 
     public ReviewDTO() {
     }
-    
+
     public ReviewDTO(Number id, String movieID, String user, String review, String role) {
         this.id = id.intValue();
         this.movieID = movieID;
@@ -31,13 +31,13 @@ public class ReviewDTO {
         this.user = user;
         this.review = review;
     }
-    
+
     public ReviewDTO(String movieID, String user, String review) {
         this.movieID = movieID;
         this.user = user;
         this.review = review;
     }
-    
+
     public ReviewDTO(String movieID, String user, String review, String Role) {
         this.movieID = movieID;
         this.user = user;
@@ -45,12 +45,12 @@ public class ReviewDTO {
         this.role = role;
     }
 
-  public ReviewDTO(Review r) {
+    public ReviewDTO(Review r) {
         this.id = r.getId();
         this.movieID = r.getMovieID();
         this.user = r.getUser();
         this.review = r.getReview();
-    }    
+    }
 
     public int getId() {
         return id;
@@ -93,17 +93,6 @@ public class ReviewDTO {
     }
 
     @Override
-    public int hashCode() {
-        int hash = 5;
-        hash = 89 * hash + this.id;
-        hash = 89 * hash + Objects.hashCode(this.movieID);
-        hash = 89 * hash + Objects.hashCode(this.user);
-        hash = 89 * hash + Objects.hashCode(this.review);
-        hash = 89 * hash + Objects.hashCode(this.role);
-        return hash;
-    }
-
-    @Override
     public boolean equals(Object obj) {
         if (this == obj) {
             return true;
@@ -137,8 +126,5 @@ public class ReviewDTO {
     public String toString() {
         return "ReviewDTO{" + "id=" + id + ", movieID=" + movieID + ", user=" + user + ", review=" + review + ", role=" + role + '}';
     }
-    
-    
-    
 
 }
