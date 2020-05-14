@@ -12,8 +12,17 @@ public class ReviewDTO {
     private String movieID;
     private String user;
     private String review;
+    private String role;
 
     public ReviewDTO() {
+    }
+
+    public ReviewDTO(Number id, String movieID, String user, String review, String role) {
+        this.id = id.intValue();
+        this.movieID = movieID;
+        this.user = user;
+        this.review = review;
+        this.role = role;
     }
 
     public ReviewDTO(int id, String movieID, String user, String review) {
@@ -27,6 +36,13 @@ public class ReviewDTO {
         this.movieID = movieID;
         this.user = user;
         this.review = review;
+    }
+
+    public ReviewDTO(String movieID, String user, String review, String Role) {
+        this.movieID = movieID;
+        this.user = user;
+        this.review = review;
+        this.role = role;
     }
 
     public ReviewDTO(Review r) {
@@ -68,6 +84,14 @@ public class ReviewDTO {
         this.user = user;
     }
 
+    public String getRole() {
+        return role;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
+    }
+
     @Override
     public boolean equals(Object obj) {
         if (this == obj) {
@@ -92,12 +116,15 @@ public class ReviewDTO {
         if (!Objects.equals(this.review, other.review)) {
             return false;
         }
+        if (!Objects.equals(this.role, other.role)) {
+            return false;
+        }
         return true;
     }
 
     @Override
     public String toString() {
-        return "ReviewDTO{" + "id=" + id + ", movieID=" + movieID + ", userName=" + user + ", review=" + review + '}';
+        return "ReviewDTO{" + "id=" + id + ", movieID=" + movieID + ", user=" + user + ", review=" + review + ", role=" + role + '}';
     }
 
 }
