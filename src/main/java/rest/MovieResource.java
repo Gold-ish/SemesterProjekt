@@ -167,6 +167,7 @@ public class MovieResource {
     @DELETE
     @Path("delete/review")
     @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
     @RolesAllowed({"user", "critic", "admin"})
     public Response deleteReview(String json) {
         try {

@@ -373,10 +373,13 @@ public class MovieResourceTest {
         System.out.println("testDeleteReview_ReturnsReview_EqualResults");
         ReviewDTO review = new ReviewDTO(re1);
         String json = GSON.toJson(review);
+        login("user", "test");
         given().contentType(ContentType.JSON)
+                .header("x-access-token", securityToken)
                 .body(json)
-                .delete("/movies/delete/review").
-                then()
+                .when()
+                .delete("/movies/delete/review")
+                .then()
                 .assertThat()
                 .statusCode(HttpStatus.OK_200.getStatusCode())
                 .body("id", is(re1.getId()))

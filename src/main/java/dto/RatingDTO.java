@@ -70,16 +70,6 @@ public class RatingDTO {
     }
 
     @Override
-    public int hashCode() {
-        int hash = 7;
-        hash = 97 * hash + this.id;
-        hash = 97 * hash + Objects.hashCode(this.movieID);
-        hash = 97 * hash + Objects.hashCode(this.user);
-        hash = 97 * hash + this.rating;
-        return hash;
-    }
-
-    @Override
     public boolean equals(Object obj) {
         if (this == obj) {
             return true;
@@ -100,6 +90,9 @@ public class RatingDTO {
         if (!Objects.equals(this.movieID, other.movieID)) {
             return false;
         }
+        if (!Objects.equals(this.user, other.user)) {
+            return false;
+        }
         return true;
     }
 
@@ -108,5 +101,4 @@ public class RatingDTO {
         return "RatingDTO{" + "id=" + id + ", movieID=" + movieID + ", userName=" + user + ", rating=" + rating + '}';
     }
 
-    
 }

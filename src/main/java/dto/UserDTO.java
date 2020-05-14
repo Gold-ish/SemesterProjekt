@@ -29,7 +29,7 @@ public class UserDTO {
         this.birthday = birthday;
         this.role = role;
     }
-    
+
     //Only used for find opperations. We don't want to show the password.
     public UserDTO(User user) {
         this.username = user.getUserName();
@@ -63,8 +63,6 @@ public class UserDTO {
         this.role = role;
     }
 
-    
-    
     public List<Review> getReviews() {
         return reviews;
     }
@@ -82,15 +80,6 @@ public class UserDTO {
     }
 
     @Override
-    public int hashCode() {
-        int hash = 7;
-        hash = 67 * hash + Objects.hashCode(this.username);
-        hash = 67 * hash + Objects.hashCode(this.gender);
-        hash = 67 * hash + Objects.hashCode(this.birthday);
-        return hash;
-    }
-
-    @Override
     public boolean equals(Object obj) {
         if (this == obj) {
             return true;
@@ -105,13 +94,38 @@ public class UserDTO {
         if (!Objects.equals(this.username, other.username)) {
             return false;
         }
+        if (!Objects.equals(this.password, other.password)) {
+            return false;
+        }
         if (!Objects.equals(this.gender, other.gender)) {
             return false;
         }
         if (!Objects.equals(this.birthday, other.birthday)) {
             return false;
         }
+        if (!Objects.equals(this.role, other.role)) {
+            return false;
+        }
+        if (!Objects.equals(this.reviews, other.reviews)) {
+            return false;
+        }
+        if (!Objects.equals(this.ratings, other.ratings)) {
+            return false;
+        }
         return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 73 * hash + Objects.hashCode(this.username);
+        hash = 73 * hash + Objects.hashCode(this.password);
+        hash = 73 * hash + Objects.hashCode(this.gender);
+        hash = 73 * hash + Objects.hashCode(this.birthday);
+        hash = 73 * hash + Objects.hashCode(this.role);
+        hash = 73 * hash + Objects.hashCode(this.reviews);
+        hash = 73 * hash + Objects.hashCode(this.ratings);
+        return hash;
     }
 
     @Override

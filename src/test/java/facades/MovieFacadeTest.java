@@ -1,11 +1,15 @@
 package facades;
 
 import dto.MovieListDTO;
+import dto.RatingDTO;
+import dto.ReviewDTO;
 import dto.SpecificMovieDTO;
 import dto.TopTenMoviesDTO;
 import entities.Rating;
+import entities.Review;
 import entities.User;
 import errorhandling.MovieNotFoundException;
+import errorhandling.NotFoundException;
 import java.io.IOException;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
@@ -27,6 +31,7 @@ public class MovieFacadeTest {
     private static EntityManagerFactory EMF;
     private static MovieFacade FACADE;
     private Rating r1, r2;
+    private Review re1;
     private static User user1 = new User("testuser", "123", "other", "05-05-2020");
 
     @BeforeAll
@@ -41,12 +46,14 @@ public class MovieFacadeTest {
         EntityManager em = EMF.createEntityManager();
         r1 = new Rating("tt0076759", "user1", 8);
         r2 = new Rating("tt0076759", "user1", 3);
+        re1 = new Review("MovieID1", "user1", "Very good movie");
         try {
             em.getTransaction().begin();
             em.createNamedQuery("Rating.deleteAllRows").executeUpdate();
             em.createNamedQuery("User.deleteAllRows").executeUpdate();
             em.persist(r1);
             em.persist(r2);
+            em.persist(re1);
             em.getTransaction().commit();
         } finally {
             em.close();
@@ -135,5 +142,21 @@ public class MovieFacadeTest {
         System.out.println("testGetTopTenMovies_ReturnsListNrOf10Movies_EqualResults");
         TopTenMoviesDTO actualDto = FACADE.getTopTenMovies();
         assertEquals(1, actualDto.getMovieDTOs().size());
+    }
+    
+    @Test
+    public void testDeleteRating_ReturnsRatingDTO_EqualResults() throws NotFoundException {
+        System.out.println("testDeleteRating_ReturnsRatingDTO_EqualResults");
+        RatingDTO ratingDTO = new RatingDTO(r1);
+        RatingDTO rdto = FACADE.deleteRating(ratingDTO);
+        assertEquals(rdto, ratingDTO);
+    }
+    
+    @Test
+    public void testDeleteReview_ReturnsReviewDTO_EqualResults() throws NotFoundException {
+        System.out.println("testDeleteReview_ReturnsReviewDTO_EqualResults");
+        ReviewDTO reviewDTO = new ReviewDTO(re1);
+        ReviewDTO rdto = FACADE.deleteReview(reviewDTO);
+        assertEquals(rdto, reviewDTO);
     }
 }
