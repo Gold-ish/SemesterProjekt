@@ -61,19 +61,22 @@ public class UserFacade {
 
     public String registerUser(UserDTO userDTO) throws UserException, WrongCriticCodeException {
         EntityManager em = getEntityManager();
-        if(userDTO.getRole() == null || userDTO.getRole().isEmpty()){
+        String criticCodeToDelete = null;
+        if (userDTO.getRole() == null || userDTO.getRole().isEmpty()) {
             userDTO.setRole("user");
-        }else{
-            if(AdminFacade.getAdminFacade(emf).verifyCriticCode(new CriticCode(userDTO.getRole()))){
-                userDTO.setRole("critic");
-            }else{
-                throw new WrongCriticCodeException("incorrect critic code");
-            }
+        } else {
+            AdminFacade.getAdminFacade(emf).verifyCriticCode(new CriticCode(userDTO.getRole()));
+            criticCodeToDelete = userDTO.getRole();
+            userDTO.setRole("critic");
         }
         User userToAdd = new User(userDTO);
         try {
             em.getTransaction().begin();
             em.persist(userToAdd);
+            if (criticCodeToDelete != null) {
+                Query q = em.createQuery("DELETE FROM CriticCode c WHERE c.code = :code");
+                q.setParameter("code", criticCodeToDelete).executeUpdate();
+            }
             em.getTransaction().commit();
             return "User was created";
         } catch (RollbackException e) {

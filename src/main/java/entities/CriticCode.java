@@ -19,15 +19,21 @@ import javax.persistence.NamedQuery;
 public class CriticCode implements Serializable {
 
     private static final long serialVersionUID = 1L;
-    
+
     @Id
-    @GeneratedValue(strategy = GenerationType.TABLE)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private int id;
     private String code;
 
     public CriticCode() {
     }
 
     public CriticCode(String code) {
+        this.code = code;
+    }
+
+    public CriticCode(int id, String code) {
+        this.id = id;
         this.code = code;
     }
 
@@ -39,10 +45,19 @@ public class CriticCode implements Serializable {
         this.code = code;
     }
 
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
     @Override
     public int hashCode() {
-        int hash = 7;
-        hash = 61 * hash + Objects.hashCode(this.code);
+        int hash = 3;
+        hash = 47 * hash + this.id;
+        hash = 47 * hash + Objects.hashCode(this.code);
         return hash;
     }
 
@@ -58,6 +73,9 @@ public class CriticCode implements Serializable {
             return false;
         }
         final CriticCode other = (CriticCode) obj;
+        if (this.id != other.id) {
+            return false;
+        }
         if (!Objects.equals(this.code, other.code)) {
             return false;
         }
@@ -66,7 +84,7 @@ public class CriticCode implements Serializable {
 
     @Override
     public String toString() {
-        return "CriticCode{" + "code=" + code + '}';
+        return "CriticCode{" + "id=" + id + ", code=" + code + '}';
     }
 
 }
