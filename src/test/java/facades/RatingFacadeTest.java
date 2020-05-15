@@ -4,6 +4,7 @@ import dto.RatingDTO;
 import entities.Rating;
 import entities.User;
 import errorhandling.NotFoundException;
+import errorhandling.UserException;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import org.junit.jupiter.api.AfterAll;
@@ -127,7 +128,7 @@ public class RatingFacadeTest {
     }
 
     @Test
-    public void testDeleteRating_ReturnsConfirmationString_EqualResults() throws NotFoundException {
+    public void testDeleteRating_ReturnsConfirmationString_EqualResults() throws NotFoundException, UserException {
         System.out.println("testDeleteRating_ReturnsConfirmationString_EqualResults");
         RatingDTO ratingDTO = new RatingDTO(r1);
         RatingDTO deleteRating = FACADE.deleteRating(new RatingDTO(r1));

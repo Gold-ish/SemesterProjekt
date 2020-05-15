@@ -3,6 +3,7 @@ package facades;
 import dto.RatingDTO;
 import entities.Rating;
 import errorhandling.NotFoundException;
+import errorhandling.UserException;
 import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.EntityManager;
@@ -99,13 +100,17 @@ public class RatingFacade {
         }
     }
 
-    public RatingDTO deleteRating(RatingDTO rdto) throws NotFoundException {
+    public RatingDTO deleteRating(RatingDTO rdto) throws NotFoundException, UserException {
         EntityManager em = getEntityManager();
         try {
             em.getTransaction().begin();
             Rating r = em.find(Rating.class, rdto.getId());
             if (r == null) {
                 throw new NotFoundException("");
+            } else if (!"adminRole".equals(rdto.getUserName())) {
+                if (!r.getUser().equals(rdto.getUserName())) {
+                    throw new UserException("User doesn't match the ratingID");
+                }
             }
             em.remove(r);
             em.getTransaction().commit();
@@ -136,12 +141,11 @@ public class RatingFacade {
         EntityManager em = getEntityManager();
         try {
             Query tq = em.createNativeQuery("SELECT MOVIEID FROM RATING WHERE MOVIEID IN (SELECT MOVIEID FROM RATING GROUP BY MOVIEID HAVING COUNT(*) > 1) GROUP BY MOVIEID ORDER BY AVG(rating)desc LIMIT 10;");
-            List<String> list = (List<String>)(List<?>) tq.getResultList();
+            List<String> list = (List<String>) (List<?>) tq.getResultList();
             return list;
         } finally {
             em.close();
         }
     }
-
 
 }

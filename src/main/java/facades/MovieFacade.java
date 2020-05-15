@@ -8,6 +8,7 @@ import dto.SpecificMovieDTO;
 import dto.TopTenMoviesDTO;
 import errorhandling.MovieNotFoundException;
 import errorhandling.NotFoundException;
+import errorhandling.UserException;
 import java.io.IOException;
 import java.util.List;
 import javax.persistence.EntityManagerFactory;
@@ -62,7 +63,7 @@ public class MovieFacade {
         return ratingFacade.editRating(ratingDTO);
     }
 
-    public RatingDTO deleteRating(RatingDTO ratingDTO) throws NotFoundException {
+    public RatingDTO deleteRating(RatingDTO ratingDTO) throws NotFoundException, UserException {
         return ratingFacade.deleteRating(ratingDTO);
     }
 
@@ -74,7 +75,7 @@ public class MovieFacade {
         return reviewFacade.editReview(reviewDTO);
     }
 
-    public ReviewDTO deleteReview(ReviewDTO review) throws NotFoundException {
+    public ReviewDTO deleteReview(ReviewDTO review) throws NotFoundException, UserException {
         return reviewFacade.deleteReview(review);
     }
 

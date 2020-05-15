@@ -10,6 +10,7 @@ import entities.Review;
 import entities.User;
 import errorhandling.MovieNotFoundException;
 import errorhandling.NotFoundException;
+import errorhandling.UserException;
 import java.io.IOException;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
@@ -145,7 +146,7 @@ public class MovieFacadeTest {
     }
     
     @Test
-    public void testDeleteRating_ReturnsRatingDTO_EqualResults() throws NotFoundException {
+    public void testDeleteRating_ReturnsRatingDTO_EqualResults() throws NotFoundException, UserException {
         System.out.println("testDeleteRating_ReturnsRatingDTO_EqualResults");
         RatingDTO ratingDTO = new RatingDTO(r1);
         RatingDTO rdto = FACADE.deleteRating(ratingDTO);
@@ -153,7 +154,7 @@ public class MovieFacadeTest {
     }
     
     @Test
-    public void testDeleteReview_ReturnsReviewDTO_EqualResults() throws NotFoundException {
+    public void testDeleteReview_ReturnsReviewDTO_EqualResults() throws NotFoundException, UserException {
         System.out.println("testDeleteReview_ReturnsReviewDTO_EqualResults");
         ReviewDTO reviewDTO = new ReviewDTO(re1);
         ReviewDTO rdto = FACADE.deleteReview(reviewDTO);

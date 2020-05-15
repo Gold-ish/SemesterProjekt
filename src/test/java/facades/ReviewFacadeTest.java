@@ -5,6 +5,7 @@ import entities.Review;
 import entities.Role;
 import entities.User;
 import errorhandling.NotFoundException;
+import errorhandling.UserException;
 import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.EntityManager;
@@ -156,7 +157,7 @@ public class ReviewFacadeTest {
     }
 
     @Test
-    public void testDeleteReview_ReturnsReview_EqualResults() throws NotFoundException {
+    public void testDeleteReview_ReturnsReview_EqualResults() throws NotFoundException, UserException {
         System.out.println("testDeleteReview_ReturnsTheReview_EqualResults");
         ReviewDTO reviewDTO = new ReviewDTO(r1);
         ReviewDTO deleteReview = FACADE.deleteReview(reviewDTO);

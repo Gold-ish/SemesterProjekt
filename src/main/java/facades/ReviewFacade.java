@@ -3,6 +3,7 @@ package facades;
 import dto.ReviewDTO;
 import entities.Review;
 import errorhandling.NotFoundException;
+import errorhandling.UserException;
 import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.EntityManager;
@@ -68,13 +69,13 @@ public class ReviewFacade {
     public List<ReviewDTO> getReviews(String movieID) {
         EntityManager em = getEntityManager();
         try {
-            Query tq = em.createNativeQuery("select ID, MOVIEID, REVIEW, USER, role_name AS role from users join REVIEW on user_name = USER join user_roles on users.user_name = user_roles.user_name where MOVIEID = '" + movieID+"'");
+            Query tq = em.createNativeQuery("select ID, MOVIEID, REVIEW, USER, role_name AS role from users join REVIEW on user_name = USER join user_roles on users.user_name = user_roles.user_name where MOVIEID = '" + movieID + "'");
             List<ReviewDTO> returnList = new ArrayList<>();
-            for(Object[] o : (List<Object[]>)tq.getResultList()){
-                returnList.add(new ReviewDTO((Number)o[0],(String)o[1],(String)o[3],(String)o[2],(String)o[4]));
-                
+            for (Object[] o : (List<Object[]>) tq.getResultList()) {
+                returnList.add(new ReviewDTO((Number) o[0], (String) o[1], (String) o[3], (String) o[2], (String) o[4]));
+
             }
-                return returnList;
+            return returnList;
         } finally {
             em.close();
         }
@@ -97,13 +98,17 @@ public class ReviewFacade {
         }
     }
 
-    public ReviewDTO deleteReview(ReviewDTO review) throws NotFoundException {
+    public ReviewDTO deleteReview(ReviewDTO review) throws NotFoundException, UserException {
         EntityManager em = getEntityManager();
         try {
             em.getTransaction().begin();
             Review r = em.find(Review.class, review.getId());
             if (r == null) {
-                throw new NotFoundException();
+                throw new NotFoundException("");
+            } else if (!"adminRole".equals((review.getUser()))) {
+                if (!r.getUser().equals(review.getUser())) {
+                    throw new UserException("User doesn't match the reviewID");
+                }
             }
             em.remove(r);
             em.getTransaction().commit();
@@ -112,5 +117,5 @@ public class ReviewFacade {
             em.close();
         }
     }
-    
-    }
+
+}

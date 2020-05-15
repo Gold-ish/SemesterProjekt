@@ -9,6 +9,8 @@ import errorhandling.MovieNotFoundException;
 import errorhandling.MovieNotFoundExceptionMapper;
 import errorhandling.NotFoundException;
 import errorhandling.TooUnspecificSearchExceptionMapper;
+import errorhandling.UserException;
+import errorhandling.UserExceptionMapper;
 import facades.MovieFacade;
 import java.io.IOException;
 import javax.annotation.security.RolesAllowed;
@@ -35,23 +37,25 @@ import utils.EMF_Creator;
 @Path("movies")
 public class MovieResource {
 
-    private static EntityManagerFactory EMF = 
-            EMF_Creator.createEntityManagerFactory(EMF_Creator.DbSelector.DEV, EMF_Creator.Strategy.CREATE);
+    private static EntityManagerFactory EMF
+            = EMF_Creator.createEntityManagerFactory(EMF_Creator.DbSelector.DEV, EMF_Creator.Strategy.CREATE);
     private static final MovieFacade FACADE = MovieFacade.getMovieFacade(EMF);
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
     private static final GenericExceptionMapper GENERIC_EXCEPTION_MAPPER
             = new GenericExceptionMapper();
     private static final TooUnspecificSearchExceptionMapper TOO_UNSPECIFIC_SEARCH
             = new TooUnspecificSearchExceptionMapper();
-    private static final MovieNotFoundExceptionMapper MOVIE_EXCEPTION_MAPPER 
+    private static final MovieNotFoundExceptionMapper MOVIE_EXCEPTION_MAPPER
             = new MovieNotFoundExceptionMapper();
+    private static final UserExceptionMapper USER_EXCEPTION_MAPPER
+            = new UserExceptionMapper();
 
     @Context
     private UriInfo context;
 
     @Context
     SecurityContext securityContext;
-    
+
     @GET
     @Produces({MediaType.APPLICATION_JSON})
     public String demo() {
@@ -81,14 +85,14 @@ public class MovieResource {
             String movie = GSON.toJson(FACADE.getMoviesByTitle(title, page));
             return Response.ok(movie).build();
         } catch (IOException ex) {
-             return GENERIC_EXCEPTION_MAPPER.toResponse(ex);
+            return GENERIC_EXCEPTION_MAPPER.toResponse(ex);
         } catch (MovieNotFoundException ex) {
             return MOVIE_EXCEPTION_MAPPER.toResponse(ex);
-        } catch (IllegalArgumentException ex){
+        } catch (IllegalArgumentException ex) {
             return TOO_UNSPECIFIC_SEARCH.toResponse(ex);
         }
     }
-    
+
     @POST
     @Path("add/rating")
     @Consumes(MediaType.APPLICATION_JSON)
@@ -96,15 +100,15 @@ public class MovieResource {
     @RolesAllowed({"user", "critic"})
     public Response addRating(String json) {
         RatingDTO rating = GSON.fromJson(json, RatingDTO.class);
-        
+
         //We manually set the user to be the user from the JWT token, 
         //to ensure that a user can't edit the Request to the server with a different username.
         rating.setUserName(securityContext.getUserPrincipal().getName());
-        
+
         String returnRating = GSON.toJson(FACADE.addRating(rating));
         return Response.ok(returnRating).build();
     }
-    
+
     @PUT
     @Path("edit/rating")
     @Consumes(MediaType.APPLICATION_JSON)
@@ -120,22 +124,28 @@ public class MovieResource {
             return MOVIE_EXCEPTION_MAPPER.toResponse(new MovieNotFoundException(ex.getMessage()));
         }
     }
-    
+
     @DELETE
     @Path("delete/rating")
     @Consumes(MediaType.APPLICATION_JSON)
-    @RolesAllowed({"user", "critic", "delete"})
+    @RolesAllowed({"user", "critic", "admin"})
     public Response deleteRating(String json) {
         try {
             RatingDTO rating = GSON.fromJson(json, RatingDTO.class);
-            rating.setUserName(securityContext.getUserPrincipal().getName());
+            if (securityContext.isUserInRole("admin")) {
+                rating.setUserName("adminRole");
+            } else {
+                rating.setUserName(securityContext.getUserPrincipal().getName());
+            }
             String deletedRating = GSON.toJson(FACADE.deleteRating(rating));
             return Response.ok(deletedRating).build();
         } catch (NotFoundException ex) {
             return GENERIC_EXCEPTION_MAPPER.toResponse(ex);
+        } catch (UserException ex) {
+            return USER_EXCEPTION_MAPPER.toResponse(ex);
         }
     }
-    
+
     @POST
     @Path("add/review")
     @Consumes(MediaType.APPLICATION_JSON)
@@ -147,7 +157,7 @@ public class MovieResource {
         String returnReview = GSON.toJson(FACADE.addReview(review));
         return Response.ok(returnReview).build();
     }
-    
+
     @PUT
     @Path("edit/review")
     @Consumes(MediaType.APPLICATION_JSON)
@@ -163,7 +173,7 @@ public class MovieResource {
             return GENERIC_EXCEPTION_MAPPER.toResponse(ex);
         }
     }
-    
+
     @DELETE
     @Path("delete/review")
     @Consumes(MediaType.APPLICATION_JSON)
@@ -172,19 +182,25 @@ public class MovieResource {
     public Response deleteReview(String json) {
         try {
             ReviewDTO review = GSON.fromJson(json, ReviewDTO.class);
-            review.setUser(securityContext.getUserPrincipal().getName());
+            if (securityContext.isUserInRole("admin")) {
+                review.setUser("adminRole");
+            } else {
+                review.setUser(securityContext.getUserPrincipal().getName());
+            }
             String deletedReview = GSON.toJson(FACADE.deleteReview(review));
             return Response.ok(deletedReview).build();
         } catch (NotFoundException ex) {
             return GENERIC_EXCEPTION_MAPPER.toResponse(ex);
+        } catch (UserException ex) {
+            return USER_EXCEPTION_MAPPER.toResponse(ex);
         }
     }
-    
+
     @GET
     @Path("topten")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getTopTenMovies() throws InterruptedException {
-            String movie = GSON.toJson(FACADE.getTopTenMovies());
-            return Response.ok(movie).build();
+        String movie = GSON.toJson(FACADE.getTopTenMovies());
+        return Response.ok(movie).build();
     }
 }
