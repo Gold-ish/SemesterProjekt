@@ -4,6 +4,7 @@ import dto.RatingDTO;
 import entities.Rating;
 import errorhandling.NotFoundException;
 import errorhandling.UserException;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.EntityManager;
@@ -77,6 +78,36 @@ public class RatingFacade {
             double avgRating = -1.0;
             if (q.getSingleResult() != null) {
                 avgRating = (double) q.getSingleResult();
+            }
+            return avgRating;
+        } finally {
+            em.close();
+        }
+    }
+    
+    public double getRatingAvgUser(String movieID) {
+        EntityManager em = getEntityManager();
+        try {
+            Query q = em.createNativeQuery("select avg(RATING) from RATING r LEFT JOIN user_roles userRoles ON r.USER = userRoles.user_name WHERE role_name = 'user' && MOVIEID = '" + movieID + "';");
+            double avgRating = -1.0;
+            System.out.println(q.getSingleResult());
+            if (q.getSingleResult() != null) {
+                avgRating = ((BigDecimal)q.getSingleResult()).doubleValue();
+            }
+            return avgRating;
+        } finally {
+            em.close();
+        }
+    }
+    
+    public double getRatingAvgCritic(String movieID) {
+        EntityManager em = getEntityManager();
+        try {
+            Query q = em.createNativeQuery("select avg(RATING) from RATING r LEFT JOIN user_roles userRoles ON r.USER = userRoles.user_name WHERE role_name = 'critic' && MOVIEID = '" + movieID + "';");
+            double avgRating = -1.0;
+            System.out.println(q.getSingleResult());
+            if (q.getSingleResult() != null) {
+                avgRating = ((BigDecimal)q.getSingleResult()).doubleValue();
             }
             return avgRating;
         } finally {
