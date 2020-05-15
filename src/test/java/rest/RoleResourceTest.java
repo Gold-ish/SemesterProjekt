@@ -247,7 +247,7 @@ public class RoleResourceTest {
                 then()
                 .assertThat()
                 .statusCode(HttpStatus.OK_200.getStatusCode())
-                .body("msg", is("Hello to (admin) User: user_admin"));
+                .body("msg", is("Hello admin: user_admin"));
     }
     
     /**
