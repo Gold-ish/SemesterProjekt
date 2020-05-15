@@ -7,6 +7,7 @@ import dto.SpecificMovieDTO;
 import dto.TopTenMoviesDTO;
 import entities.Rating;
 import entities.Review;
+import entities.Role;
 import entities.User;
 import errorhandling.MovieNotFoundException;
 import errorhandling.NotFoundException;
@@ -31,29 +32,54 @@ public class MovieFacadeTest {
 
     private static EntityManagerFactory EMF;
     private static MovieFacade FACADE;
-    private Rating r1, r2;
+    private Rating r1, r2, r3;
     private Review re1;
-    private static User user1 = new User("testuser", "123", "other", "05-05-2020");
+    private static User user1 ,user2, user3;
+    private static Role userRole, criticRole;
 
     @BeforeAll
     public static void setUpClass() {
         EMF = EMF_Creator.createEntityManagerFactory(EMF_Creator.DbSelector.TEST,
                 EMF_Creator.Strategy.DROP_AND_CREATE);
         FACADE = MovieFacade.getMovieFacade(EMF);
+         EntityManager em = EMF.createEntityManager();
+        userRole = new Role("user");
+        criticRole = new Role("critic");
+        user1 = new User("testuser", "123", "other", "05-05-2020");
+        user1.addRole(userRole);
+        user2 = new User("UserNameTestCritic", "UserPassword2", "female", "50-50-2020");
+        user2.addRole(criticRole);
+        user3 = new User("testuser1", "123", "other", "05-05-2020");
+        user3.addRole(userRole);
+        try {
+            em.getTransaction().begin();
+            em.createNamedQuery("Role.deleteAllRows").executeUpdate();
+            em.createNamedQuery("User.deleteAllRows").executeUpdate();
+            em.persist(userRole);
+            em.persist(criticRole);
+            em.persist(user1);
+            em.persist(user2);
+            em.persist(user3);
+            em.getTransaction().commit();
+        } finally {
+            em.close();
+        }
     }
 
     @BeforeEach
     public void setUp() {
         EntityManager em = EMF.createEntityManager();
-        r1 = new Rating("tt0076759", "user1", 8);
-        r2 = new Rating("tt0076759", "user1", 3);
-        re1 = new Review("MovieID1", "user1", "Very good movie");
+        r1 = new Rating("tt0076759", user1.getUserName(), 8);
+        r2 = new Rating("tt0076759", user2.getUserName(), 3);
+        r3 = new Rating("tt0076759", user3.getUserName(), 10);
+        re1 = new Review("MovieID1", user1.getUserName(), "Very good movie");
         try {
             em.getTransaction().begin();
             em.createNamedQuery("Rating.deleteAllRows").executeUpdate();
-            em.createNamedQuery("User.deleteAllRows").executeUpdate();
+            em.createNamedQuery("Review.deleteAllRows").executeUpdate();
             em.persist(r1);
             em.persist(r2);
+            em.persist(r3);
             em.persist(re1);
             em.getTransaction().commit();
         } finally {
@@ -74,12 +100,12 @@ public class MovieFacadeTest {
         }
     }
 
-    
+    @Test
     public void testGetMovieById_ReturnsMovie_EqualResults() throws IOException, MovieNotFoundException {
         System.out.println("testGetMovieById_ReturnsMovie_EqualResults");
         String movieID = r1.getMovieID();
         SpecificMovieDTO mdto = FACADE.getMovieById(movieID);
-        double expectedRatingOnMovieDTO = ((double) r1.getRating() + (double) r2.getRating()) / 2;
+        double expectedRatingOnMovieDTO = ((double) r1.getRating() + (double) r3.getRating()) / 2;
         assertEquals(expectedRatingOnMovieDTO, mdto.getAvgRating());
     }
 
