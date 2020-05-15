@@ -119,7 +119,7 @@ public class RoleResource {
     @RolesAllowed("admin")
     public String getFromAdmin() {
         String thisuser = securityContext.getUserPrincipal().getName();
-        return "{\"msg\": \"Hello to (admin) User: " + thisuser + "\"}";
+        return "{\"msg\": \"Hello admin: " + thisuser + "\"}";
     }
 
     @GET
